@@ -1,0 +1,56 @@
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Responsive Multipurpose HTML5 Template" />
+    <meta name="keywords" content="agency, bootstrap, business, corporate, creative, landing page, marketing, multipurpose, product, product launch, responsive, software, startup, startup landing page" />
+    <meta name="author" content="ThemesBoss" />
+
+
+    <title>{% block title %}Digitrav{% endblock %}</title>
+
+    <script src="{{ asset('assets2/js/plugin/webfont/webfont.min.js') }}"></script>
+    <script>
+        WebFont.load({
+            google: {"families":["Lato:300,400,700,900"]},
+            custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands", "simple-line-icons"], urls: ['{{ asset('assets2/css/fonts.min.css') }}']},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+        });
+    </script>
+
+    <!-- Site favicon -->
+    <link rel="shortcut icon"  href="{{ asset('assets/images/favicon.ico') }}">
+
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/file-upload-with-preview@3.4.3/dist/file-upload-with-preview.min.css">
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}" type="text/css">
+
+    <!-- MFP Css -->
+    <link rel="stylesheet" href="{{ asset('assets/css/magnific-popup.css') }}">
+
+    <!-- Material Icon -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/materialdesignicons.min.css') }}" />
+
+    <!-- Pe7 Icon -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/pe-icon-7.css') }}">
+
+    <!-- Owl Slider -->
+    <link rel="stylesheet" href="{{ asset('assets/css/owl.carousel.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/owl.theme.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/owl.transitions.css') }}" />
+
+
+    <link rel="stylesheet" href="{{ asset('assets/css/selectize.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/selectize.bootstrap3.css') }}" />
+
+
+
+    <!-- CSS Just for demo purpose, don't include it in your project -->
+
+    <link rel="stylesheet" href="{{ asset('assets2/css/atlantis.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets2/css/demo.css') }}">
+    <!-- Custom  Css -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/my_style.css') }}" />

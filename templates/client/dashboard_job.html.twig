@@ -1,0 +1,141 @@
+{% extends 'client/base/base.html.twig' %}
+
+{% block main %}
+    <div class="wrapper compact-wrapper">
+
+        {% if app.user.role.code =="ROLE_CLIENT" %}
+            {% include 'client/dashboard_client_nav.html.twig' %}
+
+        {% elseif app.user.role.code in ["ROLE_MANAGER_COMPANY","ROLE_TECHNICIAN_COMPANY","ROLE_TECHNICIAN_PERSON"]  %}
+            {% include 'client/dashboard_technician_nav.html.twig' %}
+        {% else %}
+            {% include 'client/dashboard_nav.html.twig' %}
+        {% endif %}
+
+
+
+        <div class="main-panel " style="margin-top: -65px">
+            <div class="content">
+                <div class="panel-header bg-primary-gradient">
+                    <div class="page-inner py-5">
+                        <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
+
+                            <div class="">
+                                <h2 class="text-white pb-2 fw-bold">{{ 'jobs'|trans }} </h2>
+
+                            </div>
+                            <div class="row ml-md-auto py-2 py-md-0 short-nav">
+                                {% if app.user.role.code == "ROLE_CLIENT" %}
+                                    {% include 'client/shortcut_client_nav.html.twig' %}
+                                {% elseif app.user.role.code in ["ROLE_SADMIN","ROLE_ADMIN","ROLE_OPERATOR"] %}
+                                    {% include 'client/shortcut_admin_nav.html.twig' %}
+
+                                {% endif %}
+
+
+                            </div>
+
+
+                        </div>
+                        {% if app.user.role.code in ["ROLE_OPERATOR","ROLE_CLIENT"] %}
+                            <a href="{{ path('web_dashboard_create_job') }}" class="btn btn-secondary btn-round">{{ 'post_a_job'|trans }}</a>
+                        {% endif %}
+
+
+                    </div>
+                </div>
+                <div class="dash page-inner mt--5">
+
+                    <div class="row container-fluid mb-5 mt-5">
+                        <table id="job-datatables" class="display table table-responsive table-striped table-hover" >
+                            <thead>
+                            <tr>
+                                <th><span class="flaticon-settings"></span></th>
+                                <th>{{ 'title'|trans }}</th>
+                                <th>{{ 'domain'|trans }}</th>
+                                <th>{{ 'category'|trans }}</th>
+                                <th>{{ 'status'|trans }}</th>
+                                <th>{{ 'date'|trans }}</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for job in jobs %}
+                                <tr {% if job.statut==0 %} class="success" {% endif %}>
+                                    <td >
+                                        <a href="{{ path('web_show_job',{slug:job.slug}) }}">
+                                            <i style="color: #1572e8" class="fa fa-eye"></i>
+                                        </a>
+                                    </td>
+                                    <td> {{ job.title}}</td>
+                                    <td> {{ job.domain.name}}</td>
+                                    <td> {{ job.category.name}}</td>
+                                    <td> {% if job.statut==0 %} {{ 'statut_in_progress'|trans }} {% endif %}</td>
+                                    <td> {{job.date | date('y/m/d')}}</td>
+
+                                </tr>
+
+
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                {% include 'client/base/dashboard_footer.html.twig' %}
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+
+
+{% endblock %}
+
+{% block footer %}
+
+{% endblock %}
+
+{% block js %}
+
+    <script >
+        $(document).ready(function() {
+            $('#job-datatables').DataTable({
+            });
+
+            $('#user-add').on('show.bs.modal', function (event) {
+
+                var button = $(event.relatedTarget); // Button that triggered the modal
+
+
+
+                if(button[0].id == "new-operator")
+                {
+                    var modal = $(this);
+                    modal.find('.modal-title').text("{{ 'new_operator'|trans }}");
+                    modal.find('.modal-body form #account').html("<option value='5' selected >{% trans %}operator{% endtrans %}</option>");
+                }
+
+                if(button[0].id == "new-admin")
+                {
+                    var modal = $(this);
+                    modal.find('.modal-title').text("{{ 'new_admin'|trans }}");
+                    modal.find('.modal-body form #account').html("<option value='6' selected >{% trans %}admin{% endtrans %}</option>");
+                }
+
+
+
+
+
+
+
+
+            })
+
+
+        });
+    </script>
+{% endblock %}

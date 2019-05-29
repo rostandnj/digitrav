@@ -1,0 +1,236 @@
+{% extends 'client/base/base.html.twig' %}
+
+
+
+{% block main %}
+    <div class="container-fluid row">
+        <div class="col-lg-12 col-md-12">
+            {% include 'client/form_search.html.twig' %}
+        </div>
+
+        <div class="col-lg-3 col-md-4">
+            <div class="mt-3 blog_sidebar rounded">
+                <div class="bg-white m-2 p-3">
+
+                    <!-- Categories -->
+                    <div class="widget mt-2">
+                        <div class="sidebar_widget_title font-weight-bold text-uppercase">{{ 'domains'|trans }}</div>
+
+                        <ul class="list-unstyled widget_list">
+                            {% for d in domains %}
+                                <li><a href="{{ path('web_domain_job',{slug:d.slug}) }}"><i class="mdi mdi-chevron-double-right"></i> {{ d.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-9 col-md-8 mt-3" >
+                <div class="home-table">
+                    <div class="home-table-center">
+                        <div class="container">
+                            <ul class="list-group" id="job-list">
+                                {% for job in jobs %}
+
+                                        <li class="job-listing">
+                                            <!-- Job Listing Details -->
+                                            <div class="job-listing-details">
+                                                <!-- Logo -->
+                                                <div class="job-listing-company-logo">
+                                                    {% if job.isMain ==0 %}
+                                                        <img src="{{ asset('assets/images/job.png') }}" width="45" height="45" alt="">
+                                                    {% else %}
+                                                        <img src="{{ asset('assets/uploads/'~job.client.picture.path) }}" width="45" height="45" alt="">
+
+
+                                                    {% endif %}
+                                                </div>
+
+                                                <!-- Details -->
+                                                <div class="job-listing-description">
+                                                    <h4 class="job-listing-company">
+
+                                                        {% if job.isMain ==0 %}
+                                                            {{ job.clientName }}
+                                                        {% else %}
+                                                            {{ job.client.surname }}  {{ job.client.name }}
+
+                                                        {% endif %}
+
+                                                    </h4>
+                                                    <h3 class="job-listing-title"><a href="{{ path('web_show_job',{slug:job.slug}) }}">{{ job.title }}</a></h3>
+                                                    <p class="job-listing-text">{{ job.description|length > 50 ? job.description|slice(0, 120) ~ '...' : job.description }}</p>
+                                                </div>
+
+                                                <!-- Bookmark -->
+                                                <span class="bookmark-icon"></span>
+                                            </div>
+
+                                            <!-- Job Listing Footer -->
+                                            <div class="job-listing-footer">
+                                                <ul>
+                                                    <li><i class="fa fa-briefcase"></i> {{ job.domain.name }} </li>
+
+                                                    <li><i class="icon-material-outline-location-on"></i> {{ job.location.city }} , {{ job.location.quater }}</li>
+
+                                                    <li><i class="icon-material-outline-account-balance-wallet"></i> XAF {{ job.category.budget }}</li>
+                                                    <li><i class="icon-material-outline-access-time"></i> {{ 'posted'|trans }} {{ job.date|date('y-m-d H:i:s')|timeago }}</li>
+                                                </ul>
+                                            </div>
+                                        </li>
+
+                                {% endfor %}
+
+
+
+
+
+                            </ul>
+                            <button id="load-more"  class="btn btn-primary">{{ 'load_more'|trans }} </button><img id="loader" width="95" height="95" src="{{ asset('assets/images/loader.gif') }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+    </div>
+
+
+{% endblock %}
+
+{% block js %}
+
+    <script>
+        $("#load-more").hide();
+        $("#loader").hide();
+
+        var nbItem="{{ jobs|length }}";
+        var totalItem=parseInt(nbItem);
+
+        if(nbItem>=4) $("#load-more").show();
+
+
+        $("#load-more").on("click",function () {
+
+            $("#load-more").attr("disabled",true);
+            $("#loader").show();
+
+
+            $.ajax({
+                type        : 'GET', // define the type of HTTP verb we want to use (POST for our form)
+                url         : "{{ path('web_find_more_job') }}", // the url where we want to POST
+                data        : {"offset":totalItem,"limit":4}, // our data object
+                dataType    : 'json', // what type of data do we expect back from the server
+                encode          : true,
+                success : function(resultat, statut)
+                {
+                    $("#loader").hide();
+
+
+                    if(resultat.jobs.length>0)
+                    {
+                        totalItem+=resultat.jobs.length;
+                        if(resultat.jobs.length<4)$("#load-more").hide();
+                        else $("#load-more").attr("disabled",false);
+
+                        let html="";
+                        let url ="{{ url('web_show_job',{slug:"a"}) }}";
+
+
+
+                        let part1="<li class=\"job-listing\"> <div class=\"job-listing-details\">" +
+                            " <div class=\"job-listing-company-logo\">";
+
+                            let partx="</h4>\n" +
+                                "                                        <p style=\"font-weight: normal;font-size: 11px!important;\" class=\"text-muted row container-fluid\">\n" +
+                                "                                        <strong class=\"text-right \">";
+
+
+                        let part2=" </div> <div class=\"job-listing-description\">\n" +
+                            "            <h4 class=\"job-listing-company\">";
+                        let part3="</h4>\n" +
+                            "            <h3 class=\"job-listing-title\">";
+                        let part4="</h3>\n" +
+                            "            <p class=\"job-listing-text\">";
+
+                        let part5="</p>\n" +
+                            "        </div><span class=\"bookmark-icon\"></span>\n" +
+                            "    </div><div class=\"job-listing-footer\">\n" +
+                            "        <ul>\n" +
+                            "            <li><i class=\"fa fa-briefcase\"></i>";
+                        let part6="</li>\n" +
+                            "\n" +
+                            "            <li><i class=\"icon-material-outline-location-on\"></i>";
+
+                        let part7="</li>\n" +
+                            "\n" +
+                            "            <li><i class=\"icon-material-outline-account-balance-wallet\"></i>";
+                        let part8="</li>\n" +
+                            "            <li><i class=\"icon-material-outline-access-time\"></i>";
+                        let part9="</li>\n" +
+                            "        </ul>\n" +
+                            "    </div>\n" +
+                            "</li>";
+
+
+
+                        resultat.jobs.forEach(function (el) {
+
+                            let img="";
+                            let name="";
+
+                            if(el.is_main === false)
+                            {
+                                name = el.client_name;
+
+                                img = "<img src=\"{{ asset('assets/images/job.png') }}\" width=\"45\" height=\"45\" alt=\"\">";
+
+                            }else
+                            {
+                                name = el.client.surname+" "+el.client.name;
+                                let img1 = "{{ asset('assets/uploads/')}}/"+el.client.picture.path;
+                                img ="<img src='"+img1+"' width='45' height='45' alt='profile' >";
+
+                            }
+
+                            html =html + part1+img+part2+name+part3+"<a href='"+url.replace('/a',"")+"/"+el.slug+"'>"+ el.title
+                            +part4+el.description.substring(0,200)+part5+el.domain.name+part6+el.location.city+", "+el.location.quater+part7+
+                                +" XAF " +el.category.budget+ part8+el.date+part9;
+
+                              });
+
+
+                        $("#job-list").append(html);
+
+                        $("#counterm").attr("style","height:"+($(document).height()+50)+"px");
+                        $("#load-more").attr("disabled",false);
+
+
+
+                    }
+                    else
+                    {
+                        $("#load-more").attr("disabled",false);
+                        $("#load-more").hide();
+                    }
+
+
+
+                },
+
+                error : function(resultat, statut, erreur){
+                    $("#loader").hide();
+                    console.log(resultat);
+
+                }
+
+            });
+
+
+
+        })
+    </script>
+
+{% endblock %}

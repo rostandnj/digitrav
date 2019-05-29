@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>PHP</ID>
+  <OriginalElement>\App\Entity\Notification</OriginalElement>
+  <nodes>
+    <node x="566.0" y="405.0">\App\Entity\Payment</node>
+    <node x="742.0" y="0.0">\App\Entity\UserDetail</node>
+    <node x="182.0" y="0.0">\App\Entity\User</node>
+    <node x="188.0" y="678.0">\App\Entity\Bill</node>
+    <node x="0.0" y="0.0">\App\Entity\Intervention</node>
+    <node x="696.0" y="678.0">\App\Entity\Statut</node>
+    <node x="0.0" y="405.0">\App\Entity\Notification</node>
+    <node x="0.0" y="678.0">\App\Entity\Quote</node>
+    <node x="879.0" y="678.0">\App\Entity\Role</node>
+    <node x="188.0" y="405.0">\App\Entity\Note</node>
+    <node x="533.0" y="678.0">\App\Entity\Category</node>
+    <node x="358.0" y="0.0">\App\Entity\Company</node>
+    <node x="741.0" y="405.0">\App\Entity\Location</node>
+    <node x="378.0" y="405.0">\App\Entity\Evaluation</node>
+    <node x="356.0" y="678.0">\App\Entity\Domain</node>
+    <node x="554.0" y="0.0">\App\Entity\File</node>
+  </nodes>
+  <notes />
+  <edges />
+  <settings layout="Hierarchic Group" zoom="1.0" x="184.0" y="203.0" />
+  <SelectedNodes>
+    <node>\App\Entity\Notification</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Fields</Category>
+  </Categories>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

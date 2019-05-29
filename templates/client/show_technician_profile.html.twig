@@ -1,0 +1,302 @@
+{% extends 'client/base/base.html.twig' %}
+
+{% block main %}
+
+    {% if userp is not null %}
+
+        <section class="pb-3 mt-3 container-fluid " >
+
+            <div class="row " >
+                <div class="content container-fluid">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card card-user">
+
+                                <div class="card-body">
+                                    <div class="author">
+                                        <img class="avatar border-gray img-thumbnail align-content-center img " style="width: 250px;height: 250px" width="200" src="{{ asset('assets/uploads/'~userp.picture.path) }}" alt="...">
+                                        {% if userp.id == app.user.id %}
+                                            <div class="middle">
+
+                                                <span data-toggle="modal" data-target="#profile-edit" style="cursor:pointer"  data-whatever="" class="text"  id="picture-modal" class="mdi mdi-pencil">{{ 'edit'|trans }}</span>
+                                            </div>
+
+
+                                        {% endif %}
+
+                                        <h5 class="title">{{ userp.username }}</h5>
+
+
+                                    </div>
+
+                                </div>
+                                <div class="card-footer">
+                                    <hr>
+                                    <div class="button-container">
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-6 col-6 ml-auto">
+                                                <h5>{{ nb_job }}
+                                                    <br>
+                                                    <small>{% trans %}work_complete{% endtrans %}</small>
+                                                </h5>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-6 ml-auto mr-auto">
+                                                <h5>
+                                                    {{ spent }}
+                                                    <small> XAF <span class=""> {{ 'money_earned'|trans }}</span></small>
+                                                </h5>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">{% trans %}reviews{% endtrans %}</h4>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled team-members">
+
+                                        {% for note in notes %}
+
+                                            <li>
+                                                <div class="row mb-1">
+                                                    <div class="col-md-4 col-4 mb-2" >
+                                                        <div class="avatar" style="display: inline-grid;">
+                                                            {% if note.intervention.isMain ==0 %}
+                                                                <img width="50" height="50" src="{{ asset('assets/images/default-avatar.png') }}" alt="Circle Image" class="img-circle img-no-padding img-responsive" />
+                                                                <span style="font-size: 12px;font-weight: bold">{{ note.intervention.clientName }} </span>
+
+                                                            {% else %}
+
+                                                                <img width="50" height="50" src="{{ asset('assets/uploads/'~note.intervention.client.picture.path) }}" alt="Circle Image" class="img-circle img-no-padding img-responsive" />
+                                                                <span style="font-size: 12px;font-weight: bold">{{ note.intervention.client.name }} </span>
+                                                            {% endif %}
+
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-8 col-8 " style="margin-top: -25px;margin-left: -15px;" >
+
+                                                        <br/>
+                                                        <span style="float: left;" class="text-muted">
+                          <small>{{ note.comment |slice(0,55)}}...</small>
+                        </span>
+
+
+                                                    </div>
+
+                                                </div>
+                                            </li>
+
+                                        {% endfor %}
+
+                                    </ul>
+                                </div>
+                            </div>
+
+
+
+
+                        </div>
+                        <div class="col-md-8">
+                            {% if userp.role.code !="ROLE_MANAGER_COMPANY" %}
+                            <div class="card card-user">
+                                <div class="card-header">
+                                    <h5 class="card-title">{% trans %}information{% endtrans %}</h5>
+                                </div>
+                                <div class="card-body">
+
+
+                                    <form>
+
+                                        <div class="row">
+                                            <div class="col-md-6 pr-1">
+                                                <div class="form-group">
+                                                    <label>{{ 'first_name'|trans }}</label>
+                                                    <input id="name" disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ userp.name }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 pl-1">
+                                                <div class="form-group">
+                                                    <label>{{ 'last_name'|trans }}</label>
+                                                    <input disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ userp.surname }}">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4 pr-1">
+                                                <div class="form-group">
+                                                    <label>{{ 'city'|trans }} </label>
+                                                    <input id="city" disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ userp.location.city }}">
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 px-1">
+                                                <div class="form-group">
+                                                    <label>{{ 'quater'|trans }}</label>
+                                                    <input id="quater" disabled type="text" class="form-control" style="border: 1px #ced4da!important;" value="{{ userp.location.quater }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 pl-1">
+                                                <div class="form-group">
+                                                    <label>{{ 'street'|trans }}
+
+                                                    </label>
+                                                    <input  id="street" disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ userp.location.detail }}">
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+                                    </form>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if userp.role.code =="ROLE_MANAGER_COMPANY" %}
+
+                                <div class="card card-user company">
+                                    <div class="card-header">
+                                        <h5 class="card-title">{% trans %}company{% endtrans %}</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form>
+
+                                            <div class="row">
+                                                <div class="col-md-6 pr-1">
+                                                    <div class="form-group">
+                                                        <label>{{ 'name'|trans }}</label>
+                                                        <input id="company-name" disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ company.name }}">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-4 pr-1">
+                                                    <div class="form-group">
+                                                        <label>{{ 'city'|trans }} </label>
+                                                        <input id="company-city" disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ company.location.city }}">
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 px-1">
+                                                    <div class="form-group">
+                                                        <label>{{ 'quater'|trans }} </label>
+                                                        <input id="company-quater" disabled type="text" class="form-control" style="border: 1px #ced4da!important;" value="{{ company.location.quater }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 pl-1">
+                                                    <div class="form-group">
+                                                        <label>{{ 'street'|trans }}
+
+                                                        </label>
+                                                        <input  id="company-street" disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ company.location.detail }}">
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+
+                                            <div class="row mb-5">
+                                                <div class="col-md-12 pb-3">
+                                                    <div class="form-group" >
+                                                        <label>{{ 'domains'|trans }}
+                                                        </label>
+                                                        <div class="form-control" style="border: 1px #ced4da!important;">
+                                                            {% for el in company.domains %}
+                                                                <span style="font-size: 18px" class="badge badge-info mb-2">{{ el.name }}</span>
+                                                            {% endfor %}
+
+
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label>{{ 'description_comp'|trans }}
+                                                        </label>
+                                                        <textarea rows="8" disabled class="form-control textarea" style="border: 1px #ced4da!important;resize: none">{{ company.description }}</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+                                        </form>
+
+                                    </div>
+                                </div>
+
+                            {% endif %}
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">{% trans %}last_jobs{% endtrans %}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled team-members">
+                                        {% for j in jobs %}
+
+                                            <li class="mb-3">
+                                                <div class="row mb-1">
+                                                    <div class="col-md-4 col-4 mb-2" >
+                                                        <div class="avatar" style="display: inline-grid;">
+                                                            <img width="50"  src="{{ asset('assets/images/job.png') }}" alt="Circle Image" class="img-circle img-no-padding img-responsive" />
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-8 col-8 " style="margin-top: -25px;margin-left: -15px;" >
+
+                                                        <br/>
+                                                        <span style="float: left;" class="text-muted">
+                          <small><a href="{{ path('web_show_job',{slug:j.slug}) }}"><u>{{ j.title}}</u></a></small><br/>
+                          <small>{{ j.description|slice(0,35)}}...</small>
+                        </span>
+
+
+                                                    </div>
+
+                                                </div>
+                                            </li>
+
+                                        {% endfor %}
+
+
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+    {% endif %}
+    {% if userp is null %}
+
+        <section style="" class="pb-3 mt-3 container-fluid user-not-found" >
+
+            user not found
+        </section>
+
+    {% endif %}
+
+{% endblock %}
+
+{% block js %}
+
+
+{% endblock %}

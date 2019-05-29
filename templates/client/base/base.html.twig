@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+{% include 'client/base/header.html.twig' %}
+    {% block styles %}
+
+    {% endblock %}
+</head>
+<body  class="">
+
+
+
+
+
+        {% if app.user is not null %}
+
+
+
+            {% include 'client/base/nav_connected.html.twig' %}
+
+
+        {% endif %}
+
+        {% if app.user is null %}
+
+
+            {% include 'client/base/nav.html.twig' %}
+
+
+        {% endif %}
+
+
+        <div class="row " style="margin-top: 70px;width: 100%">
+            {% if app.request.hasPreviousSession %}
+
+                {% for message in app.flashes('notice') %}
+                    <div style="width: 100%;background-color: #ebef0ede;text-align: right;z-index: 1000;" class="notif alert alert-warning alert-dismissible fade show" role="alert">
+                        <button  type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span  aria-hidden="true">&times;</span>
+                        </button>
+                        <div style="margin-right: 50px">
+                            {{ message }}
+                        </div>
+
+                    </div>
+                {% endfor %}
+
+            {% endif %}
+
+        </div>
+
+        <div class="row" id="counter">
+
+
+        </div>
+        <div class="" style="display: block!important;" id="counterm">
+            {% block main %}
+
+
+
+            {% endblock %}
+
+
+        </div>
+
+
+
+
+        {% block footer %}
+
+            {% include 'client/base/footer.html.twig' %}
+
+        {% endblock %}
+
+        <a href="#" class="back_top"> <i class="pe-7s-angle-up"> </i> </a>
+
+
+
+
+
+
+
+
+    <!-- Javascript -->
+<script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+
+    <script src="{{ asset('assets/js/popper.min.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.easing.min.js') }}"></script>
+    <script src="{{ asset('assets/js/scrollspy.min.js') }}"></script>
+
+    <!-- Owl Js -->
+    <script src="{{ asset('assets/js/owl.carousel.min.js') }}"></script>
+
+    <!--Filter JS-->
+    <script src="{{ asset('assets/js/isotope.js') }}"></script>
+
+    <!--Funfact JS-->
+    <script src="{{ asset('assets/js/funfacts.js') }}"></script>
+
+    <!-- MFP JS -->
+    <script src="{{ asset('assets/js/jquery.magnific-popup.min.js') }}"></script>
+
+    <!-- Custom Js   -->
+    <script src="{{ asset('assets/js/custom.js') }}"></script>
+    <script src="{{ asset('assets/js/lang.js') }}"></script>
+    <script src="https://unpkg.com/file-upload-with-preview@3.4.3/dist/file-upload-with-preview.min.js"></script>
+
+<script src="{{ asset('assets/js/selectize.js') }}"></script>
+
+<script src="{{ asset('assets2/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js') }}"></script>
+<script src="{{ asset('assets2/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js') }}"></script>
+
+<!-- jQuery Scrollbar -->
+<script src="{{ asset('assets2/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
+<script src="{{ asset('assets2/js/plugin/datatables/datatables.min.js') }}"></script>
+
+<script src="{{ asset('assets2/js/atlantis.min.js') }}"></script>
+
+
+<script >/**
+        $(".notif").fadeTo(12000, 500).slideUp(500, function(){
+            $(".notif").slideUp(500);
+        });**/
+
+        //alert($(".dash").height());
+        //alert($(document).height());
+        $(".dash").attr("style","min-height:"+($(document).height())+"px");
+
+
+        $("#counterm").attr("style","height:"+($(document).height()-150)+"px");
+
+        window.onresize = function(event) {
+           // $(".dash").attr("style","min-height:"+($(document).height())+"px");
+            $("#counterm").attr("style","height:"+($(document).height()-150)+"px");
+        };
+</script>
+
+
+<script>
+
+    $("#list-notif-btn").on("click",function () {
+
+        $.ajax({
+            type        : 'GET', // define the type of HTTP verb we want to use (POST for our form)
+            url         : "{{ path('web_nav_notifications') }}", // the url where we want to POST
+            data        : {}, // our data object
+            dataType    : 'json', // what type of data do we expect back from the server
+            encode          : true,
+            success : function(resultat, statut)
+            {
+
+
+
+                if(resultat.notifications.length>0)
+                {
+
+
+                    let html="";
+
+                    let p1='<li style="font-size: 12px!important;"> \n' +
+                        '            <div class="col-md-3 col-sm-3 col-xs-3"><div class="notify-img">';
+                    let p2='</div></div>\n' +
+                        '            <div class="col-md-9 col-sm-9 col-xs-9 ml-5"  style="font-weight: normal;"><span style="font-weight: bold!important;font-size: 13px">';
+
+                    resultat.notifications.forEach(function (el) {
+
+
+
+                        html=html+p1+"<img src='"+"{{ asset('assets/uploads/') }}/"+el.notification.user.picture.path+"' alt='' width='45' height='45' /> "
+                        +p2+el.notification.user.name+"</span><p style=\"font-size: 14px!important\"><a href=''>" +el.message +'</a></p></div>\n' +
+                            '</li>';
+
+
+                    });
+
+                    $("#list-notif").html("");
+
+                    $("#list-notif").html(html);
+
+                    $("#list-notif-more").show();
+
+
+                }
+                else
+                {
+                    setInterval(function () {
+                        $("#notif-img").hide();
+
+                    },2000)
+
+                    $("#list-notif-more").show();
+                }
+
+
+
+            },
+
+            error : function(resultat, statut, erreur){
+
+                console.log(resultat);
+
+            }
+
+        });
+
+    })
+
+</script>
+
+
+{% block js %}
+{% endblock %}
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+{% extends 'client/base/base.html.twig' %}
+
+{% block main %}
+    <div class="wrapper compact-wrapper">
+
+        {% include 'client/dashboard_nav.html.twig' %}
+
+
+
+        <div class="main-panel " style="margin-top: -65px">
+            <div class="content">
+                <div class="panel-header bg-primary-gradient">
+                    <div class="page-inner py-5">
+                        <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
+                            <div>
+                                <h2 class="text-white pb-2 fw-bold">{{ 'user'|trans }}</h2>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dash page-inner mt--5">
+
+                    <div class="row container-fluid mb-5 mt-5">
+                        <form>
+
+                            <div class="row">
+                                <div class="col-md-6 pr-1">
+                                    <div class="form-group">
+                                        <label>{{ 'first_name'|trans }}</label>
+                                        <input id="name" disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ userp.name }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 pl-1">
+                                    <div class="form-group">
+                                        <label>{{ 'last_name'|trans }}</label>
+                                        <input disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ userp.surname }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 pr-1">
+                                    <div class="form-group">
+                                        <label>{{ 'city'|trans }}</label>
+                                        <input id="city" disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ userp.location.city }}">
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4 px-1">
+                                    <div class="form-group">
+                                        <label>{{ 'quater'|trans }} </label>
+                                        <input id="quater" disabled type="text" class="form-control" style="border: 1px #ced4da!important;" value="{{ userp.location.quater }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 pl-1">
+                                    <div class="form-group">
+                                        <label>{{ 'street'|trans }}
+
+                                        </label>
+                                        <input  id="street" disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ userp.location.detail }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 ">
+                                    <div class="form-group">
+                                        <label>{{ 'email'|trans }} </label>
+                                        <input id="email" disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ userp.email }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 ">
+                                    <div class="form-group">
+                                        <label>{{ 'phone'|trans }} </label>
+                                        <input id="phone" disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ userp.phone }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+
+
+{% endblock %}
+
+{% block js %}
+
+
+{% endblock %}

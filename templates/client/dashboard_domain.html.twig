@@ -1,0 +1,143 @@
+{% extends 'client/base/base.html.twig' %}
+
+{% block main %}
+    <div class="wrapper compact-wrapper">
+
+        {% include 'client/dashboard_nav.html.twig' %}
+
+
+
+        <div class="main-panel " style="margin-top: -65px">
+            <div class="content">
+                <div class="panel-header bg-primary-gradient">
+                    <div class="page-inner py-5">
+                        <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
+                            <div>
+                                <h2 class="text-white pb-2 fw-bold">{{ 'domain'|trans }} </h2>
+
+                            </div>
+                            <div class="row ml-md-auto py-2 py-md-0 short-nav">
+
+                                {% include 'client/shortcut_admin_nav.html.twig' %}
+                            </div>
+
+                        </div>
+
+                            <button type="button" data-toggle="modal" data-target="#domain-add" data-whatever="" id="new-domain" class="btn btn-white btn-border btn-round mr-2">{{ 'add_domain'|trans }}</button>
+
+
+                    </div>
+                </div>
+                <div class="dash page-inner mt--5">
+
+                    <div class="row container-fluid mb-5 mt-5">
+                        <table id="domain-datatables" class="display table table-responsive table-striped table-hover" >
+                            <thead>
+                            <tr>
+
+                                <th><span class="flaticon-settings"></span></th>
+                                <th>{{ 'user'|trans }} / {{ 'company'|trans }}</span></th>
+                                <th>{{ 'french_name'|trans }}</th>
+                                <th>{{ 'english_name'|trans }}</th>
+                                <th>{{ 'category'|trans }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for domain in domains %}
+                                <tr>
+
+                                    <td><a href="{{ path('web_dashboard_domain_edit',{"id":domain.id}) }}">
+                                            <i style="color: #1572e8" class="fa fa-edit"></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{{ path('web_dashboard_domain_users',{"id":domain.id}) }}">
+                                            {{ 'show'|trans }}
+                                        </a>
+                                    </td>
+                                    <td> {{ domain.nameFr}}</td>
+                                    <td> {{ domain.nameEn}}</td>
+                                    <td> <a href="{{ path('web_domain_categories',{'id':domain.id}) }}">{{ 'show'|trans }}</a> </td>
+                                    </tr>
+
+
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                {% include 'client/base/dashboard_footer.html.twig' %}
+            </div>
+        </div>
+
+
+
+        {% include "client/modal_domain_add.html.twig" %}
+    </div>
+
+
+
+{% endblock %}
+
+{% block footer %}
+
+{% endblock %}
+
+{% block js %}
+
+    <script >
+        $(document).ready(function() {
+            $('#domain-datatables').DataTable({
+            });
+
+            $('#domain-add').on('show.bs.modal', function (event) {
+
+                var button = $(event.relatedTarget); // Button that triggered the modal
+
+
+
+                if(button[0].id == "new-domain")
+                {
+                    var modal = $(this);
+                    modal.find('.modal-title').text("{{ 'domain'|trans }}");
+                    var input="<div class=\"row\">\n" +
+                        "            <div class=\"col-md-12\">\n" +
+                        "                <div class=\"form-group\">\n" +
+                        "                    <label for=\"name_fr\">{{ 'french_name'|trans }}</label>\n" +
+                        "                    <input id=\"name_fr\" type=\"text\" minlength=\"3\" class=\"form-control\" name=\"name_fr\" value=\"\" required autofocus>\n" +
+                        "                    <div class=\"invalid-feedback\">\n" +
+                        "                        \n" +
+                        "                    </div>\n" +
+                        "                </div>\n" +
+                        "            </div>\n" +
+                        "            <div class=\"col-md-12\">\n" +
+                        "                <div class=\"form-group\">\n" +
+                        "                    <label for=\"name_en\">{% trans %}english_name{% endtrans %}</label>\n" +
+                        "                    <input id=\"name_en\" type=\"text\" minlength=\"3\" class=\"form-control\" name=\"name_en\" value=\"\" required autofocus>\n" +
+                        "                    <div class=\"invalid-feedback\">\n" +
+                        "\n" +
+                        "                    </div>\n" +
+                        "                </div>\n" +
+                        "\n" +
+                        "            </div>\n" +
+                        "\n" +
+                        "        </div>";
+                    modal.find('.modal-body form .main').html(input);
+                }
+
+
+
+
+
+
+
+
+
+
+            })
+
+
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,122 @@
+<div class="modal fade" id="user-add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ path('web_dashboard_user') }}" class="my-login-validation" novalidate="">
+                    <input type="hidden" name="csrf" value="{{ csrf_token('csrf') }}"/>
+                    <input type="hidden" id="location_lon" name="location_lon" value=" "/>
+                    <input type="hidden" id="location_lat" name="location_lat" value=" "/>
+                    <input type="hidden" id="location_city" name="location_city" value=""/>
+                    <input type="hidden" id="location_quater" name="location_quater" value=""/>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="first_name">{% trans %}first_name{% endtrans %}</label>
+                                <input id="first_name" type="text" minlength="1" class="form-control" name="first_name" value="{% if name is defined %}{{name|trim}}{% endif %}" required autofocus>
+                                <div class="invalid-feedback">
+                                    {% trans %}invalid_first_name{% endtrans %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="last_name">{% trans %}last_name{% endtrans %}</label>
+                                <input id="last_name" type="text" class="form-control" name="last_name" value="{% if surname is defined %}{{surname|trim}}{% endif %}"  autofocus>
+                                <div class="invalid-feedback">
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="form-group">
+                        <label for="email">{% trans %}email{% endtrans %}</label>
+                        <input id="email" type="email" class="form-control" name="email" value="{% if email is defined %} {{ email|trim }} {% endif %}" required>
+                        <div class="invalid-feedback">
+                            {% trans %}invalid_email{% endtrans %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">{% trans %}phone{% endtrans %}</label>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon3">+237</span>
+                            </div>
+                            <input minlength="9" maxlength="9" id="phone" type="text"  class="form-control" name="phone" value="{% if phone is defined %}{{phone|trim}}{% endif %}" required autofocus>
+                            <div class="invalid-feedback">
+                                {% trans %}invalid_phone{% endtrans %}
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="gender">{% trans %}gender{% endtrans %}</label>
+                                <select class="form-control" id="gender" name="gender" required autofocus>
+                                    <option value="1" value="{% if gender is defined %} {% if gender == 1 %} selected {% endif %} {% endif %}">{% trans %}man{% endtrans %}</option>
+                                    <option  value="0" value="{% if gender is defined %} {% if gender == 0 %} selected {% endif %} {% endif %}">{% trans %}woman{% endtrans %}</option>
+                                </select>
+                                <div class="invalid-feedback">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="account">{% trans %}account_type{% endtrans %}</label>
+                                <select class="form-control" id="account" name="account" required autofocus>
+
+
+                                </select>
+                                <div class="invalid-feedback">
+                                    {% trans %}invalid_account_type{% endtrans %}
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group" id="company-form">
+
+                    </div>
+
+
+                    {% if message is defined %}
+
+                        <div id="login-error" class="mt-4 text-center alert alert-danger">
+
+                            {{ message }}
+
+                        </div>
+                    {% endif %}
+
+                    <div class="form-group m-0">
+                        <button type="submit" class="btn btn-primary btn-block">
+                            {% trans %}send{% endtrans %}
+                        </button>
+                    </div>
+
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button style="border-top-width: 0px;border-right-width: 0px;border-bottom-width: 0px;border-left-width: 0px;" type="button" class=" btn-secondary" data-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>

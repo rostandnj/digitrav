@@ -1,0 +1,65 @@
+<div class="sidebar sidebar-style-2">
+    <div class="sidebar-wrapper scrollbar scrollbar-inner">
+        <div class="sidebar-content">
+
+            <ul class="nav nav-primary">
+                <li class="nav-item {% if menu =="" %}active{% endif %}">
+                    <a  href="{{ path('web_dashboard') }}" >
+                        <i class="fas fa-desktop"></i>
+                        <p>Dashboard  </p>
+                        <span class="caret"></span>
+                    </a>
+
+                </li>
+                <li class="nav-item {% if menu =="user" %}active{% endif %}">
+                    <a href="{{ path('web_dashboard_user') }}">
+                        <i class="fas fa-user"></i>
+                        <p>{{ 'user'|trans }}</p>
+
+                    </a>
+                </li>
+
+                <li class="nav-item {% if menu =="jobs" %}active{% endif %}">
+                    <a href="{{ path('web_dashboard_job') }}">
+                        <i class="fas flaticon-shopping-bag"></i>
+                        <p>{{ 'manage_job'|trans }}</p>
+
+                    </a>
+                </li>
+
+                <li class="nav-item {% if menu =="domain" %}active{% endif %}">
+                    <a href="{{ path('web_dashboard_domain') }}">
+                        <i class="fas fa-building"></i>
+                        <p>{{ 'domain'|trans }}</p>
+
+                    </a>
+                </li>
+                <li class="nav-item {% if menu =="material" %}active{% endif %}">
+                    <a href="{{ path('web_dashboard_material') }}">
+                        <i class="fas fa-toolbox"></i>
+                        <p>{{ 'material_quote'|trans }}</p>
+
+                    </a>
+                </li>
+                <li style="display: none" class="nav-item {% if menu =="category" %}active{% endif %}">
+                    <a href="{{ path('web_dashboard_category') }}">
+                        <i class="fas fa-object-group"></i>
+                        <p>{{ 'category'|trans }}</p>
+
+                    </a>
+                </li>
+                <li class="nav-item {% if menu =="alert" %}active{% endif %}">
+                    <a href="{{ path('web_dashboard_alerts') }}">
+                        <i class="fas fa-life-ring"></i>
+                        <p>{{ 'alerts'|trans }}</p>
+
+                    </a>
+                </li>
+
+
+
+
+            </ul>
+        </div>
+    </div>
+</div>

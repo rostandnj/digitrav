@@ -1,0 +1,19 @@
+{% for statut in notifications %}
+
+    {% if statut.notification.code ==9 %}
+
+        <li>
+            <div class="col-md-3 col-sm-3 col-xs-3"><div class="notify-img"><img src="{{ asset('assets/uploads/'~statut.notification.user.picture.path) }}" width="45" height="45" alt=""></div></div>
+            <div class="col-md-9 col-sm-9 col-xs-9 ml-5"  style="font-weight: normal;"><span style="font-weight: bold!important;font-size: 13px">{{ statut.notification.user.name }}</span>  hello
+                <p style="font-size: 14px!important">
+                    {{ 'about_client'|trans }}</p>
+
+            </div>
+        </li>
+
+    {% endif %}
+
+{% endfor %}
+
+
+

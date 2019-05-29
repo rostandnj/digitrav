@@ -1,0 +1,41 @@
+<div class="sidebar sidebar-style-2">
+    <div class="sidebar-wrapper scrollbar scrollbar-inner">
+        <div class="sidebar-content">
+
+            <ul class="nav nav-primary">
+                <li class="nav-item {% if menu =="" %}active{% endif %}">
+                    <a  href="{{ path('web_dashboard') }}" >
+                        <i class="fas fa-desktop"></i>
+                        <p>Dashboard  </p>
+                        <span class="caret"></span>
+                    </a>
+
+                </li>
+                <li class="nav-item {% if menu =="jobs" %}active{% endif %}">
+                    <a href="{{ path('web_dashboard_job') }}">
+                        <i class="fas flaticon-shopping-bag"></i>
+                        <p>{{ 'manage_job'|trans }}</p>
+
+                    </a>
+                </li>
+
+                <li class="nav-item {% if menu =="domain" %}active{% endif %}">
+                    <a href="#">
+                        <i class="fas fa-building"></i>
+                        <p>{{ 'transactions'|trans }}</p>
+
+                    </a>
+                </li>
+
+                <li class="nav-item {% if menu =="notification" %}active{% endif %}">
+                    <a href="#">
+                        <i class="fas flaticon-alarm"></i>
+                        <p>{{ 'notifications'|trans }}</p>
+
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,283 @@
+{% extends 'client/base/base.html.twig' %}
+
+{% block main %}
+
+    {% if job is not null %}
+
+        <section class="section bg-light mt--5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="mt-3 blog_sidebar rounded">
+                            <div class="bg-white m-2 p-3">
+                                <!-- Search widget-->
+                                <div class="widget side_widget_search">
+                                    <div class="sidebar_widget_title font-weight-bold text-uppercase mb-3">{{ 'about_client'|trans }}</div>
+
+                                    <div class="mb-0">
+                                        {% if job.isMain==true %}
+                                            <div class="avatar-sm">
+                                                <img src="{{ asset('assets/uploads/'~job.client.picture.path)}}" alt="..." class="avatar-img rounded-circle">
+
+                                            </div>
+                                        {% else %}
+                                            <div class="avatar-sm">
+                                                <img src="{{ asset('assets/uploads/man.png')}}" alt="..." class="avatar-img rounded-circle">
+
+                                            </div>
+                                        {% endif %}
+                                        <span style="font-weight: bold">{% if job.isMain ==true %} {{ job.client.name }} {{ job.client.surname }} {% else %}{{ job.clientName }} {% endif %}</span>
+
+                                        {% if job.isMain==true %}
+
+                                            <p>
+                                                <span class="fas fa-map-marker-alt"></span> {{ job.client.location.city }}, {{ job.client.location.quater }}
+                                            </p>
+
+                                        {% endif %}
+
+                                    </div>
+                                    <div class="mb-4">
+                                        <h5>
+                                            <small>{% trans %}work_complete{% endtrans %}</small> {{ nb_job }}
+                                        </h5>
+                                        <h5>
+                                            <small>{% trans %}money_spent{% endtrans %} </small> <span class=""> {{ spent }} XAF </span>
+                                        </h5>
+                                    </div>
+                                </div>
+
+                                {% if job.hasApplied ==true %}
+
+                                    <div class="widget mt-5">
+
+                                        <div class="mb-4">
+                                            <h5>
+                                                <strong>{{ 'job_amount'|trans }}</strong> : {{ job.category.budget }} XAF
+                                            </h5>
+
+                                        </div>
+                                    </div>
+                                 {% endif %}
+                                <div class="widget mt-5">
+
+                                    {% if app.user is not null %}
+
+                                        {% if app.user.role.code in ["ROLE_TECHNICIAN_PERSON","ROLE_MANAGER_COMPANY","ROLE_TECHNICIAN_COMPANY"] %}
+
+
+                                            <ul class="list-unstyled widget_list">
+
+
+                                                {% if job.canApply ==true %}
+                                                <li class="mb-2">
+                                                    <form method="post" novalidate action="{{ path('web_job_quotation',{slug:job.slug,id:job.id}) }}">
+                                                        <button type="submit" style="width: 90%" class="btn btn-lg btn-success"> <span class="far fa-paper-plane"></span> {{ 'apply'|trans }}</button></form></li>
+
+                                                    </form>
+
+                                                 {% endif %}
+
+                                                {% if job.canSave ==true %}
+
+                                                    <li>
+                                                        <form method="post" novalidate action="{{ path('web_job_add_favorite',{slug:job.slug,id:job.id}) }}">
+
+                                                        <button style="width: 90%" class="btn btn-warning"> <span class="far fa-heart"></span> {{ 'job_save'|trans }}</button>
+                                                        </form>
+                                                    </li>
+
+
+                                                {% endif %}
+
+                                                {% if job.canAlert ==true %}
+
+                                                    <li class="mt-3">
+                                                        <form method="post" novalidate action="{{ path('web_job_alert',{slug:job.slug,id:job.id}) }}">
+                                                        <button  class="btn btn-light "><span class="text-success far fa-flag"></span> {{ 'alert_job'|trans }}</button>
+                                                        </form>
+                                                    </li>
+
+                                                {% endif %}
+                                                </ul>
+
+                                        {% endif %}
+
+                                        {% if app.user.role.code in ["ROLE_ADMIN","ROLE_SADMIN","ROLE_OPERATOR"]  %}
+
+                                            <ul class="list-unstyled widget_list">
+
+
+                                                {% if job.canDelete == true %}
+                                                    <li class="mb-2">
+
+                                                       <button type="button" data-toggle="modal" data-target="#delete-job" style="width: 90%" class="btn btn-lg btn-danger"> <span class="fas flaticon-close"></span> {{ 'delete'|trans }}</button>
+                                                    </li>
+
+
+
+                                                {% endif %}
+
+
+                                            </ul>
+
+
+                                        {% endif %}
+
+                                        {% if app.user.role.code =="ROLE_CLIENT"  %}
+
+                                            <ul class="list-unstyled widget_list">
+
+
+                                                {% if job.isMain == true %}
+
+                                                    {% if job.canDelete == true and job.client.id == app.user.id  %}
+
+                                                    <li class="mb-2">
+
+                                                        <button type="button" data-toggle="modal" data-target="#delete-job" style="width: 90%" class="btn btn-lg btn-danger"> <span class="fas flaticon-close"></span> {{ 'delete'|trans }}</button>
+                                                    </li>
+
+                                                    {% endif %}
+
+
+
+                                                {% endif %}
+
+
+                                            </ul>
+
+
+                                        {% endif %}
+
+
+                                    {% endif %}
+                                </div>
+
+
+
+
+                                <!-- Tags -->
+                                <div class="widget mt-5">
+                                    <div class="sidebar_widget_title font-weight-bold text-uppercase">{{ 'domains'|trans }}</div>
+
+                                    <div class="blog_tag">
+                                        {% for d in domains %}
+                                            <a style="color: black" class="btn-light" href="#">{{ d.name }}</a>
+                                        {% endfor %}
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="blog_box rounded mt-3">
+
+                                    <div class="blog_detail rounded m-2 p-4 bg-white">
+                                        <h4 class="font-weight-bold">{{ job.title }}</h4>
+                                        <p class="mt-3 text-muted"> {{ job.description }}</p>
+                                      <div class="blog_detail_devider"></div>
+                                        <div class="clearfix mt-3">
+                                            <p class="text-muted float-left mb-0">{{ 'by'|trans }} <a href="#" class="text-custom font-weight-bold">{% if job.isMain ==true %} {{ job.client.name }} {{ job.client.surname }} {% else %}{{ job.clientName }} {% endif %}</a></p>
+                                            <span class="text-muted float-right">{{ job.date|date('y-m-d H:i:s')|timeago }}</span>
+                                        </div>
+                                        <div class="clearfix mt-3">
+                                            <p class="text-muted float-left mb-0"> <span class="fas fa-map-marker-alt"></span> {{ job.location.city }} , {{ job.location.quater }}</p>
+
+                                        </div>
+                                        <div class="blog_detail_devider mt-3"></div>
+                                        <div class="blog_tag mt-3">
+                                            <span class="badge badge-info">{{ job.domain.name }}</span>
+                                            <span class="badge badge-info">{{  job.category.name }}</span>
+                                            {% if job.subCategory is not null %}
+                                                <span class="badge badge-info">{{  job.subCategory.name }}</span>
+                                            {% endif %}
+
+                                        </div>
+
+                                        <div class="comment_blog mt-5">
+                                            <div class="col-md-12 mb-2">
+                                                <h6>{{ 'start_date'|trans }} : </h6> {{ job.startDate|date('l d F Y') }}
+                                                <div class="blog_detail_devider"></div>
+
+                                            </div>
+
+                                            {% if files|length >0 %}
+                                            <div class="col-md-12 mt-3">
+                                                <h4>{{ 'attachment'|trans }}</h4>
+
+                                            </div>
+                                            <div class="col-md-12">
+                                                <ul class="list-group">
+                                                  {% for f in files %}
+
+                                                      <li class="list-group-item"><span class="flaticon flaticon-file"></span> <a target="_blank" href="{{ asset('assets/uploads/'~f.path) }}">{{ f.name }}</a> </li>
+
+                                                  {% endfor %}
+
+                                                </ul>
+                                            </div>
+                                            {% endif %}
+
+                                            {% if quotes|length >0 %}
+
+                                            <div class="col-md-12 mt-3">
+                                                <h4>{{ 'proposals'|trans }}</h4>
+
+                                            </div>
+                                            <div class="col-md-12">
+                                                <ul class="list-group">
+                                                    {% for q in quotes %}
+
+                                                        <li class="list-group-item">
+
+                                                            <div class="comment_read mt-3 ml-0">
+                                                                <div class="comment_img">
+                                                                    <img src="{% if q.technician.role.code !="ROLE_MANAGER_COMPANY" %} {{ asset('assets/uploads/'~q.technician.picture.path) }}{% else %} {{ asset('assets/uploads/'~q.technician.company.logo.path) }} {% endif %}" alt="" class="img-fluid rounded-circle">
+                                                                </div>
+                                                                <div class="comment_data">
+                                                                    <h6><a href="{{ path('web_profile_tech',{name:q.technician.profileName,id:q.technician.uid}) }}" class="text-dark d-block">{% if q.technician.role.code !="ROLE_MANAGER_COMPANY" %} <span class="fa fa-user"></span> {{ q.technician.name }}{% else %} <span class="fa fa-building"></span> {{ q.technician.company.name }}  {% endif %}</a> <span class="text-muted font-weight-normal">{{ q.date|date('y-m-d H:i:s')|timeago }}</span></h6>
+                                                                    <p class="text-muted mb-0"><span class="fas fa-map-marker-alt"></span>
+                                                                        {% if q.technician.role.code !="ROLE_MANAGER_COMPANY" %} {{ q.technician.location.city }} , {{ q.technician.location.quater }}{% else %} {{ q.technician.company.location.city }} , {{ q.technician.company.location.quater }}  {% endif %}</p>
+
+
+                                                                </div>
+                                                            </div>
+
+                                                        </li>
+
+                                                    {% endfor %}
+
+                                                </ul>
+                                            </div>
+
+                                                {% endif %}
+
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        {% include 'client/modal_job_delete.html.twig' %}
+
+
+    {% endif %}
+
+
+{% endblock %}
+
+{% block js %}
+
+
+{% endblock %}

@@ -1,0 +1,146 @@
+<nav style="z-index: 1001" class="navbar navbar-expand-lg fixed-top custom-nav sticky stickyadd">
+    <div class="container">
+        <!-- LOGO -->
+        <a class="logo navbar-brand" href="{{ path('web_home') }}">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="" class="img-fluid logo-light">
+            <img src="{{ asset('assets/images/logo-dark.png') }}" alt="" class="img-fluid logo-dark">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="mdi mdi-menu"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav ml-auto navbar-center" id="mySidenav">
+
+                <li class="nav-item {% if app.request.pathInfo == "/find-job" %} active {% endif %}">
+                    <a href="{{ path('web_find_job') }}" class="nav-link ">{% trans %} jobs {% endtrans %} </a>
+                </li>
+                <li class="nav-item {% if app.request.pathInfo == "/dashboard" %} active {% endif %}">
+                    <a href="{{ path('web_dashboard') }}" class="nav-link ">{% trans %} dashboard {% endtrans %} </a>
+                </li>
+                {% if app.user.role.code=="ROLE_OPERATOR"  %}
+                    <li id="list-notif-btn" class="nav-item ">
+
+                        <a href="#"  data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" class="nav-link">
+                            <i class="icon-feather-bell"></i>
+
+                            {% if app.session.get("notif") >0 %}
+                                <span class="badge badge-danger">{{ app.session.get("notif") }}</span>
+
+                            {% endif %}
+
+
+                        </a>
+
+                        <ul  class="dropdown-menu  notify-drop">
+
+                            <!-- notify content -->
+                            <div id="list-notif" class="drop-content">
+                                <img id="notif-img" width="250" height="200" src="{{ asset('assets/images/loader.gif') }}">
+
+                            </div>
+                            <div id="list-notif-more" style="display: none" class="notify-drop-footer text-center">
+                                <a href="{{ path('web_notifications') }}"><i class="fa fa-eye"></i> {{ 'load_more'|trans }}</a>
+                            </div>
+                        </ul>
+                    </li>
+
+                {% endif %}
+
+                {% if app.user.role.code in ["ROLE_CLIENT","ROLE_TECHNICIAN_PERSON","ROLE_TECHNICIAN_COMPANY","ROLE_MANAGER_COMPANY"]  %}
+                <li class="nav-item {% if app.request.pathInfo == "/jobs" %} active {% endif %}">
+                    <a href="{{ path('web_dashboard_job') }}" class="nav-link ">{% trans %} my_jobs {% endtrans %}</a>
+                </li>
+
+                <li id="list-notif-btn" class="nav-item ">
+
+                    <a href="#"  data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" class="nav-link">
+                        <i class="icon-feather-bell"></i>
+
+                       {% if app.session.get("notif") >0 %}
+                        <span class="badge badge-danger">{{ app.session.get("notif") }}</span>
+
+                        {% endif %}
+
+
+                    </a>
+
+                     <ul  class="dropdown-menu  notify-drop">
+
+                        <!-- notify content -->
+                        <div id="list-notif" class="drop-content">
+                            <img id="notif-img" width="250" height="200" src="{{ asset('assets/images/loader.gif') }}">
+
+                        </div>
+                        <div id="list-notif-more" style="display: none" class="notify-drop-footer text-center">
+                            <a href="{{ path('web_notifications') }}"><i class="fa fa-eye"></i> {{ 'load_more'|trans }}</a>
+                        </div>
+                    </ul>
+                </li>
+
+                {% if app.user.role.code =="ROLE_CLIENT"  %}
+                    <li class="nav-item badge badge-info {% if app.request.pathInfo == "/create/job" %} active {% endif %}">
+                        <a href="{{ path('web_dashboard_create_job') }}" class="nav-link ">{{ 'post_a_job'|trans }}</a>
+                    </li>
+                {% endif %}
+
+
+                {% endif %}
+
+
+                <li class="list-inline-item">
+
+                    <a id="lang" val="ff" href="#" class="nav-link"><span class="mdi mdi-circle"></span> <span id="lang_val">{% trans %}cu_lang{% endtrans %}</span></a>
+                </li>
+
+
+
+            </ul>
+            <div >
+                <div style="display: none" class="dropdown pmd-dropdown pmd-user-info ml-auto">
+                    <a href="javascript:void(0);" class="btn-user dropdown-toggle media align-items-center" data-toggle="dropdown" data-sidebar="true" aria-expanded="false">
+                        <img class="mr-2 rounded-circle" src="{{ asset('assets/uploads/'~app.user.picture.path) }}" width="40" height="40" alt="avatar">
+
+                        <span style="font-size: 14px;font-weight: bold" class="material-icons md-light ml-2 pmd-sm">{{  app.user.name}}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                        <a class="dropdown-item" href="{{ path('web_profile',{'name':app.user.profileName, 'id':app.user.uid}) }}">{% trans %}profile{% endtrans %}</a>
+                        <a class="dropdown-item" href="{{ path('web_logout') }}"> <span class="mdi mdi-logout"></span> {% trans %}logout{% endtrans %}</a>
+                    </ul>
+                </div>
+                <div class="nav-item dropdown hidden-caret ml-auto">
+                    <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#" aria-expanded="false">
+                        <div class="avatar-sm">
+                            <img src="{{ asset('assets/uploads/'~app.user.picture.path) }}" alt="..." class="avatar-img rounded-circle">
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right dropdown-user animated fadeIn">
+                        <div class="dropdown-user-scroll scrollbar-outer">
+                            <li>
+                                <div class="user-box">
+                                    <div class="avatar-lg"><img src="{{ asset('assets/uploads/'~app.user.picture.path) }}" alt="image profile" class="avatar-img rounded"></div>
+                                    <div class="u-text">
+                                        <h4>{{ app.user.name }}</h4>
+                                        <p class="text-muted">{{ app.user.email }}</p>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ path('web_profile',{'name':app.user.profileName, 'id':app.user.uid}) }}">{% trans %}profile{% endtrans %}</a>
+                                <a class="dropdown-item" href="#">My Balance</a>
+                                <a class="dropdown-item" href="#">Inbox</a>
+                                <div class="dropdown-divider"></div>
+
+                                <a class="dropdown-item" href="{{ path('web_logout') }}">{% trans %}logout{% endtrans %}</a>
+                            </li>
+                        </div>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</nav>
+
+

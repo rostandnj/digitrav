@@ -1,0 +1,51 @@
+<nav class="navbar navbar-expand-lg fixed-top custom-nav sticky stickyadd">
+    <div class="container">
+        <!-- LOGO -->
+        <a class="logo navbar-brand" href="{{ path('web_home') }}">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="" class="img-fluid logo-light">
+            <img src="{{ asset('assets/images/logo-dark.png') }}" alt="" class="img-fluid logo-dark">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="mdi mdi-menu"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav ml-auto navbar-center" id="mySidenav">
+                <li class="nav-item {% if app.request.pathInfo == "/" %} active {% endif %}">
+                    <a href="{{ path('web_home') }}" class="nav-link ">{% trans %} home {% endtrans %} </a>
+                </li>
+                {% if 0==1 %}
+
+                <li class="nav-item {% if app.request.pathInfo == "/services" %} active {% endif %}">
+                    <a href="{{ path('web_services') }}" class="nav-link ">{% trans %} services {% endtrans %}</a>
+                </li>
+                <li class="nav-item {% if app.request.pathInfo == "/about" %} active {% endif %}">
+                    <a href="{{ path('web_about') }}" class="nav-link">{% trans %} about {% endtrans %}</a>
+                </li>
+
+                {% endif %}
+                <li class="nav-item {% if app.request.pathInfo == "/contact" %} active {% endif %}">
+                    <a href="{{ path('web_contact') }}" class="nav-link">{% trans %} contact {% endtrans %}</a>
+                </li>
+                <li class="nav-item {% if app.request.pathInfo == "/login" %} active {% endif %}">
+                    <a href="{{ path('web_login') }}" class="nav-link">{% trans %} login {% endtrans %}</a>
+                </li>
+                <li class="list-inline-item">
+
+                    <a id="lang" val="ff" href="#" class="nav-link"><span class="mdi mdi-circle"></span> <span id="lang_val">{% trans %}cu_lang{% endtrans %}</span></a>
+                </li>
+
+
+            </ul>
+            <div >
+                <ul class="text-right list-unstyled list-inline mb-0 social_menu">
+
+                    <li   class="list-inline-item"><a href=""><i class="mdi mdi-facebook"></i></a></li>
+                    <li style="display: none" class="list-inline-item"><a href=""><i class="mdi mdi-facebook"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</nav>
+
+

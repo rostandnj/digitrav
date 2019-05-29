@@ -1,0 +1,347 @@
+#index:
+#    path: /
+#    controller: App\Controller\DefaultController::index
+
+api_login_check:
+  path: /api/login_check
+
+api_test:
+  path: test
+  controller: App\Controller\ApiController::test
+  methods: GET
+
+api_all_company:
+  path: /companies
+  controller: App\Controller\ApiController::getAllCompany
+  methods: GET
+
+api_all_city:
+  path: /city
+  controller: App\Controller\ApiController::getAllCity
+  methods: GET
+
+api_all_domain:
+  path: /domains
+  controller: App\Controller\ApiController::getAllDomain
+  methods: GET
+
+home:
+  path: /api
+  controller: App\Controller\ApiController::home
+  methods: GET
+
+register:
+  path: /register/{type}
+  controller: App\Controller\ApiController::registerAccount
+  requirements:
+    type: client|technician_p|admin|operator|technician_c|manager
+  methods: POST
+
+api:
+  path: /api
+  controller: App\Controller\ApiController::home
+  methods: GET
+
+login_check:
+  path:     /login_check
+  methods:  [POST]
+
+validation:
+  path: /validation/next/{id}/{token}
+  controller: App\Controller\ApiController::validateAccount
+  methods: GET
+
+profile_update:
+  path: /api/profile/update/{type}
+  controller: App\Controller\ApiController::updateProfile
+  methods: POST
+  requirements:
+    type: picture|cni_file|cni_field|criminal_record|company|description|cv
+
+profile_simple:
+  path: api/profile/simple/{id}
+  controller: App\Controller\ApiController::simpleProfile
+  methods: GET
+
+profile_send_for_validation:
+  path: api/profile/send/validation
+  controller: App\Controller\ApiController::sendProfileForValidation
+  methods: GET
+
+profile_lock_account:
+  path: api/profile/lock/{id}
+  controller: App\Controller\ApiController::lockAccount
+  methods: GET
+
+profile_validate_techinician_account:
+  path: api/profile/validate/technician/{id}
+  controller: App\Controller\ApiController::validateTechnician
+  methods: POST
+
+
+web_home:
+  path: /
+  controller: App\Controller\WebController::home
+  methods: GET
+
+web_services:
+  path: /services
+  controller: App\Controller\WebController::services
+  methods: GET
+
+web_about:
+  path: /about
+  controller: App\Controller\WebController::about
+  methods: GET
+
+web_contact:
+  path: /contact
+  controller: App\Controller\WebController::contact
+  methods: GET
+
+web_login:
+  path: /login
+  controller: App\Controller\SecurityController::login
+  methods: [POST,GET]
+
+web_password:
+  path: /password
+  controller: App\Controller\WebController::password
+  methods: [POST,GET]
+
+web_sign_up:
+  path: /signup
+  controller: App\Controller\WebController::signup
+  methods: [POST,GET]
+
+web_logout:
+  path: /logout
+  #{controller: App\Controller\WebController::logout
+  methods: GET
+
+web_validation:
+  path: /validation/{id}/{token}
+  controller: App\Controller\WebController::validateAccount
+  methods: GET
+
+web_profile:
+  path: /profile/{name}/{id}
+  controller: App\Controller\WebController::profile
+  methods: [GET,POST]
+
+web_dashboard:
+  path: /dashboard
+  controller: App\Controller\WebController::dashboard
+  methods: GET
+
+web_jobs:
+  path: /jobs
+  controller: App\Controller\WebController::jobs
+  methods: GET
+
+web_notifications:
+  path: /notifications
+  controller: App\Controller\WebController::notifications
+  methods: GET
+
+web_reports:
+  path: /reports
+  controller: App\Controller\WebController::reports
+  methods: GET
+
+web_dashboard_user:
+  path: /dashboard/users
+  controller: App\Controller\WebController::dashboardUser
+  methods: [GET,POST]
+
+web_dashboard_user_detail:
+  path: /dashboard/users/{name}/{id}
+  controller: App\Controller\WebController::dashboardUserDetail
+  methods: [GET,POST]
+
+web_dashboard_user_validation:
+  path: /dashboard/users/validation
+  controller: App\Controller\WebController::dashboardUserValidation
+  methods: GET
+
+web_dashboard_domain:
+  path: /dashboard/domains
+  controller: App\Controller\WebController::dashboardDomain
+  methods: [GET,POST]
+
+web_dashboard_domain_edit:
+  path: /dashboard/domains/edit/{id}
+  controller: App\Controller\WebController::dashboardDomainEdit
+  methods: [GET,POST]
+
+web_dashboard_domain_users:
+  path: /dashboard/domains/{id}/users
+  controller: App\Controller\WebController::dashboardDomainUsers
+  methods: [GET]
+
+web_dashboard_material:
+  path: /dashboard/materials
+  controller: App\Controller\WebController::dashboardMaterial
+  methods: [GET,POST]
+
+web_dashboard_material_edit:
+  path: /dashboard/materials/edit/{id}
+  controller: App\Controller\WebController::dashboardMaterialEdit
+  methods: [GET,POST]
+
+web_dashboard_material_remove:
+  path: /dashboard/materials/remove/{id}
+  controller: App\Controller\WebController::dashboardMaterialRemove
+  methods: [GET,POST]
+
+web_dashboard_create_job:
+  path: /dashboard/create/job
+  controller: App\Controller\WebController::createJob
+  methods: [GET,POST]
+
+web_dashboard_category:
+  path: /dashboard/categories
+  controller: App\Controller\WebController::dashboardCategory
+  methods: [GET,POST]
+
+web_dashboard_category_edit:
+  path: /dashboard/categories/edit/{id}
+  controller: App\Controller\WebController::dashboardCategoryEdit
+  methods: [GET,POST]
+
+web_dashboard_category_remove:
+  path: /dashboard/categories/remove/{id}
+  controller: App\Controller\WebController::dashboardCategoryRemove
+  methods: [GET,POST]
+
+web_dashboard_categories_domain:
+  path: /dashboard/categories/domain
+  controller: App\Controller\WebController::categoryDomain
+  methods: [POST]
+
+web_dashboard_job:
+  path: /dashboard/jobs
+  controller: App\Controller\WebController::dashboardJobs
+  methods: [GET]
+
+web_show_job:
+  path: /show/job/{slug}
+  controller: App\Controller\WebController::showJob
+  methods: [GET]
+
+web_find_job:
+  path: /find-job
+  controller: App\Controller\WebController::findWork
+  methods: [GET]
+
+web_find_more_job:
+  path: /find-more/job
+  controller: App\Controller\WebController::findMoreWork
+  methods: [GET]
+
+web_category_job:
+  path: /job/category/{slug}
+  controller: App\Controller\WebController::categoryWork
+  methods: [GET]
+
+web_more_category_job:
+  path: /job/category/more/{slug}
+  controller: App\Controller\WebController::findMoreCategoryWork
+  methods: [GET]
+
+web_domain_job:
+  path: /job/domain/{slug}
+  controller: App\Controller\WebController::domainWork
+  methods: [GET]
+
+web_more_domain_job:
+  path: /job/domain/more/{slug}
+  controller: App\Controller\WebController::findMoreDomainWork
+  methods: [GET]
+
+web_job_alert:
+  path: /job/alert/{slug}/{id}
+  controller: App\Controller\WebController::alertJob
+  methods: [POST]
+
+web_job_add_favorite:
+  path: /job/favorite/{slug}/{id}
+  controller: App\Controller\WebController::addJobToFavorite
+  methods: [POST]
+
+web_job_quotation:
+  path: /job/quote/{slug}/{id}
+  controller: App\Controller\WebController::makeQuote
+  methods: [POST]
+
+web_job_favoris:
+  path: /job/favoris
+  controller: App\Controller\WebController::favoriteJob
+  methods: [GET]
+
+web_dashboard_alerts:
+  path: /dashboard/alerts
+  controller: App\Controller\WebController::dashboardAlert
+  methods: [GET,POST]
+
+web_job_delete:
+  path: /dashboard/job/delete/{slug}/{id}
+  controller: App\Controller\WebController::deleteJob
+  methods: [POST]
+
+web_dashboard_search:
+  path: /dashboard/search
+  controller: App\Controller\WebController::search
+  methods: [POST]
+
+web_dashboard_search_result:
+  path: /dashboard/search/{type}/result
+  controller: App\Controller\WebController::searchResult
+  methods: [GET]
+  requirements:
+    type: technician|job
+
+web_dashboard_search_more_result:
+  path: /dashboard/search/more
+  controller: App\Controller\WebController::searchMoreResult
+  methods: [POST]
+
+web_profile_tech:
+  path: /profile/tech/{name}/{id}
+  controller: App\Controller\WebController::showTechnician
+  methods: [GET]
+
+web_nav_notifications:
+  path: /notifications/last
+  controller: App\Controller\WebController::getNotifications
+  methods: [GET]
+
+web_notification_show:
+  path: notification/show/{id}
+  controller: App\Controller\WebController::showNotification
+  methods: GET
+
+web_domain_categories:
+  path: domain/{id}/categories
+  controller: App\Controller\WebController::showDomainCategories
+  methods: GET
+
+web_categorie_scategories:
+  path: category/{id}/subcategories
+  controller: App\Controller\WebController::showCategorySub
+  methods: [GET,POST]
+
+web_dashboard_scategory_edit:
+  path: /dashboard/subcategory/edit/{id}
+  controller: App\Controller\WebController::subCategoryEdit
+  methods: [GET,POST]
+
+web_dashboard_scategory_remove:
+  path: /dashboard/subcategory/remove/{id}
+  controller: App\Controller\WebController::subCategoryRemove
+  methods: [GET,POST]
+
+web_dashboard_scategories_list:
+  path: /dashboard/scategories/list
+  controller: App\Controller\WebController::subCategoryCategory
+  methods: [POST]

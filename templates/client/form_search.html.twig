@@ -1,0 +1,66 @@
+{% if app.user is not null %}
+
+<form style="background-color: #ecf2f9" method="post" novalidate action="{{ path('web_dashboard_search') }}" class="container-fluid form form-control">
+    <div class="row">
+        <div class="form-group col-lg-4">
+            <label  for="domain-form">{% trans %}domains{% endtrans %}</label> <br/>
+            <select id="domain-form" name="domain-form" class="form-control">
+                {% for d in domains %}
+                    <option value="{{ d.id }}">{{ d.name }}</option>
+
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group col-lg-3">
+            <label for="city-form">{{ 'city'|trans }}</label> <br>
+            <select id="city-form" name="city-form" class="form-control">
+                {% for d in towns %}
+                    <option value="{{ d.name }}">{{ d.name }}</option>
+
+                {% endfor %}
+            </select>
+        </div>
+
+        {% if app.user is not null %}
+
+            {% if app.user.role.code in ["ROLE_MANAGER_COMPANY","ROLE_TECHNICIAN_COMPANY","ROLE_TECHNICIAN_PERSON"] %}
+                <div class="form-group col-lg-4">
+                    <label for="keyword">{{ 'keywords'|trans }}</label> <br>
+                    <input type="text" class="form-control" id="keyword" name="keyword" placeholder="">
+
+                </div>
+
+            {% else %}
+                <div class="form-group col-lg-4">
+                    <label for="user-type-form">{{ 'type'|trans }}</label> <br>
+
+                        <select id="user-type-form" name="user-type-form" class="form-control">
+
+                                <option  value="user">{{ 'user'|trans}}</option>
+                                <option value="company">{{ 'company'|trans}}</option>
+
+                        </select>
+                </div>
+
+            {% endif %}
+
+        {% endif %}
+
+
+                <div class="form-group col-lg-1">
+                    <label for="search">{{ 'search'|trans }}</label> <br>
+                    <button name="search" class="btn btn-xs btn-warning"><span class="fa fa-search"></span></button>
+                </div>
+
+
+    </div>
+
+</form>
+
+{% else %}
+
+
+{% endif %}
+
+
+

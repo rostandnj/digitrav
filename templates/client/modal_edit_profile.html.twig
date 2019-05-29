@@ -1,0 +1,30 @@
+<div class="modal fade" id="profile-edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ path('web_profile',{'name':userp.profile_name,'id':userp.uid}) }}" method="POST" enctype="multipart/form-data" class="container-fluid " >
+
+                    <div class="main row "></div>
+                    <div class="row">
+                        <div class="form-group">
+                            <button id="send-modal" style="border-top-width: 0px;border-right-width: 0px;border-bottom-width: 0px;border-left-width: 0px;" type="submit" class="  btn-primary btn-block">
+                                {% trans %} send{% endtrans %}
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button style="border-top-width: 0px;border-right-width: 0px;border-bottom-width: 0px;border-left-width: 0px;" type="button" class=" btn-secondary" data-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>

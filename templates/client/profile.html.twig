@@ -1,0 +1,608 @@
+{% extends 'client/base/base.html.twig' %}
+
+{% block main %}
+
+    {% if userp is not null %}
+
+
+    <section class="pb-3 mt-3 container-fluid " >
+
+         <div class="row " >
+             <div class="content container-fluid">
+                 <div class="row">
+                     <div class="col-md-4">
+                         <div class="card card-user">
+
+                             <div class="card-body">
+                                 <div class="author">
+                                     <img class="avatar border-gray img-thumbnail align-content-center img " style="width: 250px;height: 250px" width="200" src="{{ asset('assets/uploads/'~userp.picture.path) }}" alt="...">
+                                     {% if userp.id == app.user.id %}
+                                         <div class="middle">
+
+                                             <span data-toggle="modal" data-target="#profile-edit" style="cursor:pointer"  data-whatever="" class="text"  id="picture-modal" class="mdi mdi-pencil">{{ 'edit'|trans }}</span>
+                                         </div>
+
+
+                                     {% endif %}
+
+                                     <h5 class="title">{{ userp.username }}</h5>
+
+
+                                 </div>
+                                 <p class="description text-center">
+                                     {% if userp.user_detail.citation =="" %}
+                                     {% trans %}default_citation{% endtrans %}
+                                     {% else %}
+                                         {{ userp.user_detail.citation }}
+                                     {% endif %}
+                                     {% if userp.id == app.user.id %}
+                                         |
+                                         <span style="color: blue;cursor:pointer"  data-toggle="modal" data-target="#profile-edit" data-whatever="{{ userp.user_detail.citation  }}" id="citation-modal" class="mdi mdi-pencil"> </span>
+
+                                     {% endif %}
+                                 </p>
+                                 <p class="text-center">
+                                     {% if userp.user_detail.note==0 %}
+                                         {% for i in 1..5-userp.user_detail.note %}
+                                             <img src="{{ asset('assets/images/star_no.png') }}" width="30" />
+                                         {% endfor %}
+                                     {% else %}
+                                         {% for i in 0..userp.user_detail.note-1 %}
+                                             <img src="{{ asset('assets/images/star_ok.png') }}" width="30" />
+                                         {% endfor %}
+
+                                         {% if userp.user_detail.note <5 %}
+                                             {% for i in 1..5-userp.user_detail.note %}
+                                                 <img src="{{ asset('assets/images/star_no.png') }}" width="30" />
+                                             {% endfor %}
+
+                                         {% endif %}
+
+
+                                     {% endif %}
+
+
+
+
+                                 </p>
+                             </div>
+                             <div class="card-footer">
+                                 <hr>
+                                 <div class="button-container">
+                                     <div class="row">
+                                         <div class="col-lg-3 col-md-6 col-6 ml-auto">
+                                             <h5>{{ done }}
+                                                 <br>
+                                                 <small>{% trans %}work_complete{% endtrans %}</small>
+                                             </h5>
+                                         </div>
+                                         <div class="col-lg-4 col-md-6 col-6 ml-auto mr-auto">
+                                             <h5>{% if userp.user_detail.availability == 0 %}
+                                                     <span style="color: red" class="mdi mdi-circle"></span>
+                                                {% else %}
+                                                    <span style="color: green" class="mdi mdi-circle"></span>
+                                                    {% endif %}
+                                                 <br>
+                                                 <small>{% trans %}status{% endtrans %}</small>
+                                             </h5>
+                                         </div>
+
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                         <div class="card">
+                             <div class="card-header">
+                                 <h4 class="card-title">{% trans %}reviews{% endtrans %}</h4>
+                             </div>
+                             <div class="card-body">
+                                 <ul class="list-unstyled team-members">
+
+                                     {% for note in notes %}
+
+                                         <li>
+                                             <div class="row mb-1">
+                                                 <div class="col-md-4 col-4 mb-2" >
+                                                     <div class="avatar" style="display: inline-grid;">
+                                                         {% if note.intervention.isMain ==0 %}
+                                                             <img width="50" height="50" src="{{ asset('assets/images/default-avatar.png') }}" alt="Circle Image" class="img-circle img-no-padding img-responsive" />
+                                                             <span style="font-size: 12px;font-weight: bold">{{ note.intervention.clientName }} </span>
+
+                                                         {% else %}
+
+                                                             <img width="50" height="50" src="{{ asset('assets/uploads/'~note.intervention.client.picture.path) }}" alt="Circle Image" class="img-circle img-no-padding img-responsive" />
+                                                             <span style="font-size: 12px;font-weight: bold">{{ note.intervention.client.name }} </span>
+                                                         {% endif %}
+
+
+                                                     </div>
+                                                 </div>
+                                                 <div class="col-md-8 col-8 " style="margin-top: -25px;margin-left: -15px;" >
+
+                                                     <br/>
+                                                     <span style="float: left;" class="text-muted">
+                          <small>{{ note.comment |slice(0,55)}}...</small>
+                        </span>
+
+
+                                                 </div>
+
+                                             </div>
+                                         </li>
+
+                                     {% endfor %}
+
+                                 </ul>
+                             </div>
+                         </div>
+                     </div>
+                     <div class="col-md-8">
+
+                         <div class="card card-user">
+                             <div class="card-header">
+                                 <h5 class="card-title">{% trans %}information{% endtrans %}</h5>
+                             </div>
+                             <div class="card-body">
+                                 <form>
+    {% if userp.role.code== "ROLE_MANAGER_COMPANY" %}
+                                     <div class="row">
+                                         <div class="col-md-6 pr-1">
+                                             <div class="form-group">
+                                                 <label>{% trans %}company{% endtrans %}</label>
+                                                 <input type="text" class="form-control" style="border: 1px #ced4da!important;"  disabled=""  value="
+                                                        {% if userp.user_detail.is_company== 1 %}
+                                                            {% if userp.user_detail.company is not null %}
+                                                                {{ userp.user_detail.company.name }}
+                                                            {% else %}
+                                                                {{ 'company_not_added'|trans }}
+                                                            {% endif %}
+                                                        {% else %}
+                                                        {{ 'independent'|trans }}
+                                                        {% endif %}
+                                                        ">
+                                                                                                     </div>
+                                                                                                 </div>
+                                                                                                 <div class="col-md-6 px-1">
+                                                                                                     <div class="form-group">
+                                                                                                         <label>{{ 'role'|trans }}</label>
+                                                                                                         <input disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="
+                                                        {% if userp.user_detail.is_company== 1 %}
+                                                        {{ 'employee'|trans }}
+                                                        {% else %}
+                                                        {{ 'manager'|trans }}
+                                                        {% endif %}
+                                                        ">
+                                             </div>
+                                         </div>
+
+                                     </div>
+        {% endif %}
+                                     <div class="row">
+                                         <div class="col-md-6 pr-1">
+                                             <div class="form-group">
+                                                 <label>{{ 'first_name'|trans }}</label>
+                                                 <input disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ userp.name }}">
+                                             </div>
+                                         </div>
+                                         <div class="col-md-6 pl-1">
+                                             <div class="form-group">
+                                                 <label>{{ 'last_name'|trans }}</label>
+                                                 <input disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ userp.surname }}">
+                                             </div>
+                                         </div>
+                                     </div>
+
+                                     <div class="row">
+                                         <div class="col-md-4 pr-1">
+                                             <div class="form-group">
+                                                 <label>{{ 'city'|trans }} {% if app.user.id == userp.id  %} |
+                                                         <span style="color: blue;cursor:pointer"  data-toggle="modal" data-target="#profile-edit" data-whatever="{{ userp.location.city }}" id="city-modal" class="mdi mdi-pencil"> </span> {% endif %}</label>
+                                                 <input id="city" disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ userp.location.city }}">
+
+                                             </div>
+                                         </div>
+                                         <div class="col-md-4 px-1">
+                                             <div class="form-group">
+                                                 <label>{{ 'quater'|trans }} {% if app.user.id == userp.id  %} |
+                                                         <span style="color: blue;cursor:pointer"  data-toggle="modal" data-target="#profile-edit" data-whatever="{{ userp.location.quater }}" id="quater-modal" class="mdi mdi-pencil"> </span> {% endif %}</label>
+                                                 <input id="quater" disabled type="text" class="form-control" style="border: 1px #ced4da!important;" value="{{ userp.location.quater }}">
+                                             </div>
+                                         </div>
+                                         <div class="col-md-4 pl-1">
+                                             <div class="form-group">
+                                                 <label>{{ 'street'|trans }} {% if app.user.id == userp.id  %}
+
+                                                         |<span style="color: blue;cursor:pointer"  data-toggle="modal" data-target="#profile-edit" data-whatever="{{ userp.location.detail }}" id="street-modal" class="mdi mdi-pencil"> </span> {% endif %}
+
+                                                 </label>
+                                                 <input  id="street" disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ userp.location.detail }}">
+                                             </div>
+                                         </div>
+                                     </div>
+                                     <div class="row">
+                                         <div class="col-md-12 ">
+                                             <div class="form-group">
+                                                 <label>{{ 'password'|trans }} {% if userp.id == app.user.id %}
+                                                         |
+                                                         <span style="color: blue;cursor:pointer"  data-toggle="modal" data-target="#profile-edit" data-whatever="" id="password-modal" class="mdi mdi-pencil"> </span>
+
+                                                     {% endif %}</label>
+                                                 <input id="password" disabled type="password" class="form-control" style="border: 1px #ced4da!important;"  value="********">
+                                             </div>
+                                         </div>
+                                     </div>
+
+                                     <div class="row mb-5">
+                                         <div class="col-md-12 pb-3">
+                                             <div class="form-group" >
+                                                 <label>{{ 'domains'|trans }}
+                                                     |<span style="color: blue;cursor:pointer"  data-toggle="modal" data-target="#profile-edit" data-whatever="" id="domain-modal" class="mdi mdi-pencil"> </span></label>
+                                                 <div class="form-control" style="border: 1px #ced4da!important;">
+                                                     {% for el in userp.user_detail.domains %}
+                                                     <span style="font-size: 18px" class="badge badge-info mb-2">{{ el.name }}</span>
+                                                     {% endfor %}
+
+
+
+                                                 </div>
+                                             </div>
+                                         </div>
+                                     </div>
+                                     <div class="row">
+                                         <div class="col-md-12">
+                                             <div class="form-group">
+                                                 <label>{{ 'description'|trans }}
+                                                     |<span style="color: blue;cursor:pointer"  data-toggle="modal" data-target="#profile-edit" data-whatever="description" id="description-modal" class="mdi mdi-pencil"> </span></label>
+                                                 <textarea rows="8" disabled class="form-control textarea" style="border: 1px #ced4da!important;resize: none">{{ userp.user_detail.description }}</textarea>
+                                             </div>
+                                         </div>
+                                     </div>
+
+                                     {% if app.user.id == userp.id or app.user.role.code in ["ROLE_ADMIN","ROLE_OPERATOR","ROLE_SADMIN","ROLE_MANAGER_COMPANY"]  %}
+
+                                         <div class="row">
+                                             <div class="col-md-12">
+                                                 <div class="form-group">
+                                                     <label>{{ 'cv'|trans}} {% if app.user.id == userp.id  %}
+                                                         |<span style="color: blue;cursor:pointer"  data-toggle="modal" data-target="#profile-edit" data-whatever="" id="cv-modal" class="mdi mdi-pencil"> </span>
+                                         {% endif %}</label>
+                                                     {% if userp.user_detail.cv is not null %}
+                                                     <a class="btn-custom" target="_blank" href="{{ asset('assets/uploads/'~userp.user_detail.cv.path) }}">{{ 'cv_show'|trans }}</a>
+
+                                                     {% endif %}
+                                                 </div>
+                                             </div>
+                                         </div>
+
+                                         <div class="row">
+                                             <div class="col-md-12">
+                                                 <div class="form-group">
+                                                     <label>{{ 'criminal_record'|trans}}
+                                         {% if app.user.id == userp.id  %}
+                                                         |<span style="color: blue;cursor:pointer"  data-toggle="modal" data-target="#profile-edit" data-whatever="" id="cr-modal" class="mdi mdi-pencil"> </span>
+                                             {% endif %}</label>
+                                                     {% if userp.user_detail.criminal_record is not null %}
+                                                         <a target="_blank" class="btn-custom" href="{{ asset('assets/uploads/'~userp.user_detail.criminal_record.path) }}">{{ 'criminal_record_show'|trans }}</a>
+
+                                                     {% endif %}
+                                                 </div>
+                                             </div>
+                                         </div>
+
+                                         <div class="row">
+                                             <div class="col-md-12">
+                                                 <div class="form-group">
+                                                     <label>{{ 'cni_file'|trans}}
+                                         {% if app.user.id == userp.id  %}
+                                                         |<span style="color: blue;cursor:pointer"  data-toggle="modal" data-target="#profile-edit" data-whatever="" id="cnif-modal" class="mdi mdi-pencil"> </span>
+                                             {% endif %}</label>
+                                                     {% if userp.user_detail.cni_file is not null %}
+                                                         <a target="_blank" class="btn-custom" href="{{ asset('assets/uploads/'~userp.user_detail.cni_file.path) }}">{{ 'cni_file_show'|trans }}</a>
+
+                                                     {% endif %}
+                                                 </div>
+                                             </div>
+                                         </div>
+
+
+                                     {% endif %}
+
+
+                                 </form>
+
+                                 {% if statut.statut == false  %}
+
+                                     <div class="row">
+                                         <div class="col-md-12">
+                                             <div class="form-group">
+                                                 <form   novalidate="" method="POST" enctype="multipart/form-data" action="{{ path('web_profile',{'name':userp.profile_name,'id':userp.uid}) }}">
+
+                                                     <input type="hidden" name="data" value="validate">
+                                                     <div class="form-group">
+                                                         <button id="send-modal0" style="border-top-width: 0px;border-right-width: 0px;border-bottom-width: 0px;border-left-width: 0px;" type="submit" class="btn-warning btn-block">
+                                                             {% trans %} submit_profile{% endtrans %}
+                                                         </button>
+                                                     </div>
+
+                                                 </form>
+
+                                             </div>
+                                         </div>
+                                     </div>
+                                 {% endif %}
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+         </div>
+
+    </section>
+        {% include 'client/modal_edit_profile.html.twig' %}
+
+    {% endif %}
+    {% if userp is null %}
+
+    <section style="" class="pb-3 mt-3 container-fluid user-not-found" >
+
+        user not found
+    </section>
+
+    {% endif %}
+
+{% endblock %}
+
+{% block js %}
+    <script src="{{ asset('assets/js/bootstrap3-typehead.js') }}"></script>
+    <script>
+
+
+
+
+        var data,data3;
+        $.get("{{ path('api_all_domain') }}", function(data2){
+
+            data =data2;
+            //console.log(data);
+        },'json');
+        $.get("{{ path('api_all_city') }}", function(data2){
+
+            data3 =data2;
+
+
+        },'json');
+
+        $('#profile-edit').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+
+            let detail="{{ userp.location.detail}}";
+            let quater ="{{ userp.location.quater }}";
+            let city ="{{ userp.location.city }}";
+
+            let description="{{ userp.user_detail.description|escape('js') }}";
+            let citation="{{ userp.user_detail.citation }}";
+
+
+
+            var label,input,novalid,hid;
+            novalid = '<div class="invalid-feedback">{% trans %}invalid_street{% endtrans %}  </div>';
+            if(button[0].id == "street-modal")
+            {
+                label="<label>{{ 'street'|trans }} </label>";
+                input = "<input class='form-control' type='text' required value='"+detail+"' name='edit-street' minlength='2' />";
+                hid = "<input class='form-control' type='hidden' required value='street' name='data' />";
+
+
+            }
+            if(button[0].id == "password-modal")
+            {
+                label="<p style='text-transform:uppercase;font-weight:bold' class='title'>{{ 'placeholder_password'|trans }}</p>" +
+                    "<label>{{ 'current_password'|trans }} </label>";
+                input = "<input class='form-control' type='password' required value='' name='c-password' minlength='8' />" +
+                    "<label>{{ 'new_password'|trans }} </label> "  +
+                    "<input class='form-control' type='password' required value='' name='n-password' minlength='8' />";
+                hid = "<input class='form-control' type='hidden' required value='password' name='data' />";
+
+
+            }
+
+            if(button[0].id == "quater-modal")
+            {
+                label="<label>{{ 'quater'|trans }} </label>";
+                input = "<input class='form-control' type='text' required value='"+quater+"' name='edit-quater'minlength='2' />";
+                hid = "<input class='form-control' type='hidden' required value='quater' name='data' />";
+            }
+
+            if(button[0].id == "city-modal")
+            {
+                label="<label>{{ 'city'|trans }} </label>";
+                input = "<input id='city-type' data-provide='typeahead' autocomplete='off' class='form-control' type='text' required placeholder='' name='edit-city' minlength='2' value='"+city+"' />";
+                hid = "<input  class='form-control' type='hidden' required value='city' name='data' />";
+            }
+
+            if(button[0].id == "description-modal")
+            {
+                label="<label>{{ 'description'|trans }} </label>";
+                input = "<textarea rows='8' class='form-control textarea' required name='edit-description' minlength='50'>"+description+"</textarea>";
+                hid = "<input class='form-control' type='hidden' required value='description' name='data' />";
+            }
+
+            if(button[0].id == "citation-modal")
+            {
+                label="<label>{{ 'citation'|trans }} </label>";
+                input = "<textarea rows='4' class='form-control textarea' required name='edit-citation' maxlength='200'>"+citation+"</textarea>";
+                hid = "<input class='form-control' type='hidden' required value='citation' name='data' />";
+            }
+
+            if(button[0].id == "picture-modal")
+            {
+                label="<label>{{ 'picture'|trans }} </label>";
+                input = '<div class="custom-file-container" data-upload-id="myUniqueUploadId">\n' +
+                    '    <label>{{ 'choose_image'|trans }} <a href="javascript:void(0)" class="custom-file-container__image-clear" title="{{ 'clear_image'|trans }}">&times;</a></label>\n' +
+                    '    <label class="custom-file-container__custom-file" >\n' +
+                    '        <input length="1024" name="picture" type="file" required class="custom-file-container__custom-file__custom-file-input" required accept="image/*"  aria-label="{{ 'choose_file'|trans }}">\n' +
+                    '        <input type="hidden" name="MAX_FILE_SIZE" value="2097152" />\n' +
+                    '        <span class="custom-file-container__custom-file__custom-file-control"></span>\n' +
+                    '    </label>\n' +
+                    '    <div class="custom-file-container__image-preview"></div>\n' +
+                    '</div>';
+                hid = "<input class='form-control' type='hidden' required value='picture' name='data' />";
+            }
+            if(button[0].id == "cv-modal")
+            {
+                label="<label>{{ 'cv'|trans }} </label>";
+                input = '<div class="custom-file-container" data-upload-id="myUniqueUploadId">\n' +
+                    '    <label>{{ 'choose_file'|trans }} <a href="javascript:void(0)" class="custom-file-container__image-clear" title="{{ 'clear_image'|trans }}">&times;</a></label>\n' +
+                    '    <label class="custom-file-container__custom-file" >\n' +
+                    '        <input length="1024" name="cv" type="file" required class="custom-file-container__custom-file__custom-file-input" required accept="application/pdf"  aria-label="{{ 'choose_file'|trans }}">\n' +
+                    '        <input type="hidden" name="MAX_FILE_SIZE" value="3145728" />\n' +
+                    '        <span class="custom-file-container__custom-file__custom-file-control"></span>\n' +
+                    '    </label>\n' +
+                    '    <div class="custom-file-container__image-preview"></div>\n' +
+                    '</div>';
+                hid = "<input class='form-control' type='hidden' required value='cv' name='data' />";
+            }
+
+            if(button[0].id == "cr-modal")
+            {
+                label="<label>{{ 'criminal_record'|trans }} </label>";
+                input = '<div class="custom-file-container" data-upload-id="myUniqueUploadId">\n' +
+                    '    <label>{{ 'choose_file'|trans }} <a href="javascript:void(0)" class="custom-file-container__image-clear" title="{{ 'clear_image'|trans }}">&times;</a></label>\n' +
+                    '    <label class="custom-file-container__custom-file" >\n' +
+                    '        <input length="1024" name="criminal-record" type="file" required class="custom-file-container__custom-file__custom-file-input" required accept="application/pdf"  aria-label="{{ 'choose_file'|trans }}">\n' +
+                    '        <input type="hidden" name="MAX_FILE_SIZE" value="3145728" />\n' +
+                    '        <span class="custom-file-container__custom-file__custom-file-control"></span>\n' +
+                    '    </label>\n' +
+                    '    <div class="custom-file-container__image-preview"></div>\n' +
+                    '</div>';
+                hid = "<input class='form-control' type='hidden' required value='criminal-record' name='data' />";
+            }
+
+            if(button[0].id == "cnif-modal")
+            {
+                label="<label>{{ 'cni_file'|trans }} </label>";
+                input = '<div class="custom-file-container" data-upload-id="myUniqueUploadId">\n' +
+                    '    <label>{{ 'choose_file'|trans }} <a href="javascript:void(0)" class="custom-file-container__image-clear" title="{{ 'clear_image'|trans }}">&times;</a></label>\n' +
+                    '    <label class="custom-file-container__custom-file" >\n' +
+                    '        <input length="1024" name="cnif" type="file" required class="custom-file-container__custom-file__custom-file-input" required accept="application/pdf"  aria-label="{{ 'choose_file'|trans }}">\n' +
+                    '        <input type="hidden" name="MAX_FILE_SIZE" value="3145728" />\n' +
+                    '        <span class="custom-file-container__custom-file__custom-file-control"></span>\n' +
+                    '    </label>\n' +
+                    '    <div class="custom-file-container__image-preview"></div>\n' +
+                    '</div>';
+                hid = "<input class='form-control' type='hidden' required value='cnif' name='data' />";
+            }
+
+            if(button[0].id == "domain-modal")
+            {
+                label="<div class=\"control-group\">\n" +
+                    "\t\t\t\t\t<label for=\"select-tools\">{{ 'domain'|trans }}s:</label>\n" +
+                    "\t\t\t\t\t<select multiple class='form-control' name=\"domain-name[]\" id=\"select-tools\" placeholder=\"{{ "choose_domain"|trans }}...\"></select>\n" +
+                    "\t\t\t\t</div>";
+                input =
+                    '    <label class="" >\n' +
+                    '    </label>\n' +
+                    '</div>';
+                hid = "<input class='form-control' type='hidden' required value='domain-name' name='data' />";
+            }
+
+            var recipient = button.data('whatever');
+            var modal = $(this);
+            modal.find('.modal-title').text("{{ 'profil_edit'|trans }} " +" "+ recipient);
+            modal.find('.modal-body form .main').html(label+input+hid+novalid);
+
+            if( ["picture-modal","cnif-modal","cv-modal","cr-modal"].includes(button[0].id))
+            {
+                var upload = new FileUploadWithPreview('myUniqueUploadId');
+            }
+
+            if(button[0].id == "domain-modal")
+            {
+                modal.find('.modal-body form button').text("{{ 'update'|trans }}");
+
+               var select= $('#select-tools').selectize({
+                    maxItems: 5,
+                    valueField: 'id',
+                    labelField: 'name',
+                    searchField: 'name',
+                    options: data,
+
+                    create: false
+                });
+               var myDomains=[];
+                {% for el in userp.user_detail.domains %}
+                myDomains.push("{{ el.id }}");
+
+                {% endfor %}
+                $('#select-tools')[0].selectize.setValue(myDomains);
+
+
+
+
+
+            }
+
+            if(button[0].id == "city-modal")
+            {
+
+                $("#city-type").typeahead({
+
+                    // data source
+                    source: data3,
+
+                    // how many items to show
+                    items: 8,
+
+                    // default template
+                    menu: '<ul class="typeahead dropdown-menu" role="listbox"></ul>',
+                    item: '<li><a class="dropdown-item" href="#" role="option"></a></li>',
+                    headerHtml: '<li class="dropdown-header"></li>',
+                    headerDivider: '<li class="divider" role="separator"></li>',
+                    itemContentSelector:'a',
+
+                    // min length to trigger the suggestion list
+                    minLength: 1,
+
+                    // number of pixels the scrollable parent container scrolled down
+                    scrollHeight: 0,
+
+                    // auto selects the first item
+                    autoSelect: true,
+
+                    // callbacks
+                    afterSelect: $.noop,
+                    afterEmptySelect: $.noop,
+
+                    // adds an item to the end of the list
+                    addItem: false,
+
+                    // delay between lookups
+                    delay: 0,
+
+                });
+                $(".typeahead").on("change",function() {
+                    console.log("eee");
+                    var current = $(".typeahead").typeahead("getActive");
+                    if (current) {
+                        // Some item from your model is active!
+                        if (current.name == $(".typeahead").val()) {
+                            $("#city-type").val(current.id);
+                            console.log(current);
+                            // This means the exact match is found. Use toLowerCase() if you want case insensitive match.
+                        } else {
+                            $("#city-type").val("");
+
+                            // This means it is only a partial match, you can either add a new item
+                            // or take the active if you don't want new items
+                        }
+                    } else {
+                        // Nothing is active so it is a new value (or maybe empty value)
+                    }
+                });
+            }
+        })
+    </script>
+
+
+{% endblock %}

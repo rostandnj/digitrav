@@ -1,0 +1,273 @@
+welcome: J'aime Symfony
+home: Accueil
+services: Services
+contact: Contact
+about: A propos
+login: Connexion
+french: Français
+english: English
+cu_lang: English
+cu_flag: fr.png
+email: Email
+password: Mot de passe
+remember_me: Se souvenir de moi
+create_one: Créer un compte
+send: Envoyer
+no_account: Vous n'avez pas de compte?
+password_forgotten: Mot de passe oublié?
+reset_password: Réinitialiser le mot de passe
+create_account: Création de compte
+first_name: Nom
+last_name: Prénom
+gender: sexe
+phone: Téléphone
+man: Homme
+woman: Femme
+account_type: Type de compte
+client: Client
+technician: Technicien
+ok_account: Vous avez déjà un compte?
+term: J'accepte les termes et conditions
+invalid_email: Email  invalide
+invalid_password: Mot de passe invalide
+invalid_first_name: Nom invalide
+invalid_phone: Téléphone invalide (9 chiffres uniquement)
+invalid_terms: Vous devez accepter les termes et conditions
+placeholder_password: au moins 8 charactères comprenant une Majuscule et un chiffre
+invalid_csrf: Csrf invalide
+login_incorrect: email / mot de passe incorrects
+session_expired: votre session a expiré, bien vouloir vous connecter
+register: Création de compte
+dashboard: Dashboard
+notifications: Notifications
+my_jobs: Mes Jobs
+reports: Rapports
+profile: Profil
+logout: Deconnexion
+reset_password_msg: Un nouveau mot de passe a été envoyé à votre boîte mail
+reset_password_msg_error: Aucun utilisateur trouvé avec cet email
+user_not_found: Utilisateur non trouvé
+account_activated: Compte activé
+account_already_activated: Compte déjà activé
+expired_link: Lien expiré
+invalid_gender: Genre incorrect
+email_already_used: Email déjà utilisé
+phone_already_used: Téléphone déjà utilisé
+account_created: Votre compte a été créé! allez à votre boîte mail pour l'activer
+default_citation: Un rêve ne devient pas réalité par magie, il faut de la détermination et du travail acharné
+information: Information
+work_complete: Jobs
+available: Disponible
+available_no: Non Disponible
+status: Statut
+reviews: Avis
+company: Entreprise
+company_not_added: Non fournie
+independent: Indépendant
+employee: Employé
+manager: Gestionnaire
+last_jobs: Derniers Travaux
+money_spent: Dépenses
+city: Ville
+quater: Quatier
+street: Rue
+description: A propos
+domains: Domaines d'expertises
+account_not_activated: Compte non activé
+invalid_company: Aucune entreprise selectionnée
+invalid_account_type: Aucun type de compte selectionné
+company_not_found: Entreprise non trouvée
+role: Fonction
+profil_edit: Modification du Profil
+invalid_street: nom très court
+invalid_quater: nom très court
+invalid_city: nom très court
+profile_updated: Profil mis à jour
+citation: Citation
+edit: Modifier
+picture: Image
+choose_file: Choisir un fichier (max - 3 Mo)
+clear_image: Effacer
+file_size_exceed: Fichier trop volumineux
+cv : Curriculum vitae
+add: Ajouter
+cv_show: Afficher le cv
+empty: Vide
+criminal_record: Cassier Judiciaire
+criminal_record_show: Afficher le Cassier Judiciaire
+cni: Numéro de carte nationale d'identité
+cni_file_show: Afficher la carte nationale d'identité
+cni_file: Carte nationale d'identité
+file: Fichier
+choose_image: Choisir une image (max - 2 Mo)
+domain : Domaine
+name: Nom
+choose_domain: Selectionner un domaine
+update: Modifier
+submit_profile: Soumettez votre profil pour validation
+cni_file_is_empty: Le champ CNI est vide
+criminal_record_is_empty: le champ Cassier Judiciaire est vide
+cv_is_empty: le champ CV est vide
+domain_is_empty: Aucun domaine choisi
+city_is_empty: le champ ville est vide
+quater_is_empty: le champ quartier est vide
+company_is_empty: Aucune company selectionnée
+description_is_empty: le champ description est vide
+profile_awaiting: Validation en attente
+profile_already_submitted: Votre profil est en cours de validation
+profile_sended: Votre demande de validation a été enregistrée
+operation_denied: Opération Interdite
+profile_not_send: Votre profile n'est pas activé, bien vouloir le soumettre pour validation
+company_not_send: Votre Company n'est pas activée, bien vouloir la soumettre pour validation
+description_comp: Description
+tax_card: Carte de contribuable
+trade_register: Registre de commerce
+logo: Logo
+show: Afficher
+submit_company: Soumettez votre entreprise pour validation
+current_password: Mot de passe actuel
+new_password: Nouveau mot de passe
+current_password_invalid: Mot de passe courant incorrect
+new_password_invalid: Le nouveau mot de passe devrait contenir au moins 8 charactères comprenant une Majuscule et un chiffre
+categories: Categories
+category: Categorie
+user: Utilisateur
+users: Utilisateurs
+material_quote: Matériel
+clients: Clients
+job: Job
+jobs: Jobs
+state: State
+close: Fermé
+yes: Oui
+no: Non
+on: On
+off: Off
+valid: Valide
+invalid: Invalide
+add_operator: Nouvel Operateur
+add_admin: Nouvel Admin
+new_operator: Nouvel Operator
+new_admin: Nouvel Admin
+operator: Operateur
+admin: Administrateur
+user_added: Utilisateur enregistré
+accept: Accepter
+refuse: Refuser
+accept_account: Valider le compte
+refuse_account: Rejetter le compte
+operation_did: Operation effectuée
+location_plan: Plan de localisation
+director_cni: CNI (Directeur)
+empty_location_plan: Plan de localisation vide
+empty_director_cni: CNI du directeur vide
+empty_description: description vide
+empty_tax_card: Carte de contribuable vide
+empty_trade_register: Registre de commerce vide
+empty_domain: Aucun domaine selectionné
+empty_city: Ville non renseignée
+domain_added: Domaine ajouté
+domain_not_found: Domaine non trouvé
+domain_edited: Domaine modifié
+add_domain: Ajouter un domaine
+french_name: Nom (français)
+english_name: Nom (anglais)
+domain_users: Liste des Techinicians et companies
+type: Type
+material_quote_added: Matériel ajouté
+material_quote_not_found: Matériel non trouvé
+material_quote_edited: Matériel mis à jour
+add_material: Ajouter Matériel
+delete: Supprimer
+manage_job: Jobs
+transactions: Transactions
+posted_jobs: Jobs Postés
+reviewed: Commentaires
+pending_jobs: Travaux encours
+post_a_job: Publier un job
+create_job: Publier un nouveau Job
+title: Title
+job_description: Description
+client_name: Client (Nom)
+budget: Budget
+start_date: Date souhaitée de l'intervention
+end_date: Date de fin de l'intervention
+add_category: Ajouter Catégorie
+category_added: Catégorie ajoutée
+category_not_found: Catégorie non trouvée
+category_edited: Catégorie modifiée
+title_placeholder: Entrez un titre
+description_placeholder: Décrivez le problème dont vous faites face
+video_title: Vidéo (3 mo maximun) ?
+image_title1: Image  (2 mo maximun)?
+image_title2: Autre image (2 mo maximun) ?
+empty_field: champ vide
+required_field: champ requis
+users_list: Techiniciens disponibles
+date: Date
+statut_in_progress: en cours
+by: Par
+year: année
+month: mois
+week: semaine
+day: jour
+hour: heure
+minute: minute
+second: seconde
+a_few_seconds_ago: il y'a quelques secondes
+date_a: il y'a
+attachment: Fichiers de description
+proposals: Propositions
+about_client: Apropos du client
+client_looking: Ce client recherche des techniciens en
+location: Localisation
+action: Action
+job_save: Ajouter aux favoris
+apply: Candidater
+posted: Publié
+load_more: Afficher plus
+alert_job: signaler ce job
+keywords: Mots clés
+search: go
+research: Rechercher
+domain_not_matched: Vous n'êtes pas compatible avec le domaine d'expertise requis
+alert_already_done: Alerte déjà enregistrée
+alert_done: Alerte envoyée
+job_already_saved: Job déjà enregistré aux favoris
+job_saved: Job enregistré aux favoris
+gains: Gains
+active_jobs: Jobs encours
+waiting_jobs: Jobs en attente
+favorite_jobs: Favoris
+job_amount: Budget
+alerts: Alertes
+delete_job: Supprimer ce Job
+delete_job_msg: Êtes vous sûre de vouloir supprimer ce job ?
+no_result_found: Aucun résultats trouvés
+money_earned: Gains
+invalid_name: Nom vide
+invalid_subject: Sujet vide
+invalid_message: Message vide
+message_sended: Message envoyé
+quotation_new: Proposition reçue
+quotation_accepted: Proposition acceptée
+quotation_refused: Proposition non acceptée
+quotation_ended: Intervention terminée
+evaluation_new: Nouvelle évaluation proposée
+evaluation_accepted: Evaluation acceptée
+evaluation_refused: Evaluation refusée
+note_received: Nouvelle note reçue
+account_validated: Compte validé
+account_locked: Compte bloqué
+payment_received: Payement reçu
+quotation_invitation: Invitation
+
+msg_for_job: pour le job
+sub-category: sous catégorie
+add_scategory: ajouter
+sub_category_added: sous catégorie ajoutée
+sub_category_not_found: sous catégorie non trouvée
+sub_category_edited: sous catégorie modifiée
+choose: sélectionner une option
+without_car_fees: les frais de déplacement peuvent être ajoutés si le technicien choisi n'est pas dans la même ville
+

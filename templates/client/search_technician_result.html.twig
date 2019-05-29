@@ -1,0 +1,308 @@
+{% extends 'client/base/base.html.twig' %}
+
+{% block main %}
+    <div class="container-fluid row">
+        <div class="col-lg-12 col-md-12">
+            {% include 'client/form_search.html.twig' %}
+        </div>
+
+        <div class="col-lg-3 col-md-4">
+            <div class="mt-3 blog_sidebar rounded">
+                <div class="bg-white m-2 p-3">
+
+                    <!-- Categories -->
+                    <div class="widget mt-2">
+                        <div class="sidebar_widget_title font-weight-bold text-uppercase">{{ 'domains'|trans }}</div>
+
+                        <ul class="list-unstyled widget_list">
+                            {% for d in domains %}
+                                <li><a href="{{ path('web_domain_job',{slug:d.slug}) }}"><i class="mdi mdi-chevron-double-right"></i> {{ d.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-9 col-md-8" >
+            <div class="home-table">
+                <div class="home-table-center">
+                    <div class="mt-3">
+                        <ul class="list-group" id="job-list">
+                            {% for u in users %}
+
+                                <li class="list-group-item mb-1" style="display: block;background-color: #f6f7f9">
+
+                                    <div class="comment_read mt-3 ml-0">
+                                        <div class="comment_img">
+                                            <img width="55" height="55" style="width: 55px;height: 55px" src="{% if u.role.code !="ROLE_MANAGER_COMPANY" %} {{ asset('assets/uploads/'~u.picture.path) }}{% else %} {{ asset('assets/uploads/'~u.company.logo.path) }} {% endif %}" alt="" class="img-fluid rounded-circle">
+                                        </div>
+                                        <div class="comment_data">
+                                            <h6>
+                                                <a href="{{ path('web_profile_tech',{name:u.profile_name,id:u.uid}) }}" class="text-dark d-block">
+                                                    {% if u.role.code !="ROLE_MANAGER_COMPANY" %}
+                                                        <span class="fa fa-user"></span> {{ u.name }}
+                                                    {% else %}
+                                                        <span class="fa fa-building"></span> {{ u.company.name }}
+                                                    {% endif %}
+                                                </a>
+                                                <span class="text-muted font-weight-normal">
+                                                    {{ u.date|date('y-m-d H:i:s')|timeago }}
+                                                </span>
+                                            </h6>
+                                            <p class="text-muted mb-0"><span class="fas fa-map-marker-alt"></span>
+                                                {% if u.role.code !="ROLE_MANAGER_COMPANY" %} {{ u.location.city }} , {{ u.location.quater }}{% else %} {{ u.company.location.city }} , {{ u.company.location.quater }}  {% endif %}
+                                            </p>
+                                            <span class="pull-right" style="margin-top: -100px">
+
+                                                {% if u.role.code =="ROLE_MANAGER_COMPANY"  %}
+
+
+                                                   {% if u.company.note==0 %}
+
+                                                    {% else %}
+                                                       {% for i in 0..u.company.note-1 %}
+                                                           <img src="{{ asset('assets/images/star_ok.png') }}" width="30" />
+                                                       {% endfor %}
+
+                                                    {% if u.company.note <5 %}
+                                                           {% for i in 1..5-u.company.note %}
+                                                               <img src="{{ asset('assets/images/star_no.png') }}" width="30" />
+                                                           {% endfor %}
+
+                                                       {% endif %}
+
+
+                                                   {% endif %}
+                                                {% else %}
+
+                                                    {% if u.user_detail.note==0 %}
+
+                                                    {% else %}
+                                                        {% for i in 0..u.user_detail.note-1 %}
+                                                            <img src="{{ asset('assets/images/star_ok.png') }}" width="30" />
+                                                        {% endfor %}
+
+                                                    {% if u.user_detail.note <5 %}
+                                                        {% for i in 1..5-u.user_detail.note %}
+                                                            <img src="{{ asset('assets/images/star_no.png') }}" width="30" />
+                                                        {% endfor %}
+
+                                                    {% endif %}
+
+
+                                                    {% endif %}
+
+                                                {% endif %}
+
+                                            </span>
+
+
+
+
+                                        </div>
+                                    </div>
+
+                                </li>
+
+                            {% endfor %}
+
+
+
+
+                        </ul>
+                        {% if users|length ==0 %}
+
+                            <h2 class="mt-5 text-center">{{ 'no_result_found'|trans }}</h2>
+
+                        {% endif %}
+                        <button id="load-more"  class="btn btn-primary">{{ 'load_more'|trans }} </button><img id="loader" width="95" height="95" src="{{ asset('assets/images/loader.gif') }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+{% endblock %}
+
+
+
+{% block js %}
+    <script>
+        $("#load-more").hide();
+        $("#loader").hide();
+
+        var nbItem="{{ users|length }}";
+        var totalItem=parseInt(nbItem);
+
+        var offset = parseInt("{{ offset }}")+10;
+
+
+        if(nbItem>=10) $("#load-more").show();
+
+
+        $("#load-more").on("click",function () {
+
+            $("#load-more").attr("disabled",true);
+            $("#loader").show();
+
+
+
+            $.ajax({
+                type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
+                url         : "{{ path('web_dashboard_search_more_result') }}", // the url where we want to POST
+                data        : {"d":"{{ d }}","t":"{{ t }}","c":"{{ c }}","r":"{{ r }}","key":"{{ k }}","offset":offset}, // our data object
+                dataType    : 'json', // what type of data do we expect back from the server
+                encode          : true,
+                success : function(resultat, statut)
+                {
+                    $("#loader").hide();
+
+
+                    if(resultat.users.length>0)
+                    {
+                        offset+=10;
+                        totalItem+=resultat.users.length;
+                        if(resultat.users.length<10)$("#load-more").hide();
+                        else $("#load-more").attr("disabled",false);
+
+                        let html="";
+
+                        let url ="{{ url('web_profile_tech',{name:"axx",id:"ayy"}) }}";
+
+                        let p_image="<li class=\"list-group-item mb-1\" style=\"display: block;background-color: #f6f7f9\">\n" +
+                            "\n" +
+                            "                                    <div class=\"comment_read mt-3 ml-0\">\n" +
+                            "                                        <div class=\"comment_img\">\n" +
+                            "                                            <img width=\"55\" height=\"55\" style=\"width: 55px;height: 55px\" src=\"";
+
+                        let p_comp_name="\" alt=\"\" class=\"img-fluid rounded-circle\"> </div>\n" +
+                            "                                        <div class=\"comment_data\">\n" +
+                            "                                            <h6>\n" +
+                            "                                                ";
+
+                        let p_date="</a>\n" +
+                            "                                                <span class=\"text-muted font-weight-normal\">";
+
+                        let p_location="</span>\n" +
+                            "                                            </h6>\n" +
+                            "                                            <p class=\"text-muted mb-0\"><span class=\"fas fa-map-marker-alt\"></span>";
+
+                        let p_note="</p>\n" +
+                            "                                            <span class=\"pull-right\" style=\"margin-top: -100px\">";
+
+                        let p_end=" </span>\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "                                        </div>\n" +
+                            "                                    </div>\n" +
+                            "\n" +
+                            "                                </li>";
+
+
+
+
+                        resultat.users.forEach(function (el) {
+                            var img="";
+                            var i=0;
+                            if(el.role.code == "ROLE_MANAGER_COMPANY")
+                            {
+
+
+                                if(el.company.note >0)
+                                {
+                                    for(i=0;i<=el.company.note-1;i++)
+                                    {
+                                        img=img+" <img src=\"{{ asset('assets/images/star_ok.png') }}\" width=\"30\" />";
+                                    }
+
+                                    for( i=1;i<=5-el.company.note;i++)
+                                    {
+                                        img=img+" <img src=\"{{ asset('assets/images/star_no.png') }}\" width=\"30\" />";
+                                    }
+                                }
+
+                                let ur= url.replace('/axx',"/"+el.profile_name);
+                                let u = ur.replace('/ayy',"/"+el.uid);
+
+
+
+
+                                html =html+p_image+"{{ asset('assets/uploads/')}}/"+el.company.logo.path+
+                                    p_comp_name+'<a href="'+u+'" class="text-dark d-block"><span class="fa fa-building"></span>'
+                                    +el.company.name+p_date+el.company.date+p_location+el.company.location.city+" , "
+                                +el.company.location.quater+p_note+img+p_end;
+                            }
+                            else {
+
+                                if(el.user_detail.note>0)
+                                {
+
+                                    for(i=0;i<=el.user_detail.note-1;i++)
+                                    {
+                                        img=img+" <img src=\"{{ asset('assets/images/star_ok.png') }}\" width=\"30\" />";
+                                    }
+
+                                    for( i=1;i<=5-el.user_detail.note;i++)
+                                    {
+                                        img=img+" <img src=\"{{ asset('assets/images/star_no.png') }}\" width=\"30\" />";
+                                    }
+                                }
+
+                                let ur= url.replace('/axx',"/"+el.profile_name);
+                                let u = ur.replace('/ayy',"/"+el.uid);
+
+                               // console.log(u);
+
+
+
+
+                                html =html+p_image+"{{ asset('assets/uploads/')}}/"+el.picture.path+
+                                    p_comp_name+'<a href="'+u+'" class="text-dark d-block"><span class="fa fa-user"></span>'+el.name+p_date+el.date+p_location+el.location.city+" , "
+                                    +el.location.quater+p_note+img+p_end;
+
+                            }
+
+
+
+                        });
+
+                        $("#job-list").append(html);
+
+                        $("#counterm").attr("style","height:"+$(document).height()+"px");
+                        $("#load-more").attr("disabled",false);
+
+
+
+                    }
+                    else
+                    {
+                        $("#load-more").attr("disabled",false);
+                        $("#load-more").hide();
+                    }
+
+
+
+                },
+
+                error : function(resultat, statut, erreur){
+                    $("#loader").hide();
+                    console.log(resultat);
+
+                }
+
+            });
+
+
+
+        })
+    </script>
+
+
+{% endblock %}

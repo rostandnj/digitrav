@@ -1,0 +1,129 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    locale: 'en'
+    brochures_directory: '%kernel.project_dir%/public/assets/uploads'
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+
+    # controllers are imported separately to make sure services can be injected
+    # as action arguments even if you don't extend any base controller class
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
+
+    acme_api.event.jwt_created_listener:
+        class: App\EventListener\JWTCreatedListener
+        arguments: [ '@request_stack' ]
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
+    acme_api.event.jwt_decoded_listener:
+        class: App\EventListener\JWTDecodedListener
+        arguments: [ '@request_stack' ]
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_decoded, method: onJWTDecoded }
+    acme_api.event.authentication_failure_listener:
+        class: App\EventListener\AuthenticationFailureListener
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_failure, method: onAuthenticationFailureResponse }
+    acme_api.event.jwt_expired_listener:
+        class: App\EventListener\JWTExpiredListener
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_expired, method: onJWTExpired }
+    acme_api.event.jwt_invalid_listener:
+        class: App\EventListener\JWTInvalidListener
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_not_found, method: onJWTNotFound }
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+    init_system:
+        alias: App\Service\SystemService
+        public: true
+
+    intervention_manager:
+        alias: App\Service\InterventionService
+        public: true
+
+    user_manager:
+        alias: App\Service\UserService
+        public: true
+
+    mail_manager:
+        alias: App\Service\MailService
+        public: true
+
+    request_service:
+        alias: App\Service\RequestService
+        public: true
+
+    response_service:
+        alias: App\Service\ResponseService
+        public: true
+
+    hash_service:
+        alias: App\Service\HashService
+        public: true
+
+    upload_service:
+        alias: App\Service\FileUploaderService
+        public: true
+    domain_manager:
+        alias: App\Service\DomainService
+        public: true
+
+    App\EventListener\UserListener:
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+
+    material_manager:
+        alias: App\Service\MaterialQuoteService
+        public: true
+
+    App\EventListener\DomainListener:
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+
+    App\EventListener\MaterialQuoteListener:
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+
+    category_manager:
+        alias: App\Service\CategoryService
+        public: true
+
+    App\EventListener\CategoryListener:
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+
+    App\EventListener\CompanyListener:
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+
+    App\EventListener\InterventionListener:
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+
+    city_service:
+        alias: App\Service\CityService
+        public: true
+
+    notification_service:
+        alias: App\Service\NotificationService
+        public: true
+
+    App\EventListener\StatutListener:
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }

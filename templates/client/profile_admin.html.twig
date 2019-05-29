@@ -1,0 +1,261 @@
+{% extends 'client/base/base.html.twig' %}
+
+{% block main %}
+
+    {% if userp is not null %}
+
+        <section  class="pb-3 mt-3 container-fluid " >
+
+            <div class="row " >
+                <div class="content container-fluid">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card card-user">
+
+                                <div class="card-body">
+                                    <div class="author">
+                                        <img class="avatar border-gray img-thumbnail align-content-center img " style="width: 250px;height: 250px" width="200" src="{{ asset('assets/uploads/'~userp.picture.path) }}" alt="...">
+                                        {% if userp.id == app.user.id %}
+                                            <div class="middle">
+
+                                                <span data-toggle="modal" data-target="#profile-edit" style="cursor:pointer"  data-whatever="" class="text"  id="picture-modal" class="mdi mdi-pencil">{{ 'edit'|trans }}</span>
+                                            </div>
+
+
+                                        {% endif %}
+
+                                        <h5 class="title">{{ userp.username }}</h5>
+
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="col-md-8">
+
+                            <div class="card card-user">
+                                <div class="card-header">
+                                    <h5 class="card-title">{% trans %}information{% endtrans %}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form>
+
+                                        <div class="row">
+                                            <div class="col-md-6 pr-1">
+                                                <div class="form-group">
+                                                    <label>{{ 'first_name'|trans }}</label>
+                                                    <input id="name" disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ userp.name }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 pl-1">
+                                                <div class="form-group">
+                                                    <label>{{ 'last_name'|trans }}</label>
+                                                    <input disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ userp.surname }}">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4 pr-1">
+                                                <div class="form-group">
+                                                    <label>{{ 'city'|trans }}</label>
+                                                    <input id="city" disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ userp.location.city }}">
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 px-1">
+                                                <div class="form-group">
+                                                    <label>{{ 'quater'|trans }} </label>
+                                                    <input id="quater" disabled type="text" class="form-control" style="border: 1px #ced4da!important;" value="{{ userp.location.quater }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 pl-1">
+                                                <div class="form-group">
+                                                    <label>{{ 'street'|trans }}
+
+                                                    </label>
+                                                    <input  id="street" disabled type="text" class="form-control" style="border: 1px #ced4da!important;"  value="{{ userp.location.detail }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 ">
+                                                <div class="form-group">
+                                                    <label>{{ 'password'|trans }} {% if userp.id == app.user.id %}
+                                                            |
+                                                            <span style="color: blue;cursor:pointer"  data-toggle="modal" data-target="#profile-edit" data-whatever="" id="password-modal" class="mdi mdi-pencil"> </span>
+
+                                                        {% endif %}</label>
+                                                    <input id="password" disabled type="password" class="form-control" style="border: 1px #ced4da!important;"  value="********">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        {% include 'client/modal_edit_profile.html.twig' %}
+
+    {% endif %}
+    {% if userp is null %}
+
+        <section style="" class="pb-3 mt-3 container-fluid user-not-found" >
+
+            user not found
+        </section>
+
+    {% endif %}
+
+{% endblock %}
+
+{% block js %}
+    <script src="{{ asset('assets/js/bootstrap3-typehead.js') }}"></script>
+    <script>
+        var data3=[];
+        $.get("{{ path('api_all_city') }}", function(data2){
+
+            data3 =data2;
+
+
+
+        },'json');
+        $('#profile-edit').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+
+
+            var label,input,novalid,hid;
+            novalid = '<div class="invalid-feedback">{% trans %}invalid_street{% endtrans %}  </div>';
+            if(button[0].id == "street-modal")
+            {
+                label="<label>{{ 'street'|trans }} </label>";
+                input = "<input class='form-control' type='text' required value='{{ userp.location.detail}}' name='edit-street' minlength='2' />";
+                hid = "<input class='form-control' type='hidden' required value='street' name='data' />";
+
+
+            }
+
+            if(button[0].id == "password-modal")
+            {
+                label="<p style='text-transform:uppercase;font-weight:bold' class='title'>{{ 'placeholder_password'|trans }}</p>" +
+                    "<label>{{ 'current_password'|trans }} </label>";
+                input = "<input class='form-control' type='password' required value='' name='c-password' minlength='8' />" +
+                    "<label>{{ 'new_password'|trans }} </label> "  +
+                    "<input class='form-control' type='password' required value='' name='n-password' minlength='8' />";
+                hid = "<input class='form-control' type='hidden' required value='password' name='data' />";
+
+
+            }
+            if(button[0].id == "quater-modal")
+            {
+                label="<label>{{ 'quater'|trans }} </label>";
+                input = "<input class='form-control' type='text' required value='{{ userp.location.quater }}' name='edit-quater'minlength='2' />";
+                hid = "<input class='form-control' type='hidden' required value='quater' name='data' />";
+            }
+
+            if(button[0].id == "city-modal")
+            {
+                label="<label>{{ 'city'|trans }} </label>";
+                input = "<input id='city-type' data-provide='typeahead' autocomplete='off' class='form-control' type='text' required placeholder='' name='edit-city' minlength='2' value='{{ userp.location.city }}' />";
+                hid = "<input  class='form-control' type='hidden' required value='city' name='data' />";
+            }
+
+            if(button[0].id == "picture-modal")
+            {
+                label="<label>{{ 'picture'|trans }} </label>";
+                input = '<div class="custom-file-container" data-upload-id="myUniqueUploadId">\n' +
+                    '    <label>{{ 'choose_file'|trans }} <a href="javascript:void(0)" class="custom-file-container__image-clear" title="{{ 'clear_image'|trans }}">&times;</a></label>\n' +
+                    '    <label class="custom-file-container__custom-file" >\n' +
+                    '        <input length="1024" name="picture" type="file" required class="custom-file-container__custom-file__custom-file-input" required accept="image/*"  aria-label="{{ 'choose_file'|trans }}">\n' +
+                    '        <input type="hidden" name="MAX_FILE_SIZE" value="2097152" />\n' +
+                    '        <span class="custom-file-container__custom-file__custom-file-control"></span>\n' +
+                    '    </label>\n' +
+                    '    <div class="custom-file-container__image-preview"></div>\n' +
+                    '</div>';
+                hid = "<input class='form-control' type='hidden' required value='picture' name='data' />";
+            }
+
+            var recipient = button.data('whatever'); // Extract info from data-* attributes
+            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var modal = $(this);
+            modal.find('.modal-title').text("{{ 'profil_edit'|trans }} " +" "+ recipient);
+            modal.find('.modal-body form .main').html(label+input+hid+novalid);
+
+            if(button[0].id =="picture-modal")
+            {
+                var upload = new FileUploadWithPreview('myUniqueUploadId');
+            }
+
+            if(button[0].id == "city-modal")
+            {
+
+                $("#city-type").typeahead({
+
+                    // data source
+                    source: data3,
+
+                    // how many items to show
+                    items: 8,
+
+                    // default template
+                    menu: '<ul class="typeahead dropdown-menu" role="listbox"></ul>',
+                    item: '<li><a class="dropdown-item" href="#" role="option"></a></li>',
+                    headerHtml: '<li class="dropdown-header"></li>',
+                    headerDivider: '<li class="divider" role="separator"></li>',
+                    itemContentSelector:'a',
+
+                    // min length to trigger the suggestion list
+                    minLength: 1,
+
+                    // number of pixels the scrollable parent container scrolled down
+                    scrollHeight: 0,
+
+                    // auto selects the first item
+                    autoSelect: true,
+
+                    // callbacks
+                    afterSelect: $.noop,
+                    afterEmptySelect: $.noop,
+
+                    // adds an item to the end of the list
+                    addItem: false,
+
+                    // delay between lookups
+                    delay: 0,
+
+                });
+                $(".typeahead").on("change",function() {
+                    console.log("eee");
+                    var current = $(".typeahead").typeahead("getActive");
+                    if (current) {
+                        // Some item from your model is active!
+                        if (current.name == $(".typeahead").val()) {
+                            $("#city-type").val(current.id);
+                            console.log(current);
+                            // This means the exact match is found. Use toLowerCase() if you want case insensitive match.
+                        } else {
+                            $("#city-type").val("");
+
+                            // This means it is only a partial match, you can either add a new item
+                            // or take the active if you don't want new items
+                        }
+                    } else {
+                        // Nothing is active so it is a new value (or maybe empty value)
+                    }
+                });
+            }
+        })
+    </script>
+
+{% endblock %}

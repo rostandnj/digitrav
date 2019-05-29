@@ -1,0 +1,89 @@
+{% extends 'client/base/base.html.twig' %}
+
+{% block styles %}
+
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/login.css') }}" />
+{% endblock %}
+
+{% block main %}
+
+    <section  class="container-fluid login" >
+        <div class="my-login-page">
+            <div    class="container h-100">
+                <div id="login" class="row justify-content-center">
+                    <div  class="card-wrapper">
+
+                        <div class="card ">
+                            <div class="card-body">
+                                <h4 class="card-title">{% trans %} login{% endtrans %}</h4>
+                                <form action="{{ path('web_login') }}" method="POST" class="my-login-validation" novalidate="">
+                                    <input type="hidden" name="csrf" value="{{ csrf_token('csrf') }}"/>
+                                    <div class="form-group">
+                                        <label for="email">{% trans %}email{% endtrans %} </label>
+                                        <input id="email" type="email" value="{% if email is defined %} {{ email }} {% endif %} " class="form-control" name="email" value="" required autofocus>
+                                        <div class="invalid-feedback">
+                                            {% trans %}invalid_email{% endtrans %}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="password">{% trans %} password{% endtrans %}
+                                            <a style="font-size: 10px" href="{{ path('web_password') }}" class="float-right">
+                                                {% trans %}password_forgotten{% endtrans %}
+                                            </a>
+                                        </label>
+                                        <input id="password" type="password" value="{% if password is defined %}{{ password }}{% endif %}" minlength="8" class="form-control" name="password" required data-eye>
+                                        <div class="invalid-feedback ">
+                                            {% trans %}invalid_password{% endtrans %}
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="_csrf_token"
+                                           value="{{ csrf_token('authenticate') }}"
+                                    >
+
+                                    <div class="form-group">
+                                        <div class="custom-checkbox custom-control">
+                                            <input type="checkbox" name="remember" id="remember" class="custom-control-input">
+                                            <label for="remember" style="color: #222" class="custom-control-label">{% trans %}remember_me{% endtrans %}</label>
+                                        </div>
+                                    </div>
+
+
+                                        {% if message is defined %}
+                                    <div id="login-error" class="mt-4 text-center alert alert-danger">
+                                            {{ message }}
+
+                                    </div>
+
+                                        {% endif %}
+
+
+                                    <div class="form-group m-0">
+                                        <button type="submit" class="btn btn-primary btn-block">
+                                            {% trans %} login{% endtrans %}
+                                        </button>
+                                    </div>
+                                    <div class="mt-4 text-center">
+                                        {% trans %} no_account{% endtrans %} <a href="{{ path('web_sign_up') }}">{% trans %} create_one{% endtrans %}</a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+
+{% endblock %}
+
+{% block js %}
+
+    <script src="{{ asset('assets/js/login.js') }}"></script>
+
+
+
+{% endblock %}

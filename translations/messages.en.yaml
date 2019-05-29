@@ -1,0 +1,271 @@
+welcome: I love Symfony
+home: Home
+services: Services
+contact: Contact
+about: About
+login: Login
+french: Français
+english: English
+cu_lang: Français
+cu_flag: en.png
+email: Email
+password: Password
+remember_me: Remember me
+create_one: Create One
+send: Send
+no_account: Don't have an account?
+password_forgotten: Forgot Password?
+reset_password: Reset Password
+create_account: Register
+first_name: First name
+last_name: Last name
+gender: Gender
+phone: Phone
+man: Man
+woman: Woman
+account_type: Account Type
+client: Client
+technician: Technician
+ok_account: Already have an account?
+term: I agree to the Terms and Conditions
+invalid_email: Email is invalid
+invalid_password: Password is invalid
+invalid_first_name: First name is invalid
+invalid_phone: Phone is invalid (only 9 digits)
+invalid_terms: You must agree with our Terms and Conditions
+placeholder_password: at least 8 characters comprising One Upper Character, One number
+invalid_csrf: Invalid csrf
+login_incorrect: invalid email / password
+session_expired: your session has expired, please login
+register: Register
+dashboard: Dashboard
+notifications: Notifications
+my_jobs: My Jobs
+reports: Reports
+profile: Profile
+logout: Logout
+reset_password_msg: A new password has been sended to your mail box
+reset_password_msg_error: No user found with this account
+user_not_found: User not found
+account_activated: Account activated
+account_already_activated: Account already activated
+expired_link: Expired link
+invalid_gender: Invalid gender
+email_already_used: Email already used
+phone_already_used: Phone already used
+account_created: Your account have been created! please go to your mail box for activation
+default_citation: A dream doesn't become reality through magic, it takes determination and hard work
+information: Information
+work_complete: Jobs
+available: Available
+available_no: No available
+status: Status
+reviews: Reviews
+company: Company
+company_not_added: Not yet set
+independent: Independent
+employee: Employee
+manager: Manager
+last_jobs: Last Jobs
+money_spent: Spent
+city: City
+quater: Quater
+street: Street
+description: About Me
+domains: Area of expertise
+account_not_activated: Account not activated
+invalid_company: Please choose a company
+invalid_account_type: Please choose an account type
+company_not_found: Company not found
+role: Role
+profil_edit: Profile Edit
+invalid_street: street name too short
+invalid_quater: quater name too short
+invalid_city: city name too short
+profile_updated: Profile updated
+citation: Quote
+edit: Edit
+picture: Picture
+choose_file: Choose file (max - 3 Mo)
+clear_image: Clear image
+file_size_exceed: File size exceed
+cv : Curriculum vitae
+cv_show: Show cv
+add: Add
+empty: Empty
+criminal_record: Criminal record
+criminal_record_show: Show  Criminal record
+cni: National identity card number
+cni_file_show: show  National identity card
+cni_file: National identity card
+file: File
+choose_image: Choose picture (max - 2 Mo)
+domain : Domain
+name: Name
+choose_domain: Choose domain
+update: Update
+submit_profile: Submit your profile for validation
+cni_file_is_empty: CNI field is empty
+criminal_record_is_empty: Criminal record field is empty
+cv_is_empty: CV field is empty
+domain_is_empty: No chosen domain
+city_is_empty: City field is empty
+quater_is_empty: Quater field is Empty
+company_is_empty: Company field is empty
+description_is_empty: Description is too short
+profile_awaiting: Validation pending
+profile_already_submitted: Your profile is being validated
+profile_sended: Your verification request has been saved
+operation_denied: Operation denied
+profile_not_send: Your profile is not active, please submit it for validation
+company_not_send: Your Company is not active, please submit it for validation
+description_comp: Description
+tax_card: Tax card
+trade_register: Trade Register
+logo: Logo
+show: Show
+submit_company: Submit your company for validation
+current_password: Current password
+new_password: New password
+current_password_invalid: Current password is not correct
+new_password_invalid: New password should content at least 8 characters comprising One Upper Character, One number
+categories: Categories
+category: Category
+user: User
+users: Users
+material_quote: Material Quote
+clients: Clients
+job: Job
+jobs: Jobs
+state: Etat
+close: Close
+yes: Yes
+no: No
+on: On
+off: Off
+valid: Valid
+invalid: Invalid
+add_operator: Add Operator
+add_admin: Add Admin
+new_operator: New Operator
+new_admin: New Admin
+operator: Operator
+admin: Admin
+user_added: User Added
+accept: Accept
+refuse: Refuse
+accept_account: Validate the account
+refuse_account: Reject the account
+operation_did: Operation did
+location_plan: Location Plan
+director_cni: Director CNI
+empty_location_plan: Location plan is empty
+empty_director_cni: Director CNI is empty
+empty_description: description is empty
+empty_tax_card: tax card is empty
+empty_trade_register: trade register is empty
+empty_domain: no domain choose
+empty_city: city is empty
+domain_added: Domain added
+domain_not_found: Domain not found
+domain_edited: Domain edited
+add_domain: Add domain
+french_name: French name
+english_name: English name
+domain_users: List of Users and Companies
+type: Type
+material_quote_added: Material quote added
+material_quote_not_found: Material quote not found
+material_quote_edited: Material quote edited
+add_material: Add Material
+delete: Delete
+manage_job: Jobs
+transactions: Transactions
+posted_jobs: Posted Jobs
+reviewed: Reviewed
+pending_jobs: Pending Jobs
+post_a_job: Post a Job
+create_job: Post a New Job
+title: Title
+job_description: Description
+client_name: Client Name
+budget: Budget
+start_date: Desired date of the intervention
+end_date: End date of the intervention
+add_category: Add Category
+category_added: Category added
+category_not_found: Category not found
+category_edited: Category edited
+title_placeholder: Enter a title
+description_placeholder: Describe the problem you are facing
+video_title: short video (3 mo max)?
+image_title1: image  (2 mo maximun)?
+image_title2: Another image (2 mo maximun) ?
+empty_field: empty field
+required_field: required field
+users_list: Available technicians
+date: Date
+statut_in_progress: running
+by: By
+year: year
+month: month
+week: week
+day: day
+hour: hour
+minute: minute
+second: second
+a_few_seconds_ago: a few seconds ago
+date_a: a
+attachment: Attachment
+proposals: Proposals
+about_client: About the client
+client_looking: This client is looking for technician who specialize in
+location: Location
+action: Action
+job_save: Save Job
+apply: Apply
+posted: Posted
+load_more: Load more
+alert_job: Flag as inappropriate
+keywords: Keywords
+search: go
+research: Search
+domain_not_matched: You don't match the required area of expertise
+alert_already_done: Alert already saved
+alert_done: Alert sended
+job_already_saved: Job already saved
+job_saved: Job saved
+gains: Earnings
+active_jobs: Active Jobs
+waiting_jobs: Awaiting Jobs
+favorite_jobs: Favorites
+job_amount: Job Amount
+alerts: Alerts
+delete_job: Delete Job
+delete_job_msg: Are you sure you want to delete this job ?
+no_result_found: No results found
+money_earned: Earned
+invalid_name: Empty name
+invalid_subject: Empty subject
+invalid_message: Empty message
+message_sended: Message sended
+quotation_new: submitted a proposal
+quotation_accepted: Proposal accepted
+quotation_refused: Proposal not accepted
+quotation_ended: Proposal ended
+evaluation_new: New evaluation proposed
+evaluation_accepted: Evaluation accepted
+evaluation_refused: Evaluation not accepted
+note_received: has given you a note
+account_validated: Account validated
+account_locked: Account locked
+payment_received: Payment received
+quotation_invitation: New Invitation
+msg_for_job: for job
+sub-category: sub category
+add_scategory: add
+sub_category_added: sub category added
+sub_category_not_found: sub category not found
+sub_category_edited: sub category edited
+choose: choose one option
+without_car_fees: travel expenses can be added if choosen technician is not in the same town

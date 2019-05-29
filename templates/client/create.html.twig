@@ -1,0 +1,281 @@
+{% extends 'client/base/base.html.twig' %}
+
+{% block styles %}
+
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/login.css') }}" />
+{% endblock %}
+
+{% block main %}
+
+    <section  class="container-fluid login">
+        <div class="my-login-page">
+            <div class="container h-100">
+                <div id="login" class="row justify-content-md-center h-100">
+                    <div class="">
+
+                        <div class="card fat">
+                            <div class="card-body">
+                                <h4 class="card-title">{% trans %}register{% endtrans %}</h4>
+                                <form method="POST" class="my-login-validation" novalidate="">
+                                    <input type="hidden" name="csrf" value="{{ csrf_token('csrf') }}"/>
+                                    <input type="hidden" id="location_lon" name="location_lon" value=" "/>
+                                    <input type="hidden" id="location_lat" name="location_lat" value=" "/>
+                                    <input type="hidden" id="location_city" name="location_city" value=""/>
+                                    <input type="hidden" id="location_quater" name="location_quater" value=""/>
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-12">
+                                            <div class="form-group">
+                                                <label for="first_name">{% trans %}first_name{% endtrans %}</label>
+                                                <input id="first_name" type="text" minlength="1" class="form-control" name="first_name" value="{% if name is defined %}{{name|trim}}{% endif %}" required autofocus>
+                                                <div class="invalid-feedback">
+                                                    {% trans %}invalid_first_name{% endtrans %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-sm-12">
+                                            <div class="form-group">
+                                                <label for="last_name">{% trans %}last_name{% endtrans %}</label>
+                                                <input id="last_name" type="text" class="form-control" name="last_name" value="{% if surname is defined %}{{surname|trim}}{% endif %}"  autofocus>
+                                                <div class="invalid-feedback">
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
+
+                                    <div class="form-group">
+                                        <label for="email">{% trans %}email{% endtrans %}</label>
+                                        <input id="email" type="email" class="form-control" name="email" value="{% if email is defined %} {{ email|trim }} {% endif %}" required>
+                                        <div class="invalid-feedback">
+                                            {% trans %}invalid_email{% endtrans %}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone">{% trans %}phone{% endtrans %}</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon3">+237</span>
+                                            </div>
+                                            <input minlength="9" maxlength="9" id="phone" type="text"  class="form-control" name="phone" value="{% if phone is defined %}{{phone|trim}}{% endif %}" required autofocus>
+                                            <div class="invalid-feedback">
+                                                {% trans %}invalid_phone{% endtrans %}
+                                            </div>
+                                        </div>
+
+
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="gender">{% trans %}gender{% endtrans %}</label>
+                                                <select class="form-control" id="gender" name="gender" required autofocus>
+                                                    <option value="1" value="{% if gender is defined %} {% if gender == 1 %} selected {% endif %} {% endif %}">{% trans %}man{% endtrans %}</option>
+                                                    <option  value="0" value="{% if gender is defined %} {% if gender == 0 %} selected {% endif %} {% endif %}">{% trans %}woman{% endtrans %}</option>
+                                                </select>
+                                                <div class="invalid-feedback">
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="account">{% trans %}account_type{% endtrans %}</label>
+                                                <select class="form-control" id="account" name="account" required autofocus>
+                                                    <option value="1" value="{% if account is defined %} {% if account == 1 %} selected {% endif %} {% endif %}">{% trans %}client{% endtrans %}</option>
+                                                    <option value="0" value="{% if account is defined %} {% if account == 0 %} selected {% endif %} {% endif %}">{% trans %}technician{% endtrans %}</option>
+                                                    <option value="3" value="{% if account is defined %} {% if account == 3 %} selected {% endif %} {% endif %}">{% trans %}technician{% endtrans %} ({% trans %}company{% endtrans %})</option>
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    {% trans %}invalid_account_type{% endtrans %}
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group" id="company-form">
+
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label for="password">{% trans %}password {% endtrans %} <span style="font-size: 11px">({% trans %}placeholder_password {% endtrans %}) </span></label>
+                                        <input id="password" type="password" class="form-control" name="password" placeholder="" required data-eye>
+                                        <p>
+
+                                        </p>
+                                        <div class="invalid-feedback">
+                                            {% trans %}invalid_password{% endtrans %}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="custom-checkbox custom-control">
+                                            <input type="checkbox" name="agree" id="agree" class="custom-control-input" required="">
+                                            <label for="agree" class="custom-control-label"><a href="#">{% trans %}term{% endtrans %}</a></label>
+                                            <div class="invalid-feedback">
+                                                {% trans %}invalid_terms{% endtrans %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% if message is defined %}
+
+                                    <div id="login-error" class="mt-4 text-center alert alert-danger">
+
+                                        {{ message }}
+
+                                    </div>
+                                    {% endif %}
+
+                                    <div class="form-group m-0">
+                                        <button type="submit" class="btn btn-primary btn-block">
+                                            {% trans %}send{% endtrans %}
+                                        </button>
+                                    </div>
+                                    <div class="mt-4 text-center">
+                                        {% trans %}ok_account{% endtrans %} <a href="{{ path('web_login') }}">{% trans %}login{% endtrans %}</a>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+
+{% endblock %}
+
+{% block js %}
+
+    <script src="{{ asset('assets/js/login.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="{{ asset('assets/js/bootstrap3-typehead.js') }}"></script>
+    <script>
+        //var x = document.getElementById("demo");
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+
+
+            } else {
+                //x.innerHTML = "Geolocation is not supported by this browser.";
+                console.log("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function showPosition(position) {
+            $("#location_lon").val(position.coords.longitude);
+            $("#location_lat").val(position.coords.latitude);
+
+        }
+        getLocation();
+        //showPosition();
+    </script>
+    <script>
+        var data;
+        //$.get("{{ path('api_all_company') }}", function(data2){
+          //  data =data2;
+
+       // },'json');
+
+        $("#account").on("change",function (event) {
+            if($("#account").val()==3)
+            {
+
+
+                $('#company-form').prepend('<label for="company">{% trans %}company {% endtrans %}</label>\n' +
+                    '                                        <input  id="company" type="text" class="form-control" name="company" placeholder=""  required>\n' +
+                    '                                        <input  id="company-id" type="hidden" class="form-control"  value="" name="company-id" placeholder="" required>\n' +
+                    '                                        <p>\n' +
+                    '\n' +
+                    '                                        </p>\n' +
+                    '                                        <div class="invalid-feedback">\n' +
+                    '                                            {% trans %}invalid_company{% endtrans %}\n' +
+                    '                                        </div>');
+
+
+                    // use a data source with 'id' and 'name' keys
+                   // $("#company").typeahead({ source:data });
+
+                   /* $(".typeahead").typeahead({
+
+                        // data source
+                        source: data,
+
+                        // how many items to show
+                        items: 8,
+
+                        // default template
+                        menu: '<ul class="typeahead dropdown-menu" role="listbox"></ul>',
+                        item: '<li><a class="dropdown-item" href="#" role="option"></a></li>',
+                        headerHtml: '<li class="dropdown-header"></li>',
+                        headerDivider: '<li class="divider" role="separator"></li>',
+                        itemContentSelector:'a',
+
+                        // min length to trigger the suggestion list
+                        minLength: 1,
+
+                        // number of pixels the scrollable parent container scrolled down
+                        scrollHeight: 0,
+
+                        // auto selects the first item
+                        autoSelect: true,
+
+                        // callbacks
+                        afterSelect: $.noop,
+                        afterEmptySelect: $.noop,
+
+                        // adds an item to the end of the list
+                        addItem: false,
+
+                        // delay between lookups
+                        delay: 0,
+
+                    });
+                    $(".typeahead").on("change",function() {
+                        var current = $(".typeahead").typeahead("getActive");
+                        if (current) {
+                            // Some item from your model is active!
+                            if (current.name == $(".typeahead").val()) {
+                                $("#company-id").val(current.id);
+                                console.log(current);
+                                // This means the exact match is found. Use toLowerCase() if you want case insensitive match.
+                            } else {
+                                $("#company").val("");
+                                $("#company-id").val("");
+                                // This means it is only a partial match, you can either add a new item
+                                // or take the active if you don't want new items
+                            }
+                        } else {
+                            // Nothing is active so it is a new value (or maybe empty value)
+                        }
+                    });*/
+
+            }
+            else
+            {
+                $('#company-form').html("");
+            }
+
+
+        });
+
+
+    </script>
+
+    <script>
+
+    </script>
+
+{% endblock %}

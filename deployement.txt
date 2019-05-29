@@ -1,0 +1,9 @@
+Pendant le deploiement:
+    - modifier le fichier de configuration de la librairie stof/doctrine-extensions-bundle dans le vendor
+      * remplacer TreeBuilder() par TreeBuilder('stof_doctrine_extensions')
+      * ajouter if (method_exists($treeBuilder, 'getRootNode')) {
+                            $rootNode = $treeBuilder->getRootNode();
+                        } else {
+                            $rootNode = $treeBuilder->root('stof_doctrine_extensions');
+                        }
+                        dans la fonction getConfigTreeBuilder
