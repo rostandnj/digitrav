@@ -132,8 +132,14 @@ class WebController extends AbstractController implements LogginInterfaceControl
 
         if(!is_null($this->getUser())) return $this->redirectToRoute("web_dashboard");
 
+        $domains = $this->mycontainer->get("domain_manager")->showList(10,0);
 
-       return $this->render('client/home.html.twig');
+        $jobs = $this->mycontainer->get("intervention_manager")->getJobs(3,0);
+
+
+
+
+       return $this->render('client/home.html.twig',["domains"=>$domains["data"],"jobs"=>$jobs["data"]]);
     }
 
    public function about(Request $request)

@@ -127,83 +127,48 @@
                 <div class="col-xl-12">
 
                     <div class="section-headline centered margin-bottom-15">
-                        <h3>Popular Job Categories</h3>
+                        <h3>Popular Job Domains
+                        </h3>
                     </div>
 
                     <!-- Category Boxes Container -->
                     <div class="categories-container">
 
-                        <!-- Category Box -->
-                        <a href="jobs-grid-layout-full-page.html" class="category-box">
-                            <div class="category-box-icon">
-                                <i class="icon-line-awesome-file-code-o" style="color: #65a7ef"></i>
-                            </div>
-                            <div class="category-box-counter">612</div>
-                            <div class="category-box-content">
-                                <h3>Web & Software Dev</h3>
-                                <p>Software Engineer, Web / Mobile Developer & More</p>
-                            </div>
-                        </a>
+                        {% for domain in domains %}
 
-                        <!-- Category Box -->
-                        <a href="jobs-list-layout-full-page-map.html" class="category-box">
-                            <div class="category-box-icon">
-                                <i class="icon-line-awesome-cloud-upload" style="color: #65a7ef"></i>
-                            </div>
-                            <div class="category-box-counter">113</div>
-                            <div class="category-box-content">
-                                <h3>Data Science & Analitycs</h3>
-                                <p>Data Specialist / Scientist, Data Analyst & More</p>
-                            </div>
-                        </a>
+                            <!-- Category Box -->
+                            <a href="#" class="category-box">
+                                <div class="category-box-icon">
+                                    <i class="icon-line-awesome-suitcase" style="color: #65a7ef"></i>
+                                </div>
 
-                        <!-- Category Box -->
-                        <a href="jobs-list-layout-full-page-map.html" class="category-box">
-                            <div class="category-box-icon">
-                                <i class="icon-line-awesome-suitcase" style="color: #65a7ef"></i>
-                            </div>
-                            <div class="category-box-counter">186</div>
-                            <div class="category-box-content">
-                                <h3>Accounting & Consulting</h3>
-                                <p>Auditor, Accountant, Fnancial Analyst & More</p>
-                            </div>
-                        </a>
+                                <div class="category-box-content">
+                                    <h3>{{ domain.nameEn }}</h3>
 
-                        <!-- Category Box -->
-                        <a href="jobs-list-layout-1.html" class="category-box">
-                            <div class="category-box-icon">
-                                <i class="icon-line-awesome-pencil" style="color: #65a7ef"></i>
-                            </div>
-                            <div class="category-box-counter">298</div>
-                            <div class="category-box-content">
-                                <h3>Writing & Translations</h3>
-                                <p>Copywriter, Creative Writer, Translator & More</p>
-                            </div>
-                        </a>
 
-                        <!-- Category Box -->
-                        <a href="jobs-list-layout-2.html" class="category-box">
-                            <div class="category-box-icon">
-                                <i class="icon-line-awesome-pie-chart" style="color: #65a7ef"></i>
-                            </div>
-                            <div class="category-box-counter">549</div>
-                            <div class="category-box-content">
-                                <h3>Sales & Marketing</h3>
-                                <p>Brand Manager, Marketing Coordinator & More</p>
-                            </div>
-                        </a>
+                                    <p>
+                                        {% for c in domain.categories %}
 
-                        <!-- Category Box -->
-                        <a href="jobs-list-layout-1.html" class="category-box">
-                            <div class="category-box-icon">
-                                <i class="icon-line-awesome-image" style="color: #65a7ef"></i>
-                            </div>
-                            <div class="category-box-counter">873</div>
-                            <div class="category-box-content">
-                                <h3>Graphics & Design</h3>
-                                <p>Creative Director, Web Designer & More</p>
-                            </div>
-                        </a>
+                                            {% if loop.index <=3  %}
+
+                                                {{ c.name }}
+
+                                                {% if loop.index <=2   %}
+                                                    /
+
+                                                {% endif %}
+                                            {% endif %}
+
+
+                                        {% endfor %}
+                                    </p>
+                                </div>
+                            </a>
+
+                        {% endfor %}
+
+
+
 
 
 
@@ -232,105 +197,47 @@
                     <!-- Jobs Container -->
                     <div class="tasks-list-container compact-list margin-top-35">
 
-                        <!-- Task -->
-                        <a href="single-task-page.html" class="task-listing">
+                      {% for job in jobs %}
 
-                            <!-- Job Listing Details -->
-                            <div class="task-listing-details">
+                          <!-- Task -->
+                          <a href="#" class="task-listing">
 
-                                <!-- Details -->
-                                <div class="task-listing-description">
-                                    <h3 class="task-listing-title">Food Delviery Mobile App</h3>
-                                    <ul class="task-icons">
-                                        <li><i class="icon-material-outline-location-on"></i> San Francisco</li>
-                                        <li><i class="icon-material-outline-access-time"></i> 2 minutes ago</li>
-                                    </ul>
-                                    <div class="task-tags margin-top-15">
-                                        <span>iOS</span>
-                                        <span>Android</span>
-                                        <span>mobile apps</span>
-                                        <span>design</span>
-                                    </div>
-                                </div>
+                              <!-- Job Listing Details -->
+                              <div class="task-listing-details">
 
-                            </div>
+                                  <!-- Details -->
+                                  <div class="task-listing-description">
+                                      <h3 class="task-listing-title">{{ job.title }}</h3>
+                                      <ul class="task-icons">
+                                          <li><i class="icon-material-outline-location-on"></i> {{ job.location.city }},{{ job.location.quater }}</li>
+                                          <li><i class="icon-material-outline-access-time"></i> {{ job.date|date('y-m-d H:i:s')|timeago }}</li>
+                                      </ul>
+                                      <div class="task-tags margin-top-15">
+                                          <span>{{ job.domain.name }}</span>
 
-                            <div class="task-listing-bid">
-                                <div class="task-listing-bid-inner">
-                                    <div class="task-offers">
-                                        <strong>$1,000 - $2,500</strong>
-                                        <span>Fixed Price</span>
-                                    </div>
-                                    <span class="button button-sliding-icon ripple-effect">Bid Now <i class="icon-material-outline-arrow-right-alt"></i></span>
-                                </div>
-                            </div>
-                        </a>
 
-                        <!-- Task -->
-                        <a href="single-task-page.html" class="task-listing">
+                                          <span>{{ job.category.name }}</span>
 
-                            <!-- Job Listing Details -->
-                            <div class="task-listing-details">
+                                          <span>{% if job.subCategory is not null %}  {{ job.subCategory.name }} {% endif %}</span>
+                                      </div>
+                                  </div>
 
-                                <!-- Details -->
-                                <div class="task-listing-description">
-                                    <h3 class="task-listing-title">2000 Words English to German</h3>
-                                    <ul class="task-icons">
-                                        <li><i class="icon-material-outline-location-off"></i> Online Job</li>
-                                        <li><i class="icon-material-outline-access-time"></i> 5 minutes ago</li>
-                                    </ul>
-                                    <div class="task-tags margin-top-15">
-                                        <span>copywriting</span>
-                                        <span>translating</span>
-                                        <span>editing</span>
-                                    </div>
-                                </div>
+                              </div>
 
-                            </div>
+                              <div class="task-listing-bid">
+                                  <div class="task-listing-bid-inner">
+                                      <div class="task-offers">
+                                          <strong>XAF {{ job.category.budget }}</strong>
+                                          <span>{{ 'job_amount'|trans }}</span>
+                                      </div>
+                                      </div>
+                              </div>
+                          </a>
 
-                            <div class="task-listing-bid">
-                                <div class="task-listing-bid-inner">
-                                    <div class="task-offers">
-                                        <strong>$75</strong>
-                                        <span>Fixed Price</span>
-                                    </div>
-                                    <span class="button button-sliding-icon ripple-effect">Bid Now <i class="icon-material-outline-arrow-right-alt"></i></span>
-                                </div>
-                            </div>
-                        </a>
 
-                        <!-- Task -->
-                        <a href="single-task-page.html" class="task-listing">
+                      {% endfor %}
 
-                            <!-- Job Listing Details -->
-                            <div class="task-listing-details">
 
-                                <!-- Details -->
-                                <div class="task-listing-description">
-                                    <h3 class="task-listing-title">Fix Python Selenium Code</h3>
-                                    <ul class="task-icons">
-                                        <li><i class="icon-material-outline-location-off"></i> Online Job</li>
-                                        <li><i class="icon-material-outline-access-time"></i> 30 minutes ago</li>
-                                    </ul>
-                                    <div class="task-tags margin-top-15">
-                                        <span>Python</span>
-                                        <span>Flask</span>
-                                        <span>API Development</span>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="task-listing-bid">
-                                <div class="task-listing-bid-inner">
-                                    <div class="task-offers">
-                                        <strong>$100 - $150</strong>
-                                        <span>Hourly Rate</span>
-                                    </div>
-                                    <span class="button button-sliding-icon ripple-effect">Bid Now <i class="icon-material-outline-arrow-right-alt"></i></span>
-                                </div>
-                            </div>
-                        </a>
 
 
 
