@@ -10,7 +10,6 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -49,8 +48,19 @@ class SecurityController extends AbstractController
         ];
 
         if(!is_null($error)) {
-            $data['message']= $this->mycontainer->get('translator')->trans('login_incorrect');
-            $data["error"]= $error;
+
+            if($error->getMessage() ==$this->mycontainer->get('translator')->trans('account_not_activated'))
+            {
+                $data['message']= $this->mycontainer->get('translator')->trans('account_not_activated');
+                $data["error"]=$this->mycontainer->get('translator')->trans('account_not_activated');
+            }
+            else
+            {
+                $data['message']=$this->mycontainer->get('translator')->trans('login_incorrect');
+                $data['error']=$this->mycontainer->get('translator')->trans('login_incorrect');
+
+            }
+
         }
 
 

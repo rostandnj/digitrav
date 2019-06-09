@@ -151,6 +151,23 @@
                                             </div>
                                         </div>
 
+                                        <div class="row mb-5">
+                                            <div class="col-md-12 pb-3">
+                                                <div class="form-group" >
+                                                    <label>{{ 'domains'|trans }}
+                                                    </label>
+                                                    <div class="form-control" style="border: 1px #ced4da!important;">
+                                                        {% for el in userp.user_detail.domains %}
+                                                            <span style="font-size: 18px" class="badge badge-info mb-2">{{ el.name }}</span>
+                                                        {% endfor %}
+
+
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
 
 
                                     </form>

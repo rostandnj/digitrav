@@ -62,6 +62,7 @@ class Notification
      */
     private $bill;
 
+    const QUOTATION_INVITATION_ACCEPTED=-1;
     const QUOTATION_INVITATION=0;
     const QUOTATION_NEW=1;
     const QUOTATION_ACCEPTED=2;
@@ -208,6 +209,9 @@ class Notification
 
         switch ($this->code)
         {
+            case self::QUOTATION_INVITATION_ACCEPTED:
+                $tab["quote"]=$this->getQuote()->toArray();
+                break;
             case self::QUOTATION_NEW:
                 $tab["quote"]=$this->getQuote()->toArray();
                 break;

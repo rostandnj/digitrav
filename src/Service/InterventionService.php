@@ -16,6 +16,7 @@ use App\Entity\SaveJob;
 use App\Entity\Statut;
 use App\Entity\SubCategory;
 use Doctrine\ORM\EntityManagerInterface;
+use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 
@@ -85,7 +86,7 @@ class InterventionService
            }
        }
 
-        if(strlen($data["description"])<10) return ["message"=>"description field is too short ","code"=>401,"statut"=>false,"data"=>""];
+        if(strlen($data["description"])<20) return ["message"=>"description field is too short ","code"=>401,"statut"=>false,"data"=>""];
         if(strlen($data["title"])<0) return ["message"=>"title field is too short ","code"=>401,"statut"=>false,"data"=>""];
 
        /* if(strlen($data["location_city"])<1) return ["message"=>"location city too short","code"=>401,"statut"=>false,"data"=>""];
@@ -209,6 +210,8 @@ class InterventionService
                 if($userDetail->getDomains()->contains($intervention->getDomain()))
                 {
                     $quote = new Quote();
+
+                    $quote->setSuggestedDate($intervention->getStartDate());
                     if(strtolower($intervention->getLocation()->getCity())==strtolower($u->getLocation()->getCity()))
                     {
                         $quote->setAmount($intervention->getBudget()+2000);
@@ -243,6 +246,7 @@ class InterventionService
                 if($c->getDomains()->contains($intervention->getDomain()))
                 {
                     $quote = new Quote();
+                    $quote->setSuggestedDate($intervention->getStartDate());
                     if(strtolower($intervention->getLocation()->getCity())==strtolower($c->getLocation()->getCity()))
                     {
                         $quote->setAmount($intervention->getBudget()+2000);
@@ -298,6 +302,29 @@ class InterventionService
     }
 
     public function userJobs(User $user,int $limit,int $offset)
+    {
+        $role = $user->getRole();
+
+        if($role->getCode()=="ROLE_CLIENT")
+        {
+            $jobs = $this->em->getRepository(Intervention::class)->findBy(array("client"=>$user,"isActive"=>true),array("statut"=>"ASC"),$limit,$offset);
+        }
+        else if(in_array($role->getCode(),["ROLE_MANAGER_COMPANY","ROLE_TECHNICIAN_PERSON","ROLE_TECHNICIAN_COMPANY"]))
+        {
+            $jobs = $this->em->getRepository(Intervention::class)->findByTechnician($user->getId(),$limit,$offset);
+
+        }
+        else{
+            $jobs = $this->em->getRepository(Intervention::class)->findBy(array("isActive"=>true),array("date"=>"DESC","statut"=>"ASC"),$limit,$offset);
+
+        }
+
+        return ["message"=>"","code"=>201,"statut"=>true,"data"=>$jobs];
+
+
+    }
+
+    public function userJobsDone(User $user,int $limit,int $offset)
     {
         $role = $user->getRole();
 
@@ -411,12 +438,23 @@ class InterventionService
 
         if($quoteSatut == true)
         {
-            $quotes= $this->em->getRepository(Quote::class)->findBy(array("intervention"=>$job,"isActive"=>true),array(),$limit,$offset);
+            $quotes= $this->em->getRepository(Quote::class)->findByJob($job->getId(),$limit,$offset);
+        }
+
+        $ownQuote = $this->em->getRepository(Quote::class)->findOneBy(array("intervention"=>$job,"technician"=>$user));
+        $invite =false;
+        $qid=0;
+        if(!is_null($ownQuote))
+        {
+            if($ownQuote->getStatut()==Quote::NEW){
+                $invite =true;
+                $qid = $ownQuote->getId();
+            }
         }
 
 
 
-        return ["message"=>" ","code"=>201,"statut"=>true,"data"=>["job"=>$job,"quotes"=>$quotes,"files"=>$files,"nb_job"=>$nbJob,"spent"=>$spent]];
+        return ["message"=>" ","code"=>201,"statut"=>true,"data"=>["job"=>$job,"quotes"=>$quotes,"files"=>$files,"nb_job"=>$nbJob,"spent"=>$spent,"invite"=>$invite,"qid"=>$qid]];
 
 
     }
@@ -445,8 +483,9 @@ class InterventionService
         return ["message"=>" ","code"=>201,"statut"=>true,"data"=>["jobs"=>$jobs,"domain"=>$d]];
     }
 
-    public function makeQuote(User $user,int $id)
+    public function makeQuote(User $user,int $type,string $date, string $message,int $id)
     {
+
 
         $role = $user->getRole();
 
@@ -471,33 +510,51 @@ class InterventionService
             }
             else
             {
+                $old = $this->em->getRepository(Quote::class)->findOneBy(array("technician"=>$user,"intervention"=>$job));
+
+                if(!is_null($old)) return ["message"=>"quotation_already_send","code"=>401,"statut"=>false,"data"=>null];
+
                 $quote = new Quote();
+                $quote->setStatut(Quote::SENDBYTECHNICIAN);
                 $quote->setIntervention($job);
                 $quote->setTechnician($user);
-
-
-                $notif = new Notification();
-
-                $notif->setUser($user);
-                $notif->setIsActive(false);
-                $notif->setCode(Notification::QUOTATION_NEW);
-                $notif->setQuote($quote);
-
-                $statut = new Statut();
-                $statut->setNotification($notif);
-
-                if($job->getIsMain()==false)
+                $quote->setSuggestedDate(new \DateTime($date));
+                if($type ==1)
                 {
-                    $statut->setUser($job->getOperator());
+                    $quote->setType(Quote::DEVIS);
+                    $quote->setMessage($message);
+                    $quote->setIsActive(false);
                 }
                 else
                 {
-                    $statut->setUser($job->getClient());
+                    $notif = new Notification();
+
+                    $notif->setUser($user);
+                    $notif->setIsActive(true);
+                    $notif->setCode(Notification::QUOTATION_NEW);
+                    $notif->setQuote($quote);
+
+
+
+                    $statut = new Statut();
+                    $statut->setNotification($notif);
+
+                    if($job->getIsMain()==false)
+                    {
+                        $statut->setUser($job->getOperator());
+                    }
+                    else
+                    {
+                        $statut->setUser($job->getClient());
+                    }
+
+                    $statut->setStatut(false);
+
+                    $this->em->persist($statut);
                 }
 
-                $statut->setStatut(false);
 
-                $this->em->persist($statut);
+
 
                 $this->em->persist($quote);
                 $this->em->flush();
@@ -518,12 +575,56 @@ class InterventionService
             }
             else
             {
+                $old = $this->em->getRepository(Quote::class)->findOneBy(array("technician"=>$user,"intervention"=>$job));
+
+                if(!is_null($old)) return ["message"=>"quotation_already_send","code"=>401,"statut"=>false,"data"=>null];
+
                 $quote = new Quote();
+                $quote->setStatut(Quote::SENDBYTECHNICIAN);
                 $quote->setIntervention($job);
                 $quote->setTechnician($user);
 
+                $quote->setSuggestedDate(new \DateTime($date));
+                if($type ==1)
+                {
+                    $quote->setType(Quote::DEVIS);
+                    $quote->setIsActive(false);
+                    $quote->setMessage($message);
+                }
+                else
+                {
+                    $notif = new Notification();
+
+                    $notif->setUser($user);
+                    $notif->setIsActive(true);
+                    $notif->setCode(Notification::QUOTATION_NEW);
+                    $notif->setQuote($quote);
+
+
+
+                    $statut = new Statut();
+                    $statut->setNotification($notif);
+
+                    if($job->getIsMain()==false)
+                    {
+                        $statut->setUser($job->getOperator());
+                    }
+                    else
+                    {
+                        $statut->setUser($job->getClient());
+                    }
+
+                    $statut->setStatut(false);
+
+                    $this->em->persist($statut);
+                }
+
+
+
                 $this->em->persist($quote);
                 $this->em->flush();
+
+
 
                 return ["message"=>"operation_did","code"=>201,"statut"=>true,"data"=>[]];
 
@@ -832,9 +933,13 @@ class InterventionService
                 $users = $this->em->getRepository(User::class)->findTechnicianPerson($domain,$city,$limit,$offset);
 
             }
-            else
+            elseif($ut =="company")
             {
                 $users = $this->em->getRepository(User::class)->findTechnicianCompany($domain,$city,$limit,$offset);
+            }
+            else
+            {
+                $users = $this->em->getRepository(User::class)->findTechnicianAll($domain,$city,$limit,$offset);
             }
 
             return ["message"=>"","code"=>201,"statut"=>true,"data"=>$users];
@@ -918,8 +1023,232 @@ class InterventionService
     {
         $notes = $this->em->getRepository(Note::class)->findBy(array("technician"=>$user),array("date"=>"DESC"),4,0);
 
-        return ["message"=>"","code"=>201,"statut"=>true,"data"=>$notes];
+        return ["message"=>"","code"=>201,"statut"=>false,"data"=>$notes];
 
+
+    }
+
+    public function getProposals(User $user,string  $slug,int $limit,int $offset)
+    {
+        $job = $this->em->getRepository(Intervention::class)->findOneBy(array("slug"=>$slug));
+
+        if(is_null($job))
+        {
+            return ["message"=>"job_not_found","code"=>404,"statut"=>true,"data"=>[]];
+        }
+        else
+        {
+            if($job->getIsActive()==false) return ["message"=>"job_not_found","code"=>404,"statut"=>true,"data"=>[]];
+            else
+            {
+                if($job->getIsMain()==true)
+                {
+                    if($job->getClient()->getId()!=$user->getId())
+                    {
+                        return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
+                    }
+
+                }
+                else
+                {
+                    if($job->getOperator()->getId()!=$user->getId())
+                    {
+                        return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
+                    }
+                }
+
+                $quotes = $this->em->getRepository(Quote::class)->findByJob($job->getId(),$limit,$offset);
+
+                return ["message"=>"","code"=>201,"statut"=>false,"data"=>["quotes"=>$quotes,"job"=>$job]];
+            }
+
+        }
+    }
+
+    public function editJob(User $user, string  $slug,array $data)
+    {
+
+        $job = $this->em->getRepository(Intervention::class)->findOneBy(array("slug"=>$slug));
+
+        if(is_null($job)) return ["message"=>"job_not_found","code"=>401,"statut"=>true,"data"=>[]];
+
+        if($job->getHasEdit()==true) return ["message"=>"job_already_edited","code"=>401,"statut"=>true,"data"=>[]];
+
+        if($job->getIsMain()==true)
+        {
+            if($user->getId() != $job->getClient()->getId()) return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
+        }
+        else
+        {
+            if($user->getId() != $job->getOperator()->getId()) return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
+
+        }
+
+       $req=["title","description","startdate"];
+
+        foreach ($req as $el)
+        {
+            if(!array_key_exists($el,$data)) return ["message"=>"field ".$el." is empty ","code"=>401,"statut"=>true,"data"=>[]];
+        }
+
+        if(strlen($data["description"])<20) return ["message"=>"description field is too short ","code"=>401,"statut"=>false,"data"=>""];
+        if(strlen($data["title"])<0) return ["message"=>"title field is too short ","code"=>401,"statut"=>false,"data"=>""];
+
+        $job->setTitle($data["title"]);
+        $job->setDescription($data["description"]);
+        $job->setStartDate(new \DateTime($data["startdate"]));
+
+        $job->setHasEdit(true);
+
+        $this->em->persist($job);
+        $this->em->flush();
+
+        return ["message"=>"job_updated","code"=>201,"statut"=>false,"data"=>["job"=>$job]];
+
+
+
+
+    }
+
+    public function getDevis(int $limit,$offset)
+    {
+        $res = $this->em->getRepository(Quote::class)->findBy(array("type"=>Quote::DEVIS,"statut"=>Quote::NEW,"isActive"=>false),array("date"=>"DESC"),$limit,$offset);
+
+        return ["message"=>"","code"=>201,"statut"=>false,"data"=>$res];
+
+    }
+
+    public function validDevis(User $user,bool $answer,int $id)
+    {
+
+        if(!in_array($user->getRole()->getCode(),["ROLE_OPERATOR","ROLE_ADMIN"]))
+        {
+            return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
+        }
+        else
+        {
+            $quote = $this->em->getRepository(Quote::class)->findOneBy(array("id"=>$id));
+
+            if(is_null($quote)) return ["message"=>"devis_not_found","code"=>401,"statut"=>true,"data"=>[]];
+
+            if($answer == true)
+            {
+                $quote->setStatut(Quote::VALIDATED);
+                $quote->setIsActive(true);
+
+                $notif = new Notification();
+
+                $notif->setUser($quote->getTechnician());
+                $notif->setIsActive(true);
+                $notif->setCode(Notification::QUOTATION_NEW);
+                $notif->setQuote($quote);
+
+
+
+                $statut = new Statut();
+                $statut->setNotification($notif);
+
+                if($quote->getIntervention()->getIsMain()==false)
+                {
+                    $statut->setUser($quote->getIntervention()->getOperator());
+                }
+                else
+                {
+                    $statut->setUser($quote->getIntervention()->getClient());
+                }
+
+                $statut->setStatut(false);
+
+                $this->em->persist($quote);
+
+                $this->em->persist($statut);
+
+
+            }
+            else
+            {
+                $quote->setStatut(Quote::REFUSED);
+                $this->em->persist($quote);
+
+
+            }
+
+            $this->em->flush();
+
+            return ["message"=>"operation_did","code"=>201,"statut"=>true,"data"=>[]];
+
+
+        }
+    }
+
+    public function validInvitation(User $user,int $answer, int $id)
+    {
+        $quote = $this->em->getRepository(Quote::class)->findOneBy(array("id"=>$id));
+
+        if(is_null($quote)) return ["message"=>"devis_not_found","code"=>401,"statut"=>true,"data"=>[]];
+
+        if($quote->getTechnician()->getId() != $user->getId()) return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
+
+        if($quote->getStatut()!=Quote::NEW) return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
+
+        if($answer ==true)
+        {
+            $quote->setStatut(Quote::ACCEPTEDBYTECHNICIAN);
+        }
+        else
+        {
+            $quote->setStatut(Quote::REFUSEDBYTECHNICIAN);
+        }
+
+
+        if($answer ==true)
+        {
+            $notif = new Notification();
+
+            $notif->setUser($user);
+            $notif->setIsActive(true);
+            $notif->setCode(Notification::QUOTATION_INVITATION_ACCEPTED);
+            $notif->setQuote($quote);
+
+
+
+            $statut = new Statut();
+            $statut->setNotification($notif);
+
+            if($quote->getIntervention()->getIsMain()==false)
+            {
+                $statut->setUser($quote->getIntervention()->getOperator());
+            }
+            else
+            {
+                $statut->setUser($quote->getIntervention()->getClient());
+            }
+
+            $statut->setStatut(false);
+            $this->em->persist($statut);
+        }
+
+
+
+        $this->em->persist($quote);
+
+
+
+        $this->em->flush();
+
+        return ["message"=>"operation_did","code"=>201,"statut"=>false,"data"=>[]];
+
+
+
+    }
+
+    public function getTechniciansDomain(string $slug, int $limit,int $offset)
+    {
+
+        $jobs = $this->em->getRepository(User::class)->findTechniciansDomain($slug, $limit,$offset);
+        $d=$this->em->getRepository(Domain::class)->findOneBy(array("slug"=>$slug));
+
+        return ["message"=>" ","code"=>201,"statut"=>true,"data"=>["jobs"=>$jobs,"domain"=>$d]];
 
     }
 

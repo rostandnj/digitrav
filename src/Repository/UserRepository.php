@@ -156,5 +156,54 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->getResult();
     }
 
+    public function findTechnicianAll($did,$city,$limit,$offset)
+    {
+
+        return $this->createQueryBuilder('u')
+            ->leftJoin("u.role","role")
+            ->leftJoin("u.company","comp","outer")
+            ->leftJoin("comp.location","cL")
+            ->leftJoin("comp.domains","cDomain")
+            ->leftJoin("u.userDetail","uD","outer")
+            ->leftJoin("u.location","uL")
+            ->leftJoin("uD.domains","uDomain")
+            ->where('role.code IN (:role)')
+            ->andWhere("u.isValid = :active OR comp.isValid = :active")
+            ->andWhere("cL.city LIKE :city OR uL.city LIKE :city")
+            ->andWhere("cDomain.id IN (:do) OR uDomain.id IN (:do)")
+
+
+
+            ->setParameter('role',["ROLE_TECHNICIAN_COMPANY","ROLE_TECHNICIAN_PERSON","ROLE_MANAGER_COMPANY"])
+            ->setParameter('active', 1)
+            ->setParameter('city', "%".$city."%")
+            ->setParameter('do', [$did])
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findTechniciansDomain($slug,$limit,$offset)
+    {
+        return $this->createQueryBuilder('u')
+            ->leftJoin("u.userDetail","ud")
+            ->leftJoin("ud.domains","domains")
+            ->leftJoin("u.company","comp")
+            ->leftJoin("comp.domains","compD")
+            ->where("domains.slug = :slug")
+            ->andWhere('u.isActive = :ac')
+            ->andWhere('ud.isValid = :ac OR comp.isValid = :ac')
+
+
+            ->setParameter('slug', $slug)
+            ->setParameter('ac', true)
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 
 }

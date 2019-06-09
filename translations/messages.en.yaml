@@ -198,9 +198,9 @@ category_not_found: Category not found
 category_edited: Category edited
 title_placeholder: Enter a title
 description_placeholder: Describe the problem you are facing
-video_title: short video (3 mo max)?
-image_title1: image  (2 mo maximun)?
-image_title2: Another image (2 mo maximun) ?
+video_title: short video
+image_title1: image
+image_title2: Another image
 empty_field: empty field
 required_field: required field
 users_list: Available technicians
@@ -269,3 +269,27 @@ sub_category_not_found: sub category not found
 sub_category_edited: sub category edited
 choose: choose one option
 without_car_fees: travel expenses can be added if choosen technician is not in the same town
+job_not_found: Job not found
+show_all: show all
+tooltip_name: click on name for show profile
+description_warning: please enter at least 50 characters
+edit_job: Edit Job
+job_already_edited: Job already edited
+job_updated: Job updated
+submit_proposal: submit your application
+candidature : Candidature
+submit_devis: submit a devis
+new_job_date_message: if this date does not suit you, you can propose another at the risk that the client does not accept your application because of this date
+job_devis_message: why this job requires a devis
+job_devis_length: at least 100 characters
+material_need: Do you need specifics equipements
+awaiting_task: Awaiting Tasks
+message: message
+devis_not_found: devis not found
+devis_detail: show devis detail
+accept_invitation: accept invitation
+decline_invitation: decline invitation
+quotation_invitation_accepted: Invitation accepted
+quotation_already_send: Quotation already sended
+send_invitation: send invitation
+all: all

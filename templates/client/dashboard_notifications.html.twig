@@ -60,7 +60,7 @@
                                     {% if notif.notification.code <= 3  %}
                                         {{ 'msg_for_job'|trans }}
 
-                                    <a href="#">{{ notif.notification.quote.intervention.title }}</a>
+                                    <a href="{{ path('web_show_job',{slug:notif.notification.quote.intervention.slug}) }}">{{ notif.notification.quote.intervention.title }}</a>
 
 
 
@@ -73,7 +73,7 @@
 
                                         {% if (notif.notification.code > 7 and notif.notification.code<=10) %}
 
-                                            <a href="{{ path('web_notification_show',{ 'id':notif.id}) }}">{{ 'profile'|trans }}</a>
+                                            <a href="{{ path('web_profile',{'name':app.user.profileName, 'id':app.user.uid}) }}">{{ 'profile'|trans }}</a>
 
 
                                          {% else %}
@@ -87,7 +87,7 @@
 
 
 
-                                    <span class="post-date fonts-italic">{{ notif.date | date('Y-m-d') }}</span>
+                                    <span class="post-date fonts-italic">{{ notif.date | localizeddate('long', 'medium', app.request.cookies.get("lang")) }}</span>
                                 </div>
                                 <hr/>
                             </li>

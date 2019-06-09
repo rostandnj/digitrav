@@ -101,8 +101,65 @@
                             </div>
                         </div>
                     </div>
+                    {% if quotes|length >0 %}
+                    <div class="row row-card-no-pd">
+                        <h3>{{ 'awaiting_task'|trans }}</h3>
+                        <table id="job-devis" class="display table table-responsive table-striped table-hover" >
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>{{ 'title'|trans }}</th>
+                                <th>{{ 'domain'|trans }}</th>
+                                <th>{{ 'category'|trans }}</th>
+                                <th>{{ 'message'|trans }}</th>
+                                <th>{{ 'action'|trans }}</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for quote in quotes %}
+                                <tr>
+                                    <td>{{ quote.id }}</td>
+                                    <td>
+                                        <a style="color: #575962" tabindex="0" class="btn btn-lg " role="button" data-toggle="popover" data-trigger="focus" title="{{ 'title'|trans }}" data-placement="top" data-content="{{ quote.intervention.title }}">{{ quote.intervention.title|slice(0,20) }}...</a>
+
+
+
+                                       </td>
+                                    <td> {{ quote.intervention.domain.name}}</td>
+                                    <td> {{ quote.intervention.category.name}}</td>
+                                    <td>
+                                        <a style="color: #575962" tabindex="0" class="btn btn-lg " role="button" data-toggle="popover" data-trigger="focus" title="{{ 'message'|trans }}" data-content="{{ quote.message }}">{{ quote.message|slice(0,20) }}...</a>
+
+                                        </td>
+                                    <td style="display: flex;">
+                                        <form method="post" action="{{ path('web_valid_quote',{id:quote.id}) }}" >
+                                            <input type="hidden" value="1" name="answer">
+                                            <button type="submit" class="btn btn-sm btn-success">
+                                            {{ 'accept'|trans }}
+                                            </button>
+                                        </form>
+                                        <form method="post" action="{{ path('web_valid_quote',{id:quote.id}) }}">
+                                            <input type="hidden" value="0" name="answer">
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                {{ 'refuse'|trans }}
+                                            </button>
+                                        </form>
+
+                                    </td>
+
+
+                                </tr>
+
+
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
 
                 </div>
+
 
                 {% include 'client/base/dashboard_footer.html.twig' %}
 
@@ -129,5 +186,17 @@
  {% endblock %}
 
 {% block js %}
+
+    <script>
+        $('.popover-dismiss').popover({
+            trigger: 'focus'
+        });
+
+        $(document).ready(function() {
+            $('#job-devis').DataTable({
+            });
+
+        });
+    </script>
 
 {% endblock %}

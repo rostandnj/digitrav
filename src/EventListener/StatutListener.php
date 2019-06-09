@@ -38,6 +38,9 @@ class StatutListener
 
         switch ($code)
         {
+            case -1:
+                $entity->setMessage($this->container->get('translator')->trans('quotation_invitation_accepted'));
+                break;
             case 0:
                 $entity->setMessage($this->container->get('translator')->trans('quotation_invitation'));
                 break;

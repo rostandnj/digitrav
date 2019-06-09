@@ -145,61 +145,73 @@
                         let html="";
                         let url ="{{ url('web_show_job',{slug:"a"}) }}";
 
-                        let party="<a href='";
 
-                        let partw="'></a>";
 
-                        let part1="<li class=\"list-group-item\">\n" +
-                            "\n" +
-                            "                            <div class=\"comment_read mt-3 ml-0\">\n" +
-                            "                                <div class=\"comment_img mb-2\">\n" +
-                            "                                    <img src=\"{{ asset('assets/images/job.png') }}\" width=\"45\" height=\"45\" alt=\"\">\n" +
-                            "\n" +
-                            "                                </div>\n" +
-                            "                                <div class=\"comment_data\">\n" +
-                            "                                    <div class=\"row container-fluid\">\n" +
-                            "                                        <h4 style=\"\" class=\"row container-fluid\" >";
+                        let part1="<li class=\"job-listing\"> <div class=\"job-listing-details\">" +
+                            " <div class=\"job-listing-company-logo\">";
 
                         let partx="</h4>\n" +
                             "                                        <p style=\"font-weight: normal;font-size: 11px!important;\" class=\"text-muted row container-fluid\">\n" +
                             "                                        <strong class=\"text-right \">";
 
 
-                        let part2='</strong>\n' +
-                            '                                        </p>\n' +
-                            '\n' +
-                            '                                    </div>\n' +
-                            '\n' +
-                            '                                    <div class="row container-fluid">\n' +
-                            '                                        <span class="mr-3" ><i class="fa fa-briefcase"></i>';
-                        let part3='</span> <br/>\n' +
-                            '                                        <span class="mr-3"><i class="fa fa-map-marker"></i> ';
-                        let part4='</span>\n' +
-                            '                                    </div>\n' +
-                            '                                    <p>';
+                        let part2=" </div> <div class=\"job-listing-description\">\n" +
+                            "            <h4 class=\"job-listing-company\">";
+                        let part3="</h4>\n" +
+                            "            <h3 class=\"job-listing-title\">";
+                        let part4="</h3>\n" +
+                            "            <p class=\"job-listing-text\">";
 
-                        let part5='</span> <br/>\n' +
-                            '                                        <span class="mr-3"><i class="fas fa-money-bill"></i>';
-                        let part6=' </p>\n' +
-                            '\n' +
-                            '\n' +
-                            '                                </div>\n' +
-                            '                            </div>\n' +
-                            '\n' +
-                            '                        </li>';
+                        let part5="</p>\n" +
+                            "        </div><span class=\"bookmark-icon\"></span>\n" +
+                            "    </div><div class=\"job-listing-footer\">\n" +
+                            "        <ul>\n" +
+                            "            <li><i class=\"fa fa-briefcase\"></i>";
+                        let part6="</li>\n" +
+                            "\n" +
+                            "            <li><i class=\"icon-material-outline-location-on\"></i>";
+
+                        let part7="</li>\n" +
+                            "\n" +
+                            "            <li><i class=\"icon-material-outline-account-balance-wallet\"></i>XAF ";
+                        let part8="</li>\n" +
+                            "            <li><i class=\"icon-material-outline-access-time\"></i>";
+                        let part9="</li>\n" +
+                            "        </ul>\n" +
+                            "    </div>\n" +
+                            "</li>";
 
 
 
                         resultat.users.forEach(function (el) {
 
+                            let img="";
+                            let name="";
 
-                            html = html+part1+"<a href='"+url.replace('/a',"")+"/"+el.slug+"'>"+ el.title+partx+"</a>"+"{{ 'posted'|trans }}"+" "+el.date + part2+el.domain.name +" / "+ el.category.name+part3+
-                                el.location.city+", "+el.location.quater+part5+" XAF " +el.category.budget+part4+el.description.substring(0,200)+part6;
+                            if(el.is_main === false)
+                            {
+                                name = el.client_name;
+
+                                img = "<img src=\"{{ asset('assets/images/job.png') }}\" width=\"45\" height=\"45\" alt=\"\">";
+
+                            }else
+                            {
+                                name = el.client.surname+" "+el.client.name;
+                                let img1 = "{{ asset('assets/uploads/')}}/"+el.client.picture.path;
+                                img ="<img src='"+img1+"' width='45' height='45' alt='profile' >";
+
+                            }
+
+                            html =html + part1+img+part2+name+part3+"<a href='"+url.replace('/a',"")+"/"+el.slug+"'>"+ el.title
+                                +part4+el.description.substring(0,200)+part5+el.domain.name+part6+el.location.city+", "+el.location.quater+part7+
+                                +el.budget+ part8+el.date+part9;
+
                         });
+
 
                         $("#job-list").append(html);
 
-                        $("#counterm").attr("style","height:"+$(document).height()+"px");
+                        $("#counterm").attr("style","height:"+($(document).height()+50)+"px");
                         $("#load-more").attr("disabled",false);
 
 

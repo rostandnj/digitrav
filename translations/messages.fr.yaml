@@ -198,9 +198,9 @@ category_not_found: Catégorie non trouvée
 category_edited: Catégorie modifiée
 title_placeholder: Entrez un titre
 description_placeholder: Décrivez le problème dont vous faites face
-video_title: Vidéo (3 mo maximun) ?
-image_title1: Image  (2 mo maximun)?
-image_title2: Autre image (2 mo maximun) ?
+video_title: Vidéo
+image_title1: Image
+image_title2: Autre image
 empty_field: champ vide
 required_field: champ requis
 users_list: Techiniciens disponibles
@@ -270,4 +270,27 @@ sub_category_not_found: sous catégorie non trouvée
 sub_category_edited: sous catégorie modifiée
 choose: sélectionner une option
 without_car_fees: les frais de déplacement peuvent être ajoutés si le technicien choisi n'est pas dans la même ville
-
+job_not_found: Job non trouvé
+show_all: afficher tout
+tooltip_name: cliquez sur le nom pour afficher le profil
+description_warning: au moins 50 charactères
+edit_job: Modifier le Job
+job_already_edited: Job déjà modifié
+job_updated: Job modifié
+submit_proposal: soumettre votre candidature
+candidature : Candidature
+submit_devis: soumettre un dévis
+new_job_date_message: si cette date ne vous convient pas, vous pouvez proposer une autre au risque que le client n'accepte pas votre candidature à cause de cette date
+job_devis_message: pourquoi ce job necessite un devis
+job_devis_length: au moins 100 charactères
+material_need: Avez vous besoin des matériels spécifiques
+awaiting_task: Tâches en attente
+message: message
+devis_not_found: devis non trouvé
+devis_detail: afficher le détail du devis
+accept_invitation: accepter l'invitation
+decline_invitation: decliner l'invitation
+quotation_invitation_accepted: Invitation acceptée
+quotation_already_send: Quotation déjà envoyée
+send_invitation: envoyer une invitation
+all: tout

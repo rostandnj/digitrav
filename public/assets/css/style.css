@@ -54,7 +54,7 @@
 
 body {
     overflow-x: hidden;
-    font-family: 'Open Sans', sans-serif;
+    /*font-family: 'Open Sans', sans-serif;*/
 }
 
 h1,
@@ -1614,6 +1614,10 @@ padding-top: 5px!important;}
     .short-nav{
         display: block;
     }
+
+    .send-invitation{
+        float: none;
+    }
 }
 
 
@@ -2013,3 +2017,11 @@ body {
 
 
 
+.alert-dismissible .close{
+
+    padding:0px!important;
+}
+
+.popover {
+    min-width: 80% !important;
+}

@@ -106,7 +106,9 @@ class MaterialQuote
     {
         $tab =["id"=>$this->id,
             "date"=>$this->getDate()->format(\DateTime::ISO8601),
-            "is_active"=>$this->isActive,"name"=>$this->name];
+            "is_active"=>$this->isActive,"name"=>$this->name,
+            "name_en"=>$this->nameEn,
+            "name_fr"=>$this->nameFr,];
 
         return $tab;
     }

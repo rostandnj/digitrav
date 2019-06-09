@@ -134,6 +134,11 @@ class Intervention
      */
     private $subCategory;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $hasEdit;
+
     const NEW=0;
     const ACCEPTED=1;
     const PAID=2;
@@ -148,6 +153,7 @@ class Intervention
         $this->date = new \DateTime();
         $this->statut = self::NEW;
         $this->quotes = new ArrayCollection();
+        $this->hasEdit = false;
     }
 
     public function getId(): ?int
@@ -477,6 +483,7 @@ class Intervention
             "can_save"=>$this->canSave,
             "can_delete"=>$this->canDelete,
             "can_alert"=>$this->canAlert,
+            "budget"=>$this->budget
         ];
 
         if($this->isMain ==true)
@@ -563,6 +570,18 @@ class Intervention
     public function setSubCategory(?SubCategory $subCategory): self
     {
         $this->subCategory = $subCategory;
+
+        return $this;
+    }
+
+    public function getHasEdit(): ?bool
+    {
+        return $this->hasEdit;
+    }
+
+    public function setHasEdit(bool $hasEdit): self
+    {
+        $this->hasEdit = $hasEdit;
 
         return $this;
     }

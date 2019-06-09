@@ -345,3 +345,33 @@ web_dashboard_scategories_list:
   path: /dashboard/scategories/list
   controller: App\Controller\WebController::subCategoryCategory
   methods: [POST]
+
+web_job_show_proposals:
+  path: /job/{slug}/proposals
+  controller: App\Controller\WebController::showJobProposals
+  methods: [GET]
+
+web_job_show_proposals_more:
+  path: /job/{slug}/proposals/more
+  controller: App\Controller\WebController::showJobProposalsMore
+  methods: [GET]
+
+web_edit_job:
+  path: /edit/job/{slug}/{id}
+  controller: App\Controller\WebController::editJob
+  methods: POST
+
+web_valid_quote:
+  path: /quote/valid/{id}
+  controller: App\Controller\WebController::validDevis
+  methods: POST
+
+web_accept_quote_invitation:
+  path: /job/{slug}/quote/accept/{qid}
+  controller: App\Controller\WebController::validInvitation
+  methods: POST
+
+web_more_domain_technicians:
+  path: /job/domain/technicians/more/{slug}
+  controller: App\Controller\WebController::findMoreDomainTechnicians
+  methods: [GET]

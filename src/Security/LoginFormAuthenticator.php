@@ -87,12 +87,20 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
             throw new CustomUserMessageAuthenticationException($this->container->get('translator')->trans('login_incorrect'));
         }
 
+        if ($user->getIsActive()==false) {
+            // fail authentication with a custom error
+            throw new CustomUserMessageAuthenticationException($this->container->get('translator')->trans('account_not_activated'));
+        }
+
+
         return $user;
     }
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
+            $res =$this->passwordEncoder->isPasswordValid($user, $credentials['password']);
+        return $res;
+
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)

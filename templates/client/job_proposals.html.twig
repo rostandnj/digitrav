@@ -1,0 +1,387 @@
+{% extends 'client/base/base.html.twig' %}
+
+{% block main %}
+
+    {% if job is not null %}
+
+        <section class="section bg-light mt--5">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="blog_box rounded mt-3">
+
+                                    <div class="blog_detail rounded m-2 p-4 bg-white">
+                                        <h4 class="font-weight-bold"><a href="{{ path('web_show_job',{slug:job.slug}) }}">{{ job.title }}</a></h4>
+                                        <p class="mt-3 text-muted"> {{ job.description }}</p>
+                                        <div class="blog_detail_devider"></div>
+                                        <div class="clearfix mt-3">
+                                            <p class="text-muted float-left mb-0">{{ 'by'|trans }} <a href="#" class="text-custom font-weight-bold">{% if job.isMain ==true %} {{ job.client.name }} {{ job.client.surname }} {% else %}{{ job.clientName }} {% endif %}</a></p>
+                                            <span class="text-muted float-right">{{ job.date|date('y-m-d H:i:s')|timeago }}</span>
+                                        </div>
+                                        <div class="clearfix mt-3">
+                                            <p class="text-muted float-left mb-0"> <span class="fas fa-map-marker-alt"></span> {{ job.location.city }} , {{ job.location.quater }}</p>
+
+                                        </div>
+                                        <div class="blog_detail_devider mt-3"></div>
+                                        <div class="blog_tag mt-3">
+                                            <span class="badge badge-info">{{ job.domain.name }}</span>
+                                            <span class="badge badge-info">{{  job.category.name }}</span>
+                                            {% if job.subCategory is not null %}
+                                                <span class="badge badge-info">{{  job.subCategory.name }}</span>
+                                            {% endif %}
+
+                                        </div>
+
+                                        <div class="comment_blog mt-5">
+                                            <div class="col-md-12 mb-2">
+                                                <h6>{{ 'start_date'|trans }} : </h6> {{ job.startDate|localizeddate('long', 'medium', app.request.cookies.get("lang")) }}
+                                                <div class="blog_detail_devider"></div>
+
+                                            </div>
+
+
+                                            {% if quotes|length >0 %}
+
+                                                <div class="col-md-12 mt-3">
+                                                    <h4>{{ 'proposals'|trans }}</h4>
+
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <ul class="list-group" id="quote-list">
+                                                        {% for q in quotes %}
+                                                            <li  class="job-listing with-apply-button">
+
+
+                                                                <div class="job-listing-details">
+
+
+                                                                    <div class="job-listing-company-logo">
+                                                                        <img src="{% if q.technician.role.code !="ROLE_MANAGER_COMPANY" %} {{ asset('assets/uploads/'~q.technician.picture.path) }}{% else %} {{ asset('assets/uploads/'~q.technician.company.logo.path) }} {% endif %}" alt="" class="img-fluid rounded-circle">
+                                                                    </div>
+
+
+                                                                    <div class="job-listing-description">
+                                                                        <h3 class="job-listing-title">
+                                                                            <a  style="color: grey!important;" href="{{ path('web_profile_tech',{name:q.technician.profileName,id:q.technician.uid}) }}" class="text-dark d-block">{% if q.technician.role.code !="ROLE_MANAGER_COMPANY" %} {{ q.technician.surname }} {{ q.technician.name }}  {% else %} {{ q.technician.company.name }}  {% endif %}
+                                                                            </a>
+
+                                                                            <small>
+                                                                                {% if q.technician.userDetail is not null %}
+                                                                                    {% if q.technician.userDetail.note==0 %}
+                                                                                        {% for i in 1..5-q.technician.userDetail.note %}
+                                                                                            <img src="{{ asset('assets/images/star_no.png') }}" width="20" />
+                                                                                        {% endfor %}
+                                                                                    {% else %}
+                                                                                        {% for i in 0..q.technician.userDetail.note-1 %}
+                                                                                            <img src="{{ asset('assets/images/star_ok.png') }}" width="20" />
+                                                                                        {% endfor %}
+
+                                                                                        {% if q.technician.userDetail.note <5 %}
+                                                                                            {% for i in 1..5-q.technician.userDetail.note %}
+                                                                                                <img src="{{ asset('assets/images/star_no.png') }}" width="20" />
+                                                                                            {% endfor %}
+
+                                                                                        {% endif %}
+
+
+                                                                                    {% endif %}
+
+                                                                                {% else %}
+
+                                                                                    {% if q.technician.company.note==0 %}
+                                                                                        {% for i in 1..5-q.technician.company.note %}
+                                                                                            <img src="{{ asset('assets/images/star_no.png') }}" width="20" />
+                                                                                        {% endfor %}
+                                                                                    {% else %}
+                                                                                        {% for i in 0..q.technician.company.note-1 %}
+                                                                                            <img src="{{ asset('assets/images/star_ok.png') }}" width="20" />
+                                                                                        {% endfor %}
+
+                                                                                        {% if q.technician.company.note <5 %}
+                                                                                            {% for i in 1..5-q.technician.company.note %}
+                                                                                                <img src="{{ asset('assets/images/star_no.png') }}" width="20" />
+                                                                                            {% endfor %}
+
+                                                                                        {% endif %}
+
+
+                                                                                    {% endif %}
+                                                                                {% endif %}
+                                                                            </small>
+                                                                        </h3>
+
+                                                                        <!-- Job Listing Footer -->
+                                                                        <div class="job-listing-footer">
+                                                                            <ul>
+                                                                                <li><i class="icon-material-outline-location-on"></i> {% if q.technician.role.code !="ROLE_MANAGER_COMPANY" %} {{ q.technician.location.city }} , {{ q.technician.location.quater }}{% else %} {{ q.technician.company.location.city }} , {{ q.technician.company.location.quater }}  {% endif %}</li>
+
+                                                                                <li><i class="icon-material-outline-business"></i> {% if q.technician.role.code !="ROLE_MANAGER_COMPANY" %} {{ 'technician'|trans }} {% else %}{{ 'company'|trans }}   {% endif %} <div class="verified-badge" title="Verified Employer" data-tippy-placement="top"></div></li>
+
+                                                                                <li><i class="icon-material-outline-alarm-add"></i> {{ q.suggestedDate|localizeddate('long', 'medium', app.request.cookies.get("lang")) }}</li>
+                                                                                <li><i class="icon-material-outline-access-time"></i> {{ q.date|date('y-m-d H:i:s')|timeago }}</li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <!-- Apply Button -->
+                                                                    {% if q.type == 1 %}
+                                                                   <button tabindex="0" class="btn btn-lg " role="button" data-toggle="popover" data-trigger="focus" title="{{ 'message'|trans }}" data-content="{{ q.message }}" class="btn btn-outline-dark">
+
+                                                                       <span class="list-apply-button ripple-effect">{{ 'devis_detail'|trans }}</span>
+                                                                   </button>
+
+                                                                    {% endif %}
+                                                                    <button class="btn btn-success"> <span class="list-apply-button ripple-effect">{{ 'valid'|trans }}</span></button>
+                                                                </div>
+                                                            </li>
+
+
+
+                                                        {% endfor %}
+
+                                                    </ul>
+                                                    <button id="load-more"  class="btn btn-primary">{{ 'load_more'|trans }} </button><img id="loader" width="95" height="95" src="{{ asset('assets/images/loader.gif') }}">
+
+                                                </div>
+
+
+                                            {% endif %}
+
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+
+
+    {% else %}
+    <section class="section bg-light mt--5">
+        <div class="container">
+            <div class="row">
+                {{ 'job_not_found'|trans }} / {{ 'operation_denied'|trans }}
+            </div>
+            </div>
+    </section>
+    {% endif %}
+
+
+{% endblock %}
+
+{% block js %}
+
+    <script>
+        $('.popover-dismiss').popover({
+            trigger: 'focus'
+        });
+
+        $("#load-more").hide();
+        $("#loader").hide();
+
+        var nbItem="{{ quotes|length }}";
+        var totalItem=parseInt(nbItem);
+
+        if(nbItem>=1) $("#load-more").show();
+
+        let link1 ="{{ url('web_job_show_proposals_more',{slug:job.slug}) }}";
+        //let link = link1.replace('/axx',"/"+el.technician.uid);
+
+
+        $("#load-more").on("click",function () {
+
+            $("#load-more").attr("disabled",true);
+            $("#loader").show();
+
+
+
+            $.ajax({
+                type        : 'GET', // define the type of HTTP verb we want to use (POST for our form)
+                url         : link1, // the url where we want to POST
+                data        : {"offset":totalItem,"limit":1}, // our data object
+                dataType    : 'json', // what type of data do we expect back from the server
+                encode          : true,
+                success : function(resultat, statut)
+                {
+                    $("#loader").hide();
+
+
+                    if(resultat.quotes.length>0)
+                    {
+                        totalItem+=resultat.quotes.length;
+                        if(resultat.quotes.length<1)$("#load-more").hide();
+                        else $("#load-more").attr("disabled",false);
+
+                        let html="";
+                        let url ="{{ url('web_profile_tech',{name:"axx",id:"ayy"}) }}";
+
+
+
+                        let part1='<li  class="job-listing with-apply-button">\n' +
+                            '\n' +
+                            '\n' +
+                            '    <div class="job-listing-details">\n' +
+                            '\n' +
+                            '\n' +
+                            '        <div class="job-listing-company-logo">';
+
+
+                        let part2='</div>\n' +
+                            '\n' +
+                            '\n' +
+                            '        <div class="job-listing-description">\n' +
+                            '            <h3 class="job-listing-title">';
+
+
+
+                        let part31='</small></h3><div class="job-listing-footer"><ul><li><i class="icon-material-outline-location-on"></i>';
+
+                        let part32='</li>\n' +
+                            '\n' +
+                            '                    <li><i class="icon-material-outline-business"></i>';
+
+                        let part33='</li>\n' +
+                            '\n' +
+                            '                    <li><i class="icon-material-outline-access-time"></i> ';
+
+                        let part34='</li>\n' +
+                            '                </ul></div></div><button class="btn btn-success"> <span class="list-apply-button ripple-effect">';
+
+
+                        resultat.quotes.forEach(function (el) {
+
+                            let img="";
+                            let img1="";
+                            let name="";
+                            let note="";
+                            let location="";
+                            let type="";
+
+                            let ur= url.replace('/axx',"/"+el.technician.profile_name);
+                            let u = ur.replace('/ayy',"/"+el.technician.uid);
+                            let end='</span></button></div></li>';
+
+
+                            if(el.technician.role.code === "ROLE_TECHNICIAN_PERSON")
+                            {
+                                name = el.technician.surname+" "+el.technician.name;
+                                img1 = "{{ asset('assets/uploads/')}}/"+el.technician.picture.path;
+                                img ="<img src='"+img1+"' width='55' height='55' alt='technician' class='img-fluid rounded-circle'>";
+
+                                if(el.technician.user_detail.note >0)
+                                {
+                                    for(i=0;i<=el.technician.user_detail.note-1;i++)
+                                    {
+                                        note=note+" <img src=\"{{ asset('assets/images/star_ok.png') }}\" width=\"20\" />";
+                                    }
+
+                                    for( i=1;i<=5-el.technician.user_detail.note;i++)
+                                    {
+                                        note=note+" <img src=\"{{ asset('assets/images/star_no.png') }}\" width=\"20\" />";
+                                    }
+                                }
+                                else
+                                {
+                                    for( i=1;i<=5;i++)
+                                    {
+                                        note=note+" <img src=\"{{ asset('assets/images/star_no.png') }}\" width=\"20\" />";
+                                    }
+                                }
+
+                                location= el.technician.location.city+","+el.technician.location.quater;
+                                type="{{ 'technician'|trans }}";
+
+                            }
+                            else
+                            {
+                                name = el.technician.company.name;
+                                img1 = "{{ asset('assets/uploads/')}}/"+el.technician.company.logo.path;
+                                img ="<img src='"+img1+"' width='55' height='55' alt='company' class='img-fluid rounded-circle'>";
+
+                                if(el.technician.company.note >0)
+                                {
+                                    for(i=0;i<=el.technician.company.note-1;i++)
+                                    {
+                                        note=note+" <img src=\"{{ asset('assets/images/star_ok.png') }}\" width=\"20\" />";
+                                    }
+
+                                    for( i=1;i<=5-el.technician.company.note;i++)
+                                    {
+                                        note=note+" <img src=\"{{ asset('assets/images/star_no.png') }}\" width=\"20\" />";
+                                    }
+                                }
+                                else
+                                {
+                                    for( i=1;i<=5;i++)
+                                    {
+                                        note=note+" <img src=\"{{ asset('assets/images/star_no.png') }}\" width=\"20\" />";
+                                    }
+                                }
+
+                                location= el.technician.company.location.city+","+el.technician.company.location.quater;
+                                type="{{ 'company'|trans }}";
+
+                            }
+
+                            let detail ="";
+
+                            if(el.type ==1)
+                            {
+                                detail ="<button tabindex=\"0\" class=\"btn btn-lg \" role=\"button\" data-toggle=\"popover\" data-trigger=\"focus\" title=\"{{ 'message'|trans }}\" data-content=\""+el.message+"\" class=\"btn btn-outline-dark\">\n" +
+                                    "\n" +
+                                    "                                                                       <span class=\"list-apply-button ripple-effect\">{{ 'devis_detail'|trans }}</span>\n" +
+                                    "                                                                   </button>";
+                            }
+
+                            html =html + part1+img+part2+"<a  style=\"color: grey!important;\" href='"+u+"'>"+ name
+                                +"</a><br/><small>"+note+part31+location+part32+type+
+                                    "<li><i class=\"icon-material-outline-alarm-add\"></i>"+el.suggested_date+"</li>"+part33+
+                                el.date+part34+"{{ 'valid'|trans }}"+end;
+
+
+
+                        });
+
+
+                        $("#quote-list").append(html);
+
+                        $("#counterm").attr("style","height:"+($(document).height()+50)+"px");
+                        $("#load-more").attr("disabled",false);
+
+
+
+                    }
+                    else
+                    {
+                        $("#load-more").attr("disabled",false);
+                        $("#load-more").hide();
+                    }
+
+
+
+                },
+
+                error : function(resultat, statut, erreur){
+                    $("#loader").hide();
+                    console.log(resultat);
+
+                }
+
+            });
+
+
+
+        })
+    </script>
+
+{% endblock %}

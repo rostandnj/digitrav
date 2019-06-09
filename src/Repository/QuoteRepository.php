@@ -19,22 +19,23 @@ class QuoteRepository extends ServiceEntityRepository
         parent::__construct($registry, Quote::class);
     }
 
-    // /**
-    //  * @return Quote[] Returns an array of Quote objects
-    //  */
-    /*
-    public function findByExampleField($value)
+
+    public function findByJob($id,$limit,$offset)
     {
         return $this->createQueryBuilder('q')
-            ->andWhere('q.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('q.id', 'ASC')
-            ->setMaxResults(10)
+            ->leftJoin('q.intervention','int')
+            ->where('int.id = :id')
+            ->andWhere('q.statut IN (:tab)')
+            ->setParameter('id', $id)
+            ->setParameter('tab', [Quote::ACCEPTED,Quote::SENDBYTECHNICIAN,Quote::DONE,Quote::PAID,Quote::VALIDATED,Quote::ACCEPTEDBYTECHNICIAN])
+            ->orderBy("q.date","DESC")
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+
 
     /*
     public function findOneBySomeField($value): ?Quote

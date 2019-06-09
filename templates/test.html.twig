@@ -1,427 +1,65 @@
-{% extends 'client/base/base.html.twig' %}
-
-{% block main %}
-    <div class="wrapper compact-wrapper">
-        {% if app.user.role.code in ["ROLE_ADMIN","ROLE_SADMIN","ROLE_OPERATOR"] %}
-            {% include 'client/dashboard_nav.html.twig' %}
-
-        {% elseif app.user.role.code in ["ROLE_MANAGER_COMPANY","ROLE_TECHNICIAN_PERSON","ROLE_TECHNICIAN_COMPANY"] %}
-            {% include 'client/dashboard_technician_nav.html.twig' %}
-        {% else %}
-            {% if app.user.role.code =="ROLE_CLIENT" %}
-                {% include 'client/dashboard_client_nav.html.twig' %}
-
-            {% endif %}
-        {% endif%}
+<li  class="job-listing with-apply-button">
 
 
+    <div class="job-listing-details">
 
 
-
-
-        <div class="main-panel " style="margin-top: -65px">
-            <div class="content">
-                <div class="panel-header bg-primary-gradient">
-                    <div class="page-inner py-5">
-                        <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
-                            <div>
-                                <h3 class="text-white pb-2 fw-bold">{{ 'create_job'|trans }}</h3>
-                            </div>
-                            <div class="row ml-md-auto py-2 py-md-0 short-nav">
-
-                                {% if app.user.role.code in ["ROLE_ADMIN","ROLE_SADMIN","ROLE_OPERATOR"] %}
-
-                                    {% include 'client/shortcut_admin_nav.html.twig' %}
-
-                                {% endif %}
-
-                                {% if app.user.role.code == "ROLE_CLIENT" %}
-
-                                    {% include 'client/shortcut_client_nav.html.twig' %}
-
-                                {% endif %}
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="page-inner mt--5">
-                    <form method="post" class="row container-fluid row-card-no-pd mt--2" enctype="multipart/form-data">
-
-
-                        {% if app.user.role.code =="ROLE_OPERATOR" %}
-
-                            <div class="col-lg-12">
-                                <div class="my_profile_input form-group">
-                                    <label for="client">{{ 'client'|trans }}</label>
-                                    <input type="text" class="form-control" id="client" name="client" required placeholder="" value="{% if client is defined %}{{ client }}{% endif %}">
-                                    <div class="invalid-feedback">
-                                        {{ 'required_field'|trans }}
-                                    </div>
-                                </div>
-                            </div>
-                        {% endif %}
-
-                        <div class="col-lg-12">
-                            <div class="my_profile_input form-group">
-                                <label for="title">{{ 'title'|trans }}</label>
-                                <input type="text" class="form-control" id="title" name="title" required placeholder="{{ 'title_placeholder'|trans }}" value="{% if title is defined %}{{ title }}{% endif %}">
-                                <div class="invalid-feedback">
-                                    {{ 'required_field'|trans }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="my_profile_input form-group">
-                                <label for="domain">{{ 'domain'|trans }}</label>
-                                <select class="form-control" id="domain" name="domain" required autofocus>
-
-                                    {% for domain in domains %}
-                                        <option  value="{{ domain.id }}" >{{ domain.name }}</option>
-                                    {% endfor %}
-                                </select>
-                                <div class="invalid-feedback">
-                                    {{ 'required_field'|trans }}
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="my_profile_input form-group">
-                                <label for="category">{{ 'category'|trans }}</label>
-                                <select class="form-control" id="category" name="category" required autofocus>
-
-                                </select>
-                                <div class="invalid-feedback">
-                                    {{ 'required_field'|trans }}
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="my_profile_input form-group">
-                                <label for="scategory">{{ 'sub-category'|trans }}</label>
-                                <select class="form-control" id="scategory" name="scategory" required autofocus>
-
-                                </select>
-                                <div class="invalid-feedback">
-                                    {{ 'required_field'|trans }}
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div class="col-md-12 " id="users-div">
-                            <div class="form-group" >
-                                <label class="form-label">{{ 'users_list'|trans }}</label>
-                                <div class="row" id="users">
-
-
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
-                            <div class="my_resume_textarea">
-                                <div class="form-group">
-                                    <label for="description">{{ 'job_description'|trans }}</label>
-                                    <textarea  required class="form-control" id="description" rows="9" name="description" placeholder="{{ 'description_placeholder'|trans }}" value="{% if description is defined %}{{ description }}{% endif %}"></textarea>
-                                    <div class="invalid-feedback">
-                                        {{ 'required_field'|trans }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="city">{{ 'city'|trans }} </label>
-                                <select class="form-control" id="city" name="city" required autofocus>
-
-                                </select>
-                                <div class="invalid-feedback">
-                                    {{ 'required_field'|trans }}
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="quater">{{ 'quater'|trans }} </label>
-                                <input name="quater" id="quater" type="text" class="form-control" required value="{% if quater is defined %}{{ quater }}{% endif %}">
-                                <div class="invalid-feedback">
-                                    {{ 'required_field'|trans }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 ">
-                            <div class="form-group">
-                                <label for="street">{{ 'street'|trans }}
-
-                                </label>
-                                <input name="street"  id="street" type="text" class="form-control"  required  value="{% if street is defined %}{{ street }}{% endif %}">
-                                <div class="invalid-feedback">
-                                    {{ 'required_field'|trans }}
-                                </div>
-                            </div>
-                        </div>
-
-
-
-
-                        <div class="col-md-6 ">
-                            <div class="my_profile_input form-group">
-                                <label for="video">{{ 'video_title'|trans }}</label>
-                                <input type="file" class="form-control" id="video"  accept="video/mp4" name="video" >
-                            </div>
-                        </div>
-                        <div class="col-md-6 ">
-                            <div class="my_profile_input form-group">
-                                <label for="image1">{{ 'image_title1'|trans }}</label>
-                                <input type="file" class="form-control" id="image1"  accept="image/*" name="image1" >
-                            </div>
-                        </div>
-                        <div class="col-md-6 ">
-                            <div class="my_profile_input form-group">
-                                <label for="image2">{{ 'image_title2'|trans }}</label>
-                                <input type="file" class="form-control" id="image2"  accept="image/*" name="image2" >
-                            </div>
-                        </div>
-                        <div class="col-md-12 col-lg-12">
-                            <div class="my_profile_input form-group">
-                                <label for="start_date">{{ 'start_date'|trans }}</label>
-                                <input type="date"  value="{% if start_date is defined %}{{ start_date }}{% endif %}" class="form-control" id="start_date" name="start_date" min="{{ date('now')|date('Y-m-d') }}" required>
-                                <div class="invalid-feedback">
-                                    {{ 'required_field'|trans }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="my_profile_input form-group">
-                                <label for="amount">{{ 'job_amount'|trans }}</label>
-                                <input class="form-control" name="amount" type="text" id="amount" value="" readonly/>
-                                <div class="invalid-feedback">
-                                    {{ 'required_field'|trans }}
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <input type="hidden" class="form-control" id="longitude"  name="longitude" value="">
-
-                        <input type="hidden" class="form-control" id="latitude"  name="latitude" value="">
-
-
-
-                        {% if message is defined %}
-                            <div class="col-md-12 alert alert-danger">
-
-                                {{ message }}
-                            </div>
-                        {% endif %}
-
-                        <div class="col-md-12">
-                            <div class="my_profile_input">
-                                <button type="submit" class="btn btn-lg btn-thm" href="#">{{ 'send'|trans }}</button>
-                            </div>
-                        </div>
-
-                    </form>
-
-                </div>
-                {% include 'client/base/dashboard_footer.html.twig' %}
-            </div>
+        <div class="job-listing-company-logo">
+            <img src="{% if q.technician.role.code !="ROLE_MANAGER_COMPANY" %} {{ asset('assets/uploads/'~q.technician.picture.path) }}{% else %} {{ asset('assets/uploads/'~q.technician.company.logo.path) }} {% endif %}" alt="" class="img-fluid rounded-circle">
         </div>
 
 
-
-    </div>
-
-
-
-{% endblock %}
-
-{% block footer %}
-
-{% endblock %}
-
-
-
-{% block js %}
-
-    <script>
-        $("#users-div").hide();
-
-        var data3=[];
-        $.get("{{ path('api_all_city') }}", function(data2){
-
-            data3 =data2;
-
-            if(data3.length>0)
-            {
-                var html="";
-                data3.forEach(function (el) {
-                    html = html+"<option  value="+el.name+">"+el.name +" </option>";
-                });
-
-                $("#city").html(html);
-
-
-
-            }
-
-
-
-
-        },'json');
-
-        function getSubCategory(id) {
-
-            if(id>0)
-            {
-                $.ajax({
-                    type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
-                    url         : "{{ path('web_dashboard_scategories_list') }}", // the url where we want to POST
-                    data        : {"id":id}, // our data object
-                    dataType    : 'json', // what type of data do we expect back from the server
-                    encode          : true,
-                    success : function(resultat, statut)
-                    {
-
-                        if(resultat.data.length>0)
-                        {
-                            var html="";
-                            resultat.data.forEach(function (el) {
-
-                                if(el.note===null)
-                                {
-                                    html = html+"<option  value="+el.id+">"+el.name +" </option>";
-                                }
-                                else {
-                                    html = html+"<option  value="+el.id+">"+el.name + " ("+el.note+" )"  +" </option>";
-                                }
-
-                            });
-
-                            $("#scategory").html(html);
-
-                        }
-
-                    },
-
-                    error : function(resultat, statut, erreur){
-                        console.log(resultat);
-
-                    }
-
-                });
-            }
-
-        }
-
-
-        function getDomain(id) {
-            if(id>0)
-            {
-                $.ajax({
-                    type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
-                    url         : "{{ path('web_dashboard_categories_domain') }}", // the url where we want to POST
-                    data        : {"id":id,"other":0}, // our data object
-                    dataType    : 'json', // what type of data do we expect back from the server
-                    encode          : true,
-                    success : function(resultat, statut)
-                    {
-                        $("#users").html("");
-                        $("#users-div").hide();
-
-
-                        if(resultat.data.length>0)
-                        {
-                            var html="";
-                            let i=0;
-                            resultat.data.forEach(function (el) {
-                                html = html+"<option  value="+el.id+">"+el.name +" </option>";
-
-                                if(i===0){getSubCategory(parseInt(el.id));}
-                                i++;
-                            });
-
-                            $("#category").html(html);
-
-                        }
-
-                        if(resultat.users.length>0 || resultat.companies.length>0)
-                        {
-                            var us="";
-
-                            var first="<div class=\"col-md-2 col-sm-4 col-xs-4\">\n" +
-                                "                            <label class=\"imagecheck mb-4\">\n" +
-                                "                            <input name=\"imagecheck\" type=\"checkbox\" value=\"1\" class=\"imagecheck-input\">\n" +
-                                "                            <figure class=\"imagecheck-figure\">";
-
-                            var last =" </figure>\n" +
-                                "                            </label>\n" +
-                                "                            </div>";
-
-                            resultat.users.forEach(function(el){
-
-
-
-
-                                us=us+first+
-                                    "<img width=\"100px\" height=\"100px\" src='{{ asset('assets/uploads') }}"+"/"+el.picture.path +"' alt=\"title\" class=\"imagecheck-image\">\n"+
-                                    "<h6>"+ el.name+" - "+el.user_detail.note+ "<img src=\"{{ asset('assets/images/star_ok.png') }}\" width=\"15\" />"+"</h6>"+
-                                    last;
-
-                            });
-                            resultat.companies.forEach(function(el){
-
-
-
-                                us=us+first+
-                                    "<img width=\"100px\" height=\"100px\" src='{{ asset('assets/uploads') }}"+"/"+el.logo.path+ "' alt=\"title\" class=\"imagecheck-image\">\n"+
-                                    "<h6>"+ el.name+ " (C) - "+ el.note +"<img src=\"{{ asset('assets/images/star_ok.png') }}\" width=\"15\" /> "+ "</h6>"+
-                                    last;
-
-                            });
-
-                            $("#users").html(us);
-                            $("#users-div").show();
-
-                            $("#counterm").attr("style","height:"+$(document).height()+"px");
-
-
-
-                        }
-
-
-                    },
-
-                    error : function(resultat, statut, erreur){
-                        console.log(resultat);
-
-                    }
-
-                });
-            }
-        };
-
-        var cuV = $("#domain").val();
-
-        $("#domain").on("click",function () {
-            $("#category").html("");
-            $("#scategory").html("");
-            getDomain(parseInt($("#domain").val()));
-        });
-
-        $("#category").on("click",function () {
-            $("#scategory").html("");
-            getSubCategory(parseInt($("#category").val()));
-        });
-
-        getDomain(cuV);
-
-
-
-    </script>
-
-{% endblock %}
+        <div class="job-listing-description">
+            <h3 class="job-listing-title">
+                <a  style="color: grey!important;" href="{{ path('web_profile_tech',{name:q.technician.profileName,id:q.technician.uid}) }}" class="text-dark d-block">{% if q.technician.role.code !="ROLE_MANAGER_COMPANY" %} {{ q.technician.surname }} {{ q.technician.name }}  {% else %} {{ q.technician.company.name }}  {% endif %}
+                </a>
+
+                <small>
+                    {% if q.technician.userDetail is not null %}
+                        {% if q.technician.userDetail.note==0 %}
+                            {% for i in 1..5-q.technician.userDetail.note %}
+                                <img src="{{ asset('assets/images/star_no.png') }}" width="20" />
+                            {% endfor %}
+                        {% else %}
+                            {% for i in 0..q.technician.userDetail.note-1 %}
+                                <img src="{{ asset('assets/images/star_ok.png') }}" width="20" />
+                            {% endfor %}
+
+                            {% if q.technician.userDetail.note <5 %}
+                                {% for i in 1..5-q.technician.userDetail.note %}
+                                    <img src="{{ asset('assets/images/star_no.png') }}" width="20" />
+                                {% endfor %}
+
+                            {% endif %}
+
+
+                        {% endif %}
+
+                    {% else %}
+
+                        {% if q.technician.company.note==0 %}
+                            {% for i in 1..5-q.technician.company.note %}
+                                <img src="{{ asset('assets/images/star_no.png') }}" width="20" />
+                            {% endfor %}
+                        {% else %}
+                            {% for i in 0..q.technician.company.note-1 %}
+                                <img src="{{ asset('assets/images/star_ok.png') }}" width="20" />
+                            {% endfor %}
+
+                            {% if q.technician.company.note <5 %}
+                                {% for i in 1..5-q.technician.company.note %}
+                                    <img src="{{ asset('assets/images/star_no.png') }}" width="20" />
+                                {% endfor %}
+
+                            {% endif %}
+
+
+                        {% endif %}
+                    {% endif %}
+                </small></h3><div class="job-listing-footer"><ul><li><i class="icon-material-outline-location-on"></i> {% if q.technician.role.code !="ROLE_MANAGER_COMPANY" %} {{ q.technician.location.city }} , {{ q.technician.location.quater }}{% else %} {{ q.technician.company.location.city }} , {{ q.technician.company.location.quater }}  {% endif %}</li>
+
+                    <li><i class="icon-material-outline-business"></i> {% if q.technician.role.code !="ROLE_MANAGER_COMPANY" %} {{ 'technician'|trans }} {% else %}{{ 'company'|trans }}   {% endif %} <div class="verified-badge" title="Verified Employer" data-tippy-placement="top"></div></li>
+
+                    <li><i class="icon-material-outline-access-time"></i> {{ q.date|date('y-m-d H:i:s')|timeago }}</li>
+                </ul></div></div><button class="btn btn-success"> <span class="list-apply-button ripple-effect">
+                Apply Now</span></button></div></li>

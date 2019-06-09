@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Integer;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\QuoteRepository")
@@ -27,7 +30,7 @@ class Quote
     private $isActive;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="integer")
      */
     private $statut;
 
@@ -54,11 +57,37 @@ class Quote
      */
     private $amount;
 
+    /**
+     * @ORM\Column(type="datetimetz")
+     */
+    private $suggestedDate;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $type;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $message;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ToolQuote", mappedBy="quote", orphanRemoval=true)
+     */
+    private $toolQuotes;
+
     const NEW =0;
     const ACCEPTED =1;
     const REFUSED =2;
     const PAID =3;
     const DONE=4;
+    const DEVIS=true;
+    const QUOTE=false;
+    const VALIDATED=5;
+    const ACCEPTEDBYTECHNICIAN =6;
+    const SENDBYTECHNICIAN =7;
+    const REFUSEDBYTECHNICIAN =8;
 
 
     /**
@@ -69,6 +98,8 @@ class Quote
         $this->date = new \DateTime();
         $this->isActive = true;
         $this->statut = self::NEW;
+        $this->type = false;
+        $this->toolQuotes = new ArrayCollection();
     }
 
 
@@ -101,12 +132,12 @@ class Quote
         return $this;
     }
 
-    public function getStatut(): ?bool
+    public function getStatut(): ?int
     {
         return $this->statut;
     }
 
-    public function setStatut(bool $statut): self
+    public function setStatut($statut): self
     {
         $this->statut = $statut;
 
@@ -146,7 +177,12 @@ class Quote
             "intervention_slug"=>$this->getIntervention()->getSlug(),
             "amount"=>$this->amount,
             "date"=>$this->getDate()->format(\DateTime::ISO8601),
-            "is_active"=>$this->isActive,"statut"=>$this->statut,"technician"=>$this->getTechnician()->toArrayShort()];
+            "is_active"=>$this->isActive,
+            "statut"=>$this->statut,
+            "technician"=>$this->getTechnician()->toArray(),
+            "suggested_date"=>$this->getSuggestedDate()
+
+        ];
 
         return $tab;
     }
@@ -171,6 +207,73 @@ class Quote
     public function setAmount(?string $amount): self
     {
         $this->amount = $amount;
+
+        return $this;
+    }
+
+    public function getSuggestedDate(): ?\DateTimeInterface
+    {
+        return $this->suggestedDate;
+    }
+
+    public function setSuggestedDate(\DateTimeInterface $suggestedDate): self
+    {
+        $this->suggestedDate = $suggestedDate;
+
+        return $this;
+    }
+
+    public function getType(): ?bool
+    {
+        return $this->type;
+    }
+
+    public function setType(bool $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    public function setMessage(?string $message): self
+    {
+        $this->message = $message;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ToolQuote[]
+     */
+    public function getToolQuotes(): Collection
+    {
+        return $this->toolQuotes;
+    }
+
+    public function addToolQuote(ToolQuote $toolQuote): self
+    {
+        if (!$this->toolQuotes->contains($toolQuote)) {
+            $this->toolQuotes[] = $toolQuote;
+            $toolQuote->setQuote($this);
+        }
+
+        return $this;
+    }
+
+    public function removeToolQuote(ToolQuote $toolQuote): self
+    {
+        if ($this->toolQuotes->contains($toolQuote)) {
+            $this->toolQuotes->removeElement($toolQuote);
+            // set the owning side to null (unless already changed)
+            if ($toolQuote->getQuote() === $this) {
+                $toolQuote->setQuote(null);
+            }
+        }
 
         return $this;
     }

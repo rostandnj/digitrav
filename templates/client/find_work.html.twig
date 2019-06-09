@@ -166,7 +166,7 @@
 
                         let part7="</li>\n" +
                             "\n" +
-                            "            <li><i class=\"icon-material-outline-account-balance-wallet\"></i>";
+                            "            <li><i class=\"icon-material-outline-account-balance-wallet\"></i>XAF ";
                         let part8="</li>\n" +
                             "            <li><i class=\"icon-material-outline-access-time\"></i>";
                         let part9="</li>\n" +
@@ -197,7 +197,7 @@
 
                             html =html + part1+img+part2+name+part3+"<a href='"+url.replace('/a',"")+"/"+el.slug+"'>"+ el.title
                             +part4+el.description.substring(0,200)+part5+el.domain.name+part6+el.location.city+", "+el.location.quater+part7+
-                                +" XAF " +el.category.budget+ part8+el.date+part9;
+                                 +el.budget+ part8+el.date+part9;
 
                               });
 
