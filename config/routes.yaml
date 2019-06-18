@@ -411,3 +411,8 @@ web_payment_callback_cancel:
   controller: App\Controller\WebController::getPaymentCallbackCancel
   methods: [GET]
 
+web_end_job:
+  path: /job/{slug}/end
+  controller: App\Controller\WebController::validateJobAsEnded
+  methods: [POST]
+

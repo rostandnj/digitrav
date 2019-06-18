@@ -2976,10 +2976,17 @@ class WebController extends AbstractController implements LogginInterfaceControl
 
     public function getClientRecentJobForInvitation(Request $request,$techId)
     {
-        $cu = $this->getUser();
-        if($cu==null) return $this->redirectToRoute("web_login");
+
 
         $res = $this->mycontainer->get('response_service');
+
+        $cu = $this->getUser();
+        if($cu==null) {
+            $res->setContent(["jobs"=>[],"message"=>"operation_denied"]);
+            $res->setStatut(401);
+
+            return $res->getResponse();
+        }
 
 
         if($cu->getRole()->getCode()=="ROLE_CLIENT" || $cu->getRole()->getCode()=="ROLE_OPERATOR")
@@ -3142,6 +3149,24 @@ class WebController extends AbstractController implements LogginInterfaceControl
 
         return $this->redirectToRoute("web_job_show_proposals",["slug"=>$slug]);
 
+
+    }
+
+    public function validateJobAsEnded(Request $request,$slug)
+    {
+        $cu = $this->getUser();
+        if($cu==null) return $this->redirectToRoute("web_login");
+
+        $data=[];
+
+        $data["message"]=trim($request->request->get("message"));
+        $data["note"]=trim($request->request->get("message"));
+
+        $res = $this->mycontainer->get("intervention_manager")->endJob($cu,$slug,$data);
+
+        $this->addFlash('notice',$this->mycontainer->get('translator')->trans($res["message"]));
+
+        return $this->redirectToRoute("web_show_job",["slug"=>$slug]);
 
     }
 

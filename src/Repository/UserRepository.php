@@ -190,7 +190,7 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->leftJoin("u.company","comp")
             ->leftJoin("comp.domains","compD")
             ->where('role.code IN (:role)')
-            ->andWhere("domains.slug = :slug")
+            ->andWhere("domains.slug = :slug OR compD.slug = :slug")
             ->andWhere('u.isActive = :ac')
             ->andWhere('ud.isValid = :ac OR comp.isValid = :ac')
 

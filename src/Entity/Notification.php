@@ -48,7 +48,7 @@ class Notification
     private $evaluation;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Note")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Note",cascade={"persist","remove"})
      */
     private $note;
 

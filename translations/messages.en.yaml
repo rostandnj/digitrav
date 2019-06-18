@@ -309,4 +309,12 @@ transaction_expired: Transaction expired
 payment_has_failed: Transaction has failed
 transaction_not_found: Transaction not found
 transaction_canceled: Transaction canceled
-
+transaction_paid: Paid
+transaction_done: Done
+job_not_pay: The job is not yet paid
+bill_not_found: Bill not found
+validate_job: Mark as ended
+note_field_is_empty: Note field is empty
+bad_note: Bad note (please choose between 1 to 5)
+message_comment: Comment about the technician
+give_note: Note for technician

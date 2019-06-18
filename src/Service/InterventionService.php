@@ -1805,6 +1805,142 @@ class InterventionService
 
     }
 
+    public function endJob(User $user,string $slug,array $data)
+    {
+        $job = $this->em->getRepository(Intervention::class)->findOneBy(array("slug"=>$slug));
+
+        if(is_null($job)) return ["message"=>"job_not_found","code"=>401,"statut"=>true,"data"=>[]];
+
+        if($job->getStatut()!=Intervention::PAID) return ["message"=>"job_not_pay","code"=>401,"statut"=>true,"data"=>[]];
+
+        if($job->getIsMain()==true)
+        {
+            if($job->getClient()->getId() != $user->getId()) return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
+        }
+        else
+        {
+            if($job->getOperator()->getId() != $user->getId()) return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
+
+        }
+
+        $quote = $this->em->getRepository(Quote::class)->findOneBy(array("intervention"=>$job,"statut"=>Quote::PAID));
+
+        if(is_null($quote)) return ["message"=>"quotation_not_found","code"=>401,"statut"=>true,"data"=>[]];
+
+        $bill = $quote->getBill();
+
+        if(is_null($bill)) return ["message"=>"bill_not_found","code"=>401,"statut"=>true,"data"=>[]];
+
+        if(is_null($data["message"])) return ["message"=>"message_field_is_empty","code"=>401,"statut"=>true,"data"=>[]];
+        if(is_null($data["note"])) return ["message"=>"note_field_is_empty","code"=>401,"statut"=>true,"data"=>[]];
+
+        $n = (int)$data["note"];
+
+        $testN =false;
+
+        if($n <= 5)
+        {
+            $testN =true;
+        }
+
+        if($n >=1)
+        {
+            $testN =true;
+        }
+
+        if($testN == false) return ["message"=>"bad_note","code"=>401,"statut"=>true,"data"=>[]];
+
+        $job->setEndDate(new \DateTime());
+        $job->setStatut(Intervention::DONE);
+
+        $quote->setStatut(Quote::DONE);
+
+        $note = new Note();
+        $note->setIntervention($job);
+        $note->setNote($n);
+        if($data["message"]!=""){
+            $note->setComment($data["message"]);
+            $note->setHasComment(true);
+        }
+        else
+        {
+            $note->setHasComment(false);
+        }
+
+
+        $tech =$quote->getTechnician();
+            $note->setTechnician($tech);
+
+            if($tech->getRole()->getCode()=="ROLE_MANAGER_COMPANY")
+            {
+                $comp = $tech->getCompany();
+
+                if($comp->getNote()==0)
+                {
+                    $comp->setNote($n);
+                }
+                else
+                {
+                    $comp->setNote(ceil(($comp->getNote()+$n)/2));
+                }
+
+
+                $this->em->persist($comp);
+            }
+            else
+            {
+                $ud = $tech->getUserDetail();
+                if($ud->getNote()==0)
+                {
+                    $ud->setNote($n);
+                }
+                else
+                {
+                    $ud->setNote(ceil(($ud->getNote()+$n)/2));
+                }
+
+
+
+                $this->em->persist($ud);
+            }
+
+
+        $notif = new Notification();
+        $notif->setUser($user);
+        $notif->setIsActive(true);
+        $notif->setQuote($quote);
+        $notif->setCode(Notification::QUOTATION_ENDED);
+
+        $sta = new Statut();
+        $sta->setUser($tech);
+        $sta->setNotification($notif);
+
+
+        $notif2 = new Notification();
+        $notif2->setUser($user);
+        $notif2->setIsActive(true);
+        $notif2->setNote($note);
+        $notif2->setCode(Notification::NOTE_RECEIVED);
+
+        $sta2 = new Statut();
+        $sta2->setUser($tech);
+        $sta2->setNotification($notif2);
+
+        $this->em->persist($job);
+        $this->em->persist($quote);
+        $this->em->persist($sta);
+        $this->em->persist($sta2);
+
+        $this->em->flush();
+
+
+
+        return ["message"=>"operation_did","code"=>201,"statut"=>false,"data"=>[]];
+
+
+
+    }
+
 
 
 

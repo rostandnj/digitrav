@@ -84,6 +84,33 @@
 
 
 
+
+                                        {% endif %}
+
+                                        {% if job.statut==2 %}
+
+                                            {% if job.isMain==false %}
+
+                                                {% if app.user.id == job.operator.id %}
+                                                    <div class="widget mt-3">
+
+                                                        <button type="button" data-toggle="modal" data-target="#end-job" style="width: 90%" class="btn btn-lg btn-success"> <span class="fas flaticon-hands"></span> {{ 'validate_job'|trans }}</button>
+                                                    </div>
+
+                                                {% endif %}
+
+                                            {% else %}
+
+                                                {% if app.user.id == job.client.id %}
+                                                    <div class="widget mt-3">
+
+                                                        <button type="button" data-toggle="modal" data-target="#end-job" style="width: 90%" class="btn btn-lg btn-success"> <span class="fas flaticon-hands"></span> {{ 'validate_job'|trans }}</button>
+                                                    </div>
+
+                                                {% endif %}
+
+                                            {% endif %}
+
                                         {% endif %}
 
 
@@ -357,6 +384,7 @@
         {% include 'client/modal_job_delete.html.twig' %}
         {% include 'client/modal_edit_job.html.twig' %}
         {% include 'client/modal_job_apply.html.twig' %}
+        {% include 'client/modal_end_job.html.twig' %}
 
 
     {% endif %}

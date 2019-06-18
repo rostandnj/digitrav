@@ -310,3 +310,12 @@ transaction_expired: Transaction expirée
 payment_has_failed: Echec de la transaction
 transaction_not_found: Transaction inexistante
 transaction_canceled: Transaction annulée
+transaction_paid: Payé
+transaction_done: Effectué
+job_not_pay: Ce job n'a pas été payé
+bill_not_found: Facture non trouvée
+validate_job: Terminer
+note_field_is_empty: Le champ note est vide
+bad_note: Mauvaise note (choisir dans l'intervalle de 1 à 5)
+message_comment: Commentaire à propos du technicien
+give_note: Une note pour le technician

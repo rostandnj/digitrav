@@ -31,7 +31,60 @@
 
                                 </div>
                                 <div class="card-footer">
-                                    <hr>
+                                    {% if userp.role.code =="ROLE_MANAGER_COMPANY" %}
+                                        <p class="text-center">
+                                            {% if userp.company.note==0 %}
+                                                {% for i in 1..5-userp.company.note %}
+                                                    <img src="{{ asset('assets/images/star_no.png') }}" width="30" />
+                                                {% endfor %}
+                                            {% else %}
+                                                {% for i in 0..userp.company.note-1 %}
+                                                    <img src="{{ asset('assets/images/star_ok.png') }}" width="30" />
+                                                {% endfor %}
+
+                                                {% if userp.company.note <5 %}
+                                                    {% for i in 1..5-userp.company.note %}
+                                                        <img src="{{ asset('assets/images/star_no.png') }}" width="30" />
+                                                    {% endfor %}
+
+                                                {% endif %}
+
+
+                                            {% endif %}
+
+
+
+
+                                        </p>
+
+
+                                    {% else %}
+
+                                        <p class="text-center">
+                                            {% if userp.user_detail.note==0 %}
+                                                {% for i in 1..5-userp.user_detail.note %}
+                                                    <img src="{{ asset('assets/images/star_no.png') }}" width="30" />
+                                                {% endfor %}
+                                            {% else %}
+                                                {% for i in 0..userp.user_detail.note-1 %}
+                                                    <img src="{{ asset('assets/images/star_ok.png') }}" width="30" />
+                                                {% endfor %}
+
+                                                {% if userp.user_detail.note <5 %}
+                                                    {% for i in 1..5-userp.user_detail.note %}
+                                                        <img src="{{ asset('assets/images/star_no.png') }}" width="30" />
+                                                    {% endfor %}
+
+                                                {% endif %}
+
+
+                                            {% endif %}
+
+
+
+
+                                        </p>
+                                    {% endif %}
                                     <div class="button-container">
                                         <div class="row">
                                             <div class="col-lg-3 col-md-6 col-6 ml-auto">

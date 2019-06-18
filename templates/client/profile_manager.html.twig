@@ -31,7 +31,30 @@
 
                                 </div>
                                 <div class="card-footer">
-                                    <hr>
+                                    <p class="text-center">
+                                        {% if userp.company.note==0 %}
+                                            {% for i in 1..5-userp.company.note %}
+                                                <img src="{{ asset('assets/images/star_no.png') }}" width="30" />
+                                            {% endfor %}
+                                        {% else %}
+                                            {% for i in 0..userp.company.note-1 %}
+                                                <img src="{{ asset('assets/images/star_ok.png') }}" width="30" />
+                                            {% endfor %}
+
+                                            {% if userp.company.note <5 %}
+                                                {% for i in 1..5-userp.company.note %}
+                                                    <img src="{{ asset('assets/images/star_no.png') }}" width="30" />
+                                                {% endfor %}
+
+                                            {% endif %}
+
+
+                                        {% endif %}
+
+
+
+
+                                    </p>
                                     <div class="button-container">
                                         <div class="row">
                                             <div class="col-lg-3 col-md-6 col-6 ml-auto">
@@ -43,7 +66,7 @@
                                             <div class="col-lg-4 col-md-6 col-6 ml-auto mr-auto">
                                                 <h5>
                                                     {{ earning }}
-                                                    <small>{% trans %}money_spent{% endtrans %} <span class=""> XAF </span></small>
+                                                    <small>{{ 'money_earned'|trans }} <span class=""> XAF </span></small>
                                                 </h5>
                                             </div>
 

@@ -70,7 +70,12 @@
                                     <td> {{ job.title}}</td>
                                     <td> {{ job.domain.name}}</td>
                                     <td> {{ job.category.name}}</td>
-                                    <td> {% if job.statut==0 %} {{ 'statut_in_progress'|trans }} {% endif %}</td>
+                                    <td>
+                                        {% if job.statut==0 %} {{ 'statut_in_progress'|trans }} {% endif %}
+                                        {% if job.statut==2 %} {{ 'transaction_paid'|trans }} {% endif %}
+                                        {% if job.statut==4 %} {{ 'transaction_done'|trans }} {% endif %}
+
+                                    </td>
                                     <td> {{job.date | date('y/m/d')}}</td>
 
                                 </tr>
