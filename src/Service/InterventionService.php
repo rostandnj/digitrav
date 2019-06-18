@@ -1479,9 +1479,9 @@ class InterventionService
             "currency"=> "OUV",
             "order_id"=> $quote->getReference(),
           "amount"=> 1000,
-          "return_url"=> "http://37.120.158.247:32788/digitrav/public/"."job/payment/callback/".$quote->getReference()."/".$quote->getIntervention()->getSlug(),
-          "cancel_url"=> "http://37.120.158.247:32788/digitrav/public/"."job/payment/callback/cancel/".$quote->getReference()."/".$quote->getIntervention()->getSlug(),
-          "notif_url"=> "http://37.120.158.247:32788/digitrav/public/"."job/payment/notification",
+          "return_url"=> $this->container->get("router")->generate("web_payment_callback",["ref"=>$quote->getReference(),"slug"=>$quote->getIntervention()->getSlug()]),
+          "cancel_url"=> $this->container->get("router")->generate("web_payment_callback_cancel",["ref"=>$quote->getReference(),"slug"=>$quote->getIntervention()->getSlug()]),
+          "notif_url"=> $this->container->get("router")->generate("web_payment_notification"),
           "lang"=> "fr",
           "reference"=> "DIGITRAV"
         ];

@@ -1,5 +1,6 @@
 # ignore all logs
 *.log
+*.env
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
