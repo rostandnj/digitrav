@@ -23,14 +23,7 @@ class FileUploaderService
 
     public function upload(UploadedFile $file)
     {
-        $fileName = md5(uniqid()).'.'.$file->guessExtension();
-
-        $size = $file->getSize();
-        $on = $file->getClientOriginalName();
-        $ext = $file->getExtension();
-        $mime = $file->getMimeType();
-
-        if($size >=2097152)
+        if($file =="")
         {
             $data["statut"]=false;
             $data["code"]=401;
@@ -38,24 +31,43 @@ class FileUploaderService
 
             return $data;
         }
+        else
+        {
+            $fileName = md5(uniqid()).'.'.$file->guessExtension();
 
-        try {
-            $file->move($this->getTargetDirectory(), $fileName);
-        } catch (FileException $e) {
-            $data["statut"]=false;
-            $data["code"]=401;
-            $data["message"]=$e->getMessage();
+            $size = $file->getSize();
+            $on = $file->getClientOriginalName();
+            $ext = $file->getExtension();
+            $mime = $file->getMimeType();
+
+            if($size >=2097152)
+            {
+                $data["statut"]=false;
+                $data["code"]=401;
+                $data["message"]="file_size_exceed";
+
+                return $data;
+            }
+
+            try {
+                $file->move($this->getTargetDirectory(), $fileName);
+            } catch (FileException $e) {
+                $data["statut"]=false;
+                $data["code"]=401;
+                $data["message"]=$e->getMessage();
+
+                return $data;
+            }
+
+            $data["statut"]=true;
+            $data["code"]=201;
+            $data["file"]=["path"=>$fileName,"size"=>$size,"name"=>$on,"type"=>$mime,
+                "extension"=>".".$ext];
+            $data["message"]="";
 
             return $data;
         }
 
-        $data["statut"]=true;
-        $data["code"]=201;
-        $data["file"]=["path"=>$fileName,"size"=>$size,"name"=>$on,"type"=>$mime,
-            "extension"=>".".$ext];
-        $data["message"]="";
-
-        return $data;
 
     }
 

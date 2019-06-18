@@ -171,9 +171,6 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
             ->andWhere("u.isValid = :active OR comp.isValid = :active")
             ->andWhere("cL.city LIKE :city OR uL.city LIKE :city")
             ->andWhere("cDomain.id IN (:do) OR uDomain.id IN (:do)")
-
-
-
             ->setParameter('role',["ROLE_TECHNICIAN_COMPANY","ROLE_TECHNICIAN_PERSON","ROLE_MANAGER_COMPANY"])
             ->setParameter('active', 1)
             ->setParameter('city', "%".$city."%")
@@ -187,16 +184,37 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     public function findTechniciansDomain($slug,$limit,$offset)
     {
         return $this->createQueryBuilder('u')
+            ->leftJoin("u.role","role")
             ->leftJoin("u.userDetail","ud")
             ->leftJoin("ud.domains","domains")
             ->leftJoin("u.company","comp")
             ->leftJoin("comp.domains","compD")
-            ->where("domains.slug = :slug")
+            ->where('role.code IN (:role)')
+            ->andWhere("domains.slug = :slug")
             ->andWhere('u.isActive = :ac')
             ->andWhere('ud.isValid = :ac OR comp.isValid = :ac')
 
 
             ->setParameter('slug', $slug)
+            ->setParameter('ac', true)
+            ->setParameter('role',["ROLE_TECHNICIAN_COMPANY","ROLE_TECHNICIAN_PERSON","ROLE_MANAGER_COMPANY"])
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function findTechniciansAll($limit,$offset)
+    {
+        return $this->createQueryBuilder('u')
+            ->leftJoin("u.role","role")
+            ->leftJoin("u.userDetail","ud")
+            ->leftJoin("u.company","comp")
+            ->where('role.code IN (:role)')
+            ->andWhere('u.isActive = :ac')
+            ->andWhere('ud.isValid = :ac OR comp.isValid = :ac')
+            ->setParameter('role',["ROLE_TECHNICIAN_PERSON","ROLE_MANAGER_COMPANY"])
             ->setParameter('ac', true)
             ->setMaxResults($limit)
             ->setFirstResult($offset)

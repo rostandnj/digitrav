@@ -17,7 +17,7 @@ class Payment
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=30)
      */
     private $reference;
 
@@ -51,9 +51,32 @@ class Payment
      */
     private $isActive;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $statut;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $payToken;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $notifToken;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $payUrl;
+
+
+
     const ORANGE_MONEY=0;
     const MOBILE_MONEY=1;
     const EXPRESS_UNION=2;
+    const ORDER=3;
 
     /**
      * Payment constructor.
@@ -62,6 +85,7 @@ class Payment
     {
         $this->date = new \DateTime();
         $this->isActive = true;
+        $this->statut = false;
     }
 
 
@@ -160,5 +184,53 @@ class Payment
             "receiver"=>$this->receiver,"date"=>$this->getDate()->format(\DateTime::ISO8601)];
 
         return $tab;
+    }
+
+    public function getStatut(): ?bool
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(bool $statut): self
+    {
+        $this->statut = $statut;
+
+        return $this;
+    }
+
+    public function getPayToken(): ?string
+    {
+        return $this->payToken;
+    }
+
+    public function setPayToken(?string $payToken): self
+    {
+        $this->payToken = $payToken;
+
+        return $this;
+    }
+
+    public function getNotifToken(): ?string
+    {
+        return $this->notifToken;
+    }
+
+    public function setNotifToken(?string $notifToken): self
+    {
+        $this->notifToken = $notifToken;
+
+        return $this;
+    }
+
+    public function getPayUrl(): ?string
+    {
+        return $this->payUrl;
+    }
+
+    public function setPayUrl(?string $payUrl): self
+    {
+        $this->payUrl = $payUrl;
+
+        return $this;
     }
 }

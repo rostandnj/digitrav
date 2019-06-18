@@ -29,52 +29,60 @@
             <div class="home-table">
                 <div class="home-table-center">
                     <div class="container">
-                        <h3>{{ 'domains'|trans }} / {{ domain.name }}</h3>
+
                         <ul class="list-group" id="job-list">
-                        {% for u in jobs %}
+                            {% for u in jobs %}
 
-                            <li class="list-group-item mb-1" style="display: block;background-color: #f6f7f9">
+                                <li class="list-group-item mb-1" style="display: block;background-color: #f6f7f9">
 
-                                <div class="comment_read mt-3 ml-0">
-                                    <div class="comment_img">
-                                        <img width="55" height="55" style="width: 55px;height: 55px" src="{% if u.role.code !="ROLE_MANAGER_COMPANY" %} {{ asset('assets/uploads/'~u.picture.path) }}{% else %} {{ asset('assets/uploads/'~u.company.logo.path) }} {% endif %}" alt="" class="img-fluid rounded-circle">
-                                    </div>
-                                    <div class="comment_data">
-                                        <h6 >
-                                            <a href="{{ path('web_profile_tech',{name:u.profileName,id:u.uid}) }}" class="text-dark d-block">
-                                                {% if u.role.code !="ROLE_MANAGER_COMPANY" %}
-                                                    <span class="fa fa-user"></span> {{ u.name }}
-                                                {% else %}
-                                                    <span class="fa fa-building"></span> {{ u.company.name }}
-                                                {% endif %}
-                                            </a>
+                                    <div class="comment_read mt-3 ml-0">
+                                        <div class="comment_img">
+                                            <img width="55" height="55" style="width: 55px;height: 55px" src="{% if u.role.code !="ROLE_MANAGER_COMPANY" %} {{ asset('assets/uploads/'~u.picture.path) }}{% else %} {{ asset('assets/uploads/'~u.company.logo.path) }} {% endif %}" alt="" class="img-fluid rounded-circle">
+                                        </div>
+                                        <div class="comment_data">
+                                            <h6 >
+                                                <a href="{{ path('web_profile_tech',{name:u.profileName,id:u.uid}) }}" class="text-dark d-block">
+                                                    {% if u.role.code !="ROLE_MANAGER_COMPANY" %}
+                                                        <span class="fa fa-user"></span> {{ u.name }}
+                                                    {% else %}
+                                                        <span class="fa fa-building"></span> {{ u.company.name }}
+                                                    {% endif %}
+                                                </a>
 
-                                            <span class="text-muted font-weight-normal">
+                                                <span class="text-muted font-weight-normal">
                                                     {{ u.date|date('y-m-d H:i:s')|timeago }}
                                                 </span>
 
-                                        </h6>
-                                        <button data-id="{{ u.id }}" data-toggle="modal" data-target="#send-invitation" class="btn btn-success pull-right send-invitation"> <span style="color: white!important;" class="list-apply-button ripple-effect">{{ 'send_invitation'|trans }}</span></button>
+                                            </h6>
+                                            <button data-id="{{ u.id }}" data-toggle="modal" data-target="#send-invitation"  class="btn btn-success pull-right send-invitation"> <span style="color: white!important;" class="list-apply-button ripple-effect">{{ 'send_invitation'|trans }}</span>
 
 
-                                        <p class="text-muted mb-0"><span class="fas fa-map-marker-alt"></span>
-                                            {% if u.role.code !="ROLE_MANAGER_COMPANY" %}
-                                                {{ u.location.city }} , {{ u.location.quater }} -
-                                                <span class="fa fa-briefcase"></span>
-                                                {% for d1 in u.userDetail.domains %}
-                                                    <span  class="badge badge-light">{{ d1.name }}</span>
 
-                                                {% endfor %}
-                                            {% else %}
-                                                {{ u.company.location.city }} , {{ u.company.location.quater }} -
-                                                <span class="fa fa-briefcase"></span>
-                                                {% for d1 in u.company.domains %}
-                                                    <span  class="badge badge-light">{{ d1.name }}</span>
 
-                                                {% endfor %}
-                                            {% endif %}
-                                        </p>
-                                        <span class="pull-right" style="margin-top: -100px">
+
+                                            </button>
+
+
+                                            <p class="text-muted mb-0">
+
+                                                <span class="fas fa-map-marker-alt"></span>
+                                                {% if u.role.code !="ROLE_MANAGER_COMPANY" %}
+                                                    {{ u.location.city }} , {{ u.location.quater }} -
+                                                    <span class="fa fa-briefcase"></span>
+                                                    {% for d1 in u.userDetail.domains %}
+                                                      <span  class="badge badge-light">{{ d1.name }}</span>
+
+                                                    {% endfor %}
+                                                {% else %}
+                                                    {{ u.company.location.city }} , {{ u.company.location.quater }} -
+                                                    <span class="fa fa-briefcase"></span>
+                                                    {% for d1 in u.company.domains %}
+                                                        <span  class="badge badge-light">{{ d1.name }}</span>
+
+                                                    {% endfor %}
+                                                {% endif %}
+                                            </p>
+                                            <span class="pull-right" style="margin-top: -100px">
 
                                                 {% if u.role.code =="ROLE_MANAGER_COMPANY"  %}
 
@@ -121,12 +129,12 @@
 
 
 
+                                        </div>
                                     </div>
-                                </div>
 
-                            </li>
+                                </li>
 
-                        {% endfor %}
+                            {% endfor %}
                         </ul>
 
 
@@ -144,6 +152,8 @@
     </div>
 
     {% include 'client/modal_client_invitation.html.twig' %}
+
+
 {% endblock %}
 
 {% block js %}
@@ -153,6 +163,8 @@
         $("#loader").hide();
 
         var nbItem="{{ jobs|length }}";
+
+
         var totalItem=parseInt(nbItem);
 
         if(nbItem>=4) $("#load-more").show();
@@ -169,7 +181,7 @@
 
             $.ajax({
                 type        : 'GET', // define the type of HTTP verb we want to use (POST for our form)
-                url         : "{{ path('web_more_domain_technicians',{slug:domain.slug}) }}", // the url where we want to POST
+                url         : "{{ path('web_more_technicians') }}", // the url where we want to POST
                 data        : {"offset":offset}, // our data object
                 dataType    : 'json', // what type of data do we expect back from the server
                 encode          : true,
@@ -203,10 +215,7 @@
                         let p_date="</a>\n" +
                             "                                                <span class=\"text-muted font-weight-normal\">";
 
-                        let p_location="</span>\n" +
-                            "                                            </h6>\n" +
-                            "<button  class=\"btn btn-success pull-right send-invitation\"> <span style=\"color: white!important;\" class=\"list-apply-button ripple-effect\">{{ 'send_invitation'|trans }}</span></button>\n"+
-                            " <p class=\"text-muted mb-0\"><span class=\"fas fa-map-marker-alt\"></span>";
+
 
                         let p_note="</p>\n" +
                             "                                            <span class=\"pull-right\" style=\"margin-top: -100px\">";
@@ -225,6 +234,10 @@
 
 
                         resultat.users.forEach(function (el) {
+                            let p_location="</span>\n" +
+                                "                                            </h6>\n" +
+                                "<button data-toggle='modal' data-target='#send-invitation' data-id='"+el.id+"'"+ " class=\"btn btn-success pull-right send-invitation\"> <span style=\"color: white!important;\" class=\"list-apply-button ripple-effect\">{{ 'send_invitation'|trans }}</span></button>\n"+
+                                " <p class=\"text-muted mb-0\"><span class=\"fas fa-map-marker-alt\"></span>";
                             var img="";
                             var i=0;
                             let domain="";
@@ -284,9 +297,11 @@
 
 
 
+
+
                                 html =html+p_image+"{{ asset('assets/uploads/')}}/"+el.picture.path+
                                     p_comp_name+'<a href="'+u+'" class="text-dark d-block"><span class="fa fa-user"></span>'+el.name+p_date+el.date+p_location+el.location.city+" , "
-                                    +el.location.quater+" - <span class=\"fa fa-briefcase\"></span> "+domain+p_note+img+p_end;
+                                    +el.location.quater+" - <span class=\"fa fa-briefcase\"></span> "+domain+   p_note+img+p_end;
 
                             }
 
@@ -323,6 +338,7 @@
 
 
         });
+
 
         $('#send-invitation').on('show.bs.modal', function (event) {
             $("#main-loader").show();
@@ -388,7 +404,7 @@
             })
 
 
-            // modal.find('#id').text(recipient);
+           // modal.find('#id').text(recipient);
 
 
 

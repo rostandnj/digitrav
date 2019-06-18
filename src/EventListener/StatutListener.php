@@ -80,6 +80,11 @@ class StatutListener
 
         }
 
+        $uid =$this->container->get("hash_service")->encrypt($entity->getId());
+
+        $entity->setUid($uid);
+        $entity->setUrl($this->container->get("router")->generate("web_notification_show",["id"=>$uid]));
+
 
     }
 }

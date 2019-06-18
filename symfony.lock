@@ -146,6 +146,9 @@
             "config/packages/lexik_jwt_authentication.yaml"
         ]
     },
+    "mashape/unirest-php": {
+        "version": "v3.0.4"
+    },
     "monolog/monolog": {
         "version": "1.24.0"
     },

@@ -48,5 +48,20 @@ class HashService
 
     }
 
+    public function generateUUID ( $prefix = 'DIGI', $length=12 ) {
+        // Perfect for: UNIQUE ID GENERATION
+        // Create a UUID made of: PREFIX:TIMESTAMP:UUID(PART - LENGTH - or FULL)
+        $my_random_id = $prefix;
+        $my_random_id .= chr ( rand ( 65, 90 ) );
+        $my_random_id .= time ();
+        $my_uniqid = uniqid ( $prefix );
+        if($length > 0) {
+            $my_random_id .= substr($my_uniqid, $length);
+        } else {
+            $my_random_id .= $my_uniqid;
+        }
+	return $my_random_id;
+}
+
 
 }

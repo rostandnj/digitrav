@@ -184,7 +184,7 @@ class WebController extends AbstractController implements LogginInterfaceControl
             if (!$this->isCsrfTokenValid('csrf', $submittedToken))
             {
                 $this->addFlash('notice',$this->mycontainer->get('translator')->trans('invalid_csrf'));
-                $this->redirectToRoute('web_home');
+                return $this->redirectToRoute('web_home');
             }
             else
             {
@@ -1741,9 +1741,21 @@ class WebController extends AbstractController implements LogginInterfaceControl
         $domains = $this->mycontainer->get('domain_manager')->showList(20,0);
         $cities =$this->mycontainer->get("city_service")->getAll();
 
+        if($cu->getRole()->getCode()=="ROLE_CLIENT")
+        {
+            $res = $this->mycontainer->get("intervention_manager")->getTechniciansAll($limit,$offset);
+            return $this->render('client/client_technicians_list.html.twig',["domains"=>$domains["data"],"towns"=>$cities,"jobs"=>$res["data"]["users"]]);
 
-        return $this->render('client/find_work.html.twig',["jobs"=>$res["data"],"domains"=>$domains["data"],"towns"=>$cities]);
-    }
+        }
+        else
+        {
+            return $this->render('client/find_work.html.twig',["jobs"=>$res["data"],"domains"=>$domains["data"],"towns"=>$cities]);
+
+        }
+
+
+
+            }
 
     public function findMoreWork(Request $request)
     {
@@ -2457,35 +2469,30 @@ class WebController extends AbstractController implements LogginInterfaceControl
 
         if($cu==null) return $this->redirectToRoute("web_login");
 
-        $data= $this->mycontainer->get("notification_service")->getOne($id);
+        $data= $this->mycontainer->get("notification_service")->getOne($this->mycontainer->get("hash_service")->decrypt($id));
 
         if($data["statut"]==true)
         {
+            $this->addFlash('notice',$this->mycontainer->get('translator')->trans($data["message"]));
 
+
+            return $this->redirectToRoute("web_find_job");
         }
         else
         {
-            $code = $data["data"]->getNotification()->getCode();
-
-            if(in_array($code,[0,1,2,3,7,8])){
-
-                //afficher le job
-
-            }
-            else if(in_array($code,[4,5,6])){
-
-                //gestion des évaluations sur un job
-
-            }
-            else if(in_array($code,[8,9,10]))
+            if($data["data"]["url"]=="")
             {
-                //gestion des notifications à afficher sur le profile
-
+                return $this->redirect($data["data"]["url"]);
             }
-            else{
-                //gestion des payements
-
+            else
+            {
+                return $this->redirect($data["data"]["url"]);
             }
+
+
+
+
+
         }
 
 
@@ -2709,11 +2716,12 @@ class WebController extends AbstractController implements LogginInterfaceControl
 
         if($job["statut"]==true)
         {
-            return $this->render("client/job_proposals.html.twig",["job"=>null,"quotes"=>null,"message"=>$job["message"]]);
-
+            $this->addFlash('notice',$this->mycontainer->get('translator')->trans($job["message"]));
+            return $this->redirectToRoute('web_show_job',["slug"=>$slug]);
         }
         else
         {
+            //var_dump($job["data"]["quotes"][0]->toArray());
             return $this->render("client/job_proposals.html.twig",["job"=>$job["data"]["job"],"quotes"=>$job["data"]["quotes"]]);
 
         }
@@ -2739,6 +2747,10 @@ class WebController extends AbstractController implements LogginInterfaceControl
             $offset = intval($request->query->get('offset'));
         }
         else $offset =1;
+
+
+
+
 
         $job = $this->mycontainer->get("intervention_manager")->getProposals($cu,$slug,$limit,$offset);
 
@@ -2849,6 +2861,8 @@ class WebController extends AbstractController implements LogginInterfaceControl
 
     public function findMoreDomainTechnicians(Request $request,$slug)
     {
+        $cu = $this->getUser();
+        if($cu==null) return $this->redirectToRoute("web_login");
 
         if(!empty($request->query->get('limit')))
         {
@@ -2873,6 +2887,22 @@ class WebController extends AbstractController implements LogginInterfaceControl
         {
             $a = $el->toArray();
             $a["date"]=$this->extension->timeagoFunction($el->getDate()->format('y-m-d H:i:s'));
+            $a["domains"]=[];
+
+            if($a["role"]["code"]=="ROLE_MANAGER_COMPANY")
+            {
+                foreach ($el->getCompany()->getDomains() as $d)
+                {
+                    $a["domains"][]= $d->getName();
+                }
+            }
+            else
+            {
+                foreach ($el->getUserDetail()->getDomains() as $d)
+                {
+                    $a["domains"][]= $d->getName();
+                }
+            }
             $data[]=$a;
         }
 
@@ -2881,6 +2911,233 @@ class WebController extends AbstractController implements LogginInterfaceControl
         $res->setStatut(201);
 
         return $res->getResponse();
+    }
+
+    public function findMoreTechnicians(Request $request)
+    {
+
+        $cu = $this->getUser();
+        if($cu==null) return $this->redirectToRoute("web_login");
+
+        if(!empty($request->query->get('limit')))
+        {
+            $limit = intval($request->query->get('limit'));
+        }
+        else $limit =4;
+
+        if(!empty($request->query->get('offset')))
+        {
+            $offset = intval($request->query->get('offset'));
+        }
+        else $offset =0;
+
+
+        $res = $this->mycontainer->get("intervention_manager")->getTechniciansAll($limit,$offset);
+
+        $data =[];
+
+
+
+        foreach ($res["data"]["users"] as $el)
+        {
+            $a = $el->toArray();
+            $a["date"]=$this->extension->timeagoFunction($el->getDate()->format('y-m-d H:i:s'));
+
+            $a["domains"]=[];
+
+            if($a["role"]["code"]=="ROLE_MANAGER_COMPANY")
+            {
+                foreach ($el->getCompany()->getDomains() as $d)
+                {
+                    $a["domains"][]= $d->getName();
+                }
+            }
+            else
+            {
+                foreach ($el->getUserDetail()->getDomains() as $d)
+                {
+                    $a["domains"][]= $d->getName();
+                }
+            }
+            $data[]=$a;
+        }
+
+        $res = $this->mycontainer->get('response_service');
+        $res->setContent(["users"=>$data]);
+        $res->setStatut(201);
+
+        return $res->getResponse();
+    }
+
+    public function getClientRecentJobForInvitation(Request $request,$techId)
+    {
+        $cu = $this->getUser();
+        if($cu==null) return $this->redirectToRoute("web_login");
+
+        $res = $this->mycontainer->get('response_service');
+
+
+        if($cu->getRole()->getCode()=="ROLE_CLIENT" || $cu->getRole()->getCode()=="ROLE_OPERATOR")
+        {
+            $limit =20;
+            $offset =0;
+
+            $jobs =$this->mycontainer->get("intervention_manager")->getClientJobForInvitation($cu,$techId, $limit, $offset);
+
+            $data=[];
+
+            foreach ($jobs["data"]["jobs"] as $el)
+            {
+
+                $data[]=$el->toArray();
+
+            }
+
+            $res->setContent(["jobs"=>$data]);
+            $res->setStatut(201);
+
+            return $res->getResponse();
+
+
+        }
+        else
+        {
+
+            $res->setContent(["jobs"=>[],"message"=>"operation_denied"]);
+            $res->setStatut(401);
+
+            return $res->getResponse();
+
+        }
+
+    }
+
+    public function sendInvitationToTechnician(Request $request)
+    {
+        $cu = $this->getUser();
+        if($cu==null) return $this->redirectToRoute("web_login");
+
+        $data["job"]=trim($request->request->get("job"));
+        $data["tech"]=trim($request->request->get("tech-id"));
+
+        $r = $this->mycontainer->get("intervention_manager")->sendInvitation($cu,(int)$data["job"],(int)$data["tech"]);
+
+        $this->addFlash('notice',$this->mycontainer->get('translator')->trans($r["message"]));
+        return $this->redirectToRoute('web_find_job');
+
+
+
+
+    }
+
+    public function initiatePayment(Request $request)
+    {
+        $cu = $this->getUser();
+        if($cu==null) return $this->redirectToRoute("web_login");
+
+        $id = (int)$request->request->get("quoteid");
+        $slug = $request->request->get("slug");
+
+        $res = $this->mycontainer->get("intervention_manager")->getQuote($cu,$id);
+
+        if($res["statut"]==true)
+        {
+            $this->addFlash('notice',$this->mycontainer->get('translator')->trans($res["message"]));
+
+
+            return $this->redirectToRoute('web_show_job',["slug"=>$slug]);
+        }
+        else
+        {
+
+            $d = $this->mycontainer->get("intervention_manager")->makePayment($cu,$res["data"]);
+
+
+
+            if($d["data"]->code==201)
+            {
+                return $this->redirect($d["data"]->body->payment_url);
+            }
+            else{
+               // $response = $this->mycontainer->get('response_service');
+               // $response->setStatut(201);
+
+                //$response->setContent(["result"=>$d["data"]->body]);
+
+                $this->addFlash('notice',$this->mycontainer->get('translator')->trans($d["data"]->body->description));
+
+
+                return $this->redirectToRoute("web_job_show_proposals",["slug"=>$slug]);
+            }
+
+
+
+
+        }
+
+
+
+
+    }
+
+    public function getPaymentNotification(Request $request)
+    {
+
+        if($request->server->get("SERVER_NAME")=="api.orange.com")
+        {
+            $status = $request->request->get("status");
+            $notifToken = $request->request->get("notif_token");
+            $ref = $request->request->get("ref");
+            $txnid = $request->request->get("txnid");
+
+            $res = $this->mycontainer->get("intervention_manager")->getNotification($status,$notifToken);
+
+            if($res["code"]==201)
+            {
+                return true;
+            }
+            else
+            {
+                return true;
+            }
+
+
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
+    public function getPaymentCallback(Request $request,$ref,$slug)
+    {
+        $cu = $this->getUser();
+
+        if($cu==null) return $this->redirectToRoute("web_login");
+
+        $res =$this->mycontainer->get("intervention_manager")->getQuoteAfterPayment($cu,$ref);
+
+        if($res["message"]!="") $this->addFlash('notice',$this->mycontainer->get('translator')->trans($res["message"]));
+
+        return $this->redirectToRoute("web_job_show_proposals",["slug"=>$slug]);
+
+
+    }
+
+    public function getPaymentCallbackCancel(Request $request,$ref,$slug)
+    {
+        $cu = $this->getUser();
+
+        if($cu==null) return $this->redirectToRoute("web_login");
+
+       // $res =$this->mycontainer->get("intervention_manager")->getQuoteAfterPayment($cu,$ref);
+
+         $this->addFlash('notice',$this->mycontainer->get('translator')->trans("transaction_canceled"));
+
+        return $this->redirectToRoute("web_job_show_proposals",["slug"=>$slug]);
+
+
     }
 
 

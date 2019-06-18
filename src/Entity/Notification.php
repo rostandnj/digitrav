@@ -62,6 +62,10 @@ class Notification
      */
     private $bill;
 
+    private $url;
+
+    private $uid;
+
     const QUOTATION_INVITATION_ACCEPTED=-1;
     const QUOTATION_INVITATION=0;
     const QUOTATION_NEW=1;
@@ -201,11 +205,52 @@ class Notification
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * @param mixed $url
+     * @return Notification
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUid()
+    {
+        return $this->uid;
+    }
+
+    /**
+     * @param mixed $uid
+     * @return Notification
+     */
+    public function setUid($uid)
+    {
+        $this->uid = $uid;
+        return $this;
+    }
+
+
+
     public function toArray()
     {
         $tab =["id"=>$this->id,
             "date"=>$this->getDate()->format(\DateTime::ISO8601),
-            "code"=>$this->code,"user"=>$this->getUser()->toArrayShort()];
+            "code"=>$this->code,"user"=>$this->getUser()->toArrayShort(),
+        "url"=>$this->getUrl(),
+            "uid"=>$this->getUid()
+        ];
 
         switch ($this->code)
         {

@@ -293,3 +293,20 @@ quotation_invitation_accepted: Invitation accepted
 quotation_already_send: Quotation already sended
 send_invitation: send invitation
 all: all
+no_job_found: No job found matching this technician / company
+choose_job: choose one job
+user_not_matched: User don't match the required area of expertise
+notification_not_found: Notification not found
+payment_detail: Payment Details
+reason: Reason
+valid_quotation: Validation of candidature
+valid_devis: Validation of devis
+quotation_not_found: Candidature not found
+payment_is_done: Payment is done
+transaction_waiting_user: Transaction is waiting user action
+transaction_in_progress: Transaction in progress
+transaction_expired: Transaction expired
+payment_has_failed: Transaction has failed
+transaction_not_found: Transaction not found
+transaction_canceled: Transaction canceled
+

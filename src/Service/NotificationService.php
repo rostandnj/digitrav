@@ -10,9 +10,11 @@ namespace App\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
 use App\Entity\Statut;
+use App\Entity\Notification;
 use App\Entity\User;
 
 class NotificationService
@@ -32,6 +34,8 @@ class NotificationService
     {
         $data = $this->em->getRepository(Statut::class)->findBy(array("user"=>$user,"isActive"=>true),array("date"=>"DESC"),$limit,$offset);
 
+
+
         return ["message"=>"","code"=>201,"statut"=>false,"data"=>$data];
     }
 
@@ -49,10 +53,12 @@ class NotificationService
 
         if(is_null($res))
         {
-            return ["message"=>"","code"=>401,"statut"=>true,"data"=>[]];
+            return ["message"=>"notification_not_found","code"=>401,"statut"=>true,"data"=>[]];
         }
         else
         {
+            $url="";
+
             if($res->getStatut()==false)
             {
 
@@ -65,7 +71,55 @@ class NotificationService
                 $nb = $this->container->get("session")->get("nofif");
                 if($nb>0) $this->container->get("session")->set("nofif",$nb-1);
             }
-            return ["message"=>"","code"=>201,"statut"=>false,"data"=>$res];
+
+            $entity=$res->getNotification();
+
+            switch ($res->getNotification()->getCode())
+            {
+                case Notification::QUOTATION_INVITATION_ACCEPTED:
+                    $url=$this->container->get("router")->generate("web_show_job",["slug"=>$entity->getQuote()->getIntervention()->getSlug()], UrlGeneratorInterface::ABSOLUTE_URL);
+                    break;
+
+                case Notification::QUOTATION_INVITATION:
+                    $url=$this->container->get("router")->generate("web_show_job",["slug"=>$entity->getQuote()->getIntervention()->getSlug()], UrlGeneratorInterface::ABSOLUTE_URL);
+                    break;
+                case Notification::QUOTATION_NEW:
+                    $url=$this->container->get("router")->generate("web_show_job",["slug"=>$entity->getQuote()->getIntervention()->getSlug()], UrlGeneratorInterface::ABSOLUTE_URL);
+                    break;
+                case Notification::EVALUATION_ACCEPTED:
+                    $url=$this->container->get("router")->generate("web_show_job",["slug"=>$entity->getQuote()->getIntervention()->getSlug()], UrlGeneratorInterface::ABSOLUTE_URL);
+                    break;
+                case Notification::QUOTATION_ENDED:
+                    $url=$this->container->get("router")->generate("web_show_job",["slug"=>$entity->getQuote()->getIntervention()->getSlug()], UrlGeneratorInterface::ABSOLUTE_URL); break;
+                case Notification::QUOTATION_ACCEPTED:
+                    $url=$this->container->get("router")->generate("web_show_job",["slug"=>$entity->getQuote()->getIntervention()->getSlug()], UrlGeneratorInterface::ABSOLUTE_URL);
+                    break;
+                case Notification::ACCOUNT_VALIDATED:
+                    $cu = $this->container->get("security.token_storage")->getToken()->getUser();
+                    $url=$this->container->get("router")->generate("web_profile",["name"=>$cu->getProfileName(),"id"=>$cu->getUid()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+                    break;
+
+                case Notification::NOTE_RECEIVED:
+                    $cu = $this->container->get("security.token_storage")->getToken()->getUser();
+                    $url=$this->container->get("router")->generate("web_profile",["name"=>$cu->getProfileName(),"id"=>$cu->getUid()], UrlGeneratorInterface::ABSOLUTE_URL);
+                    break;
+
+                case Notification::ACCOUNT_LOCKED:
+                    $cu = $this->container->get("security.token_storage")->getToken()->getUser();
+                    $url=$this->container->get("router")->generate("web_profile",["name"=>$cu->getProfileName(),"id"=>$cu->getUid()], UrlGeneratorInterface::ABSOLUTE_URL);
+                    break;
+                case Notification::PAYMENT_RECEIVED:
+                    $cu = $this->container->get("security.token_storage")->getToken()->getUser();
+                    $url=$this->container->get("router")->generate("web_profile",["name"=>$cu->getProfileName(),"id"=>$cu->getUid()], UrlGeneratorInterface::ABSOLUTE_URL);
+                    break;
+                default:
+                    break;
+
+
+            }
+
+            return ["message"=>"","code"=>201,"statut"=>false,"data"=>["statut"=>$res,"url"=>$url]];
         }
 
 
@@ -78,5 +132,6 @@ class NotificationService
         return $res[0]["nb"];
 
     }
+
 
 }

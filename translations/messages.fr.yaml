@@ -294,3 +294,19 @@ quotation_invitation_accepted: Invitation acceptée
 quotation_already_send: Quotation déjà envoyée
 send_invitation: envoyer une invitation
 all: tout
+no_job_found: Aucun job trouvé correspondant à ce technicien / cette entreprise
+choose_job: sélectionner un job
+user_not_matched: L'utilisateur n'est pas compatible avec le domaine d'expertise requis
+notification_not_found: Notification non trouvée
+payment_detail: Détails de Payement
+reason: Motif
+valid_quotation: Validation de la candidature
+valid_devis: Validation du devis
+quotation_not_found: Candidature non trouvée
+payment_is_done: Payement effectué
+transaction_waiting_user: La transaction est en attente de validation par vous
+transaction_in_progress: Transaction encours
+transaction_expired: Transaction expirée
+payment_has_failed: Echec de la transaction
+transaction_not_found: Transaction inexistante
+transaction_canceled: Transaction annulée

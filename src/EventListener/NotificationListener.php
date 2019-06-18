@@ -2,19 +2,18 @@
 /**
  * Created by PhpStorm.
  * User: rostandnj
- * Date: 17/4/19
- * Time: 5:40 PM
+ * Date: 12/6/19
+ * Time: 7:09 PM
  */
 
 namespace App\EventListener;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
-use App\Entity\Category;
+use App\Entity\Notification;
 
-class CategoryListener
+class NotificationListener
 {
-
     private $container;
 
     public function __construct(ContainerInterface $c)
@@ -27,18 +26,17 @@ class CategoryListener
         $entity = $args->getObject();
 
         // only act on some "Product" entity
-        if (!$entity instanceof Category) {
+        if (!$entity instanceof Notification) {
             return;
         }
 
-        $get ="getName".ucfirst($this->container->get("request_stack")->getCurrentRequest()->cookies->get("lang"));
 
-        $entity->setName($entity->$get());
 
 
 
         //$entityManager = $args->getObjectManager();
-        // ... do something with the Product
+
 
     }
+
 }

@@ -17,6 +17,13 @@
                 <li class="nav-item {% if app.request.pathInfo == "/dashboard" %} active {% endif %}">
                     <a href="{{ path('web_dashboard') }}" class="nav-link ">{% trans %} dashboard {% endtrans %} </a>
                 </li>
+
+                {% if app.user.role.code =="ROLE_OPERATOR" %}
+                    <li class="nav-item {% if app.request.pathInfo == "/jobs" %} active {% endif %}">
+                        <a href="{{ path('web_dashboard_job') }}" class="nav-link ">{% trans %} my_jobs {% endtrans %}</a>
+                    </li>
+                {% endif %}
+
                 {% if app.user.role.code=="ROLE_OPERATOR"  %}
                     <li id="list-notif-btn" class="nav-item ">
 
@@ -45,6 +52,8 @@
                     </li>
 
                 {% endif %}
+
+
 
                 {% if app.user.role.code in ["ROLE_CLIENT","ROLE_TECHNICIAN_PERSON","ROLE_TECHNICIAN_COMPANY","ROLE_MANAGER_COMPANY"]  %}
                 <li class="nav-item {% if app.request.pathInfo == "/jobs" %} active {% endif %}">
@@ -79,7 +88,7 @@
 
                 {% if app.user.role.code =="ROLE_CLIENT"  %}
                     <li class="nav-item badge badge-info {% if app.request.pathInfo == "/create/job" %} active {% endif %}">
-                        <a href="{{ path('web_dashboard_create_job') }}" class="nav-link ">{{ 'post_a_job'|trans }}</a>
+                        <a style="color: white" href="{{ path('web_dashboard_create_job') }}" class="nav-link ">{{ 'post_a_job'|trans }}</a>
                     </li>
                 {% endif %}
 

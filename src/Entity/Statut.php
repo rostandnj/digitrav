@@ -45,6 +45,10 @@ class Statut
 
     private $message;
 
+    private $url;
+
+    private $uid;
+
     /**
      * Statut constructor.
      */
@@ -139,6 +143,42 @@ class Statut
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * @param mixed $url
+     * @return Statut
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUid()
+    {
+        return $this->uid;
+    }
+
+    /**
+     * @param mixed $uid
+     * @return Statut
+     */
+    public function setUid($uid)
+    {
+        $this->uid = $uid;
+        return $this;
+    }
+
 
 
     public function toArray()
@@ -146,7 +186,10 @@ class Statut
         $tab =["id"=>$this->id,
             "date"=>$this->getDate()->format(\DateTime::ISO8601),
             "message"=>$this->message,
-            "statut"=>$this->statut,"notification"=>$this->getNotification()->toArray()];
+            "statut"=>$this->statut,"notification"=>$this->getNotification()->toArray(),
+            "uid"=>$this->getUid(),
+            "url"=>$this->getUrl()
+        ];
 
         return $tab;
     }

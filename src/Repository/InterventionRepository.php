@@ -141,4 +141,44 @@ class InterventionRepository extends ServiceEntityRepository
 
     }
 
+    public function clientJobForInvitaion($cid,$tid,$role,$dids,$limit,$offset)
+    {
+
+        if($role == "ROLE_CLIENT")
+        {
+            $left = "i.client";
+        }
+        else
+        {
+            $left = "i.operator";
+        }
+
+
+        $sub = $this->createQueryBuilder("int1")
+            ->leftJoin("int1.quotes","q1")
+            ->leftJoin("q1.technician","t1")
+            ->where("t1.id = :tid")
+            ->select("int1.id");
+
+
+        $qb= $this->createQueryBuilder('i');
+
+        return $qb->leftJoin("i.domain","d")
+            ->leftJoin($left,"c")
+            ->where('c.id = :cid')
+            ->andWhere('d.id IN (:did)')
+            ->andWhere('i.statut = :val')
+            ->andWhere($qb->expr()->notIn("i.id",$sub->getDQL()))
+            ->setParameter('tid', $tid)
+            ->setParameter('cid', $cid)
+            ->setParameter('did', $dids)
+            ->setParameter('val', Intervention::NEW)
+            ->orderBy('i.date', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 }

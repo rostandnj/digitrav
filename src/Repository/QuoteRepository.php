@@ -36,6 +36,20 @@ class QuoteRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findByJobValidated($id)
+    {
+        return $this->createQueryBuilder('q')
+            ->leftJoin('q.intervention','int')
+            ->where('int.id = :id')
+            ->andWhere('q.statut IN (:tab)')
+            ->setParameter('id', $id)
+            ->setParameter('tab', [Quote::DONE,Quote::PAID])
+            ->orderBy("q.date","DESC")
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 
     /*
     public function findOneBySomeField($value): ?Quote

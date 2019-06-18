@@ -8,16 +8,19 @@
 
 namespace App\Service;
 
+use App\Entity\Bill;
 use App\Entity\Company;
 use App\Entity\JobAlert;
 use App\Entity\Notification;
+use App\Entity\Payment;
 use App\Entity\Quote;
 use App\Entity\SaveJob;
 use App\Entity\Statut;
 use App\Entity\SubCategory;
+use Couchbase\PhraseSearchQuery;
 use Doctrine\ORM\EntityManagerInterface;
-use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Unirest;
 
 
 use App\Entity\User;
@@ -112,8 +115,7 @@ class InterventionService
 
 
         $intervention = new Intervention();
-        $d = new \DateTime();
-        $intervention->setReference($d->format("y-m-d")."-".uniqid());
+        $intervention->setReference($this->container->get("hash_service")->generateUUID("DIGII",12));
         //$intervention->setSlug($this->slugify($data["title"]));
 
         $intervention->setDescription($data["description"]);
@@ -314,6 +316,11 @@ class InterventionService
             $jobs = $this->em->getRepository(Intervention::class)->findByTechnician($user->getId(),$limit,$offset);
 
         }
+        /*else if($role->getCode()=="ROLE_OPERATOR")
+        {
+            $jobs = $this->em->getRepository(Intervention::class)->findBy(array("isActive"=>true,"operator"=>$user),array("date"=>"DESC","statut"=>"ASC"),$limit,$offset);
+
+        }*/
         else{
             $jobs = $this->em->getRepository(Intervention::class)->findBy(array("isActive"=>true),array("date"=>"DESC","statut"=>"ASC"),$limit,$offset);
 
@@ -436,21 +443,43 @@ class InterventionService
             }
         }
 
+
+
         if($quoteSatut == true)
         {
-            $quotes= $this->em->getRepository(Quote::class)->findByJob($job->getId(),$limit,$offset);
+
+
+            if(in_array($job->getStatut(),[Intervention::PAID,Intervention::DONE]))
+            {
+                $testQ=true;
+                $quotes= $this->em->getRepository(Quote::class)->findByJobValidated($job->getId());
+            }
+            else
+            {
+                $testQ=false;
+                $quotes= $this->em->getRepository(Quote::class)->findByJob($job->getId(),$limit,$offset);
+            }
+
+
         }
 
-        $ownQuote = $this->em->getRepository(Quote::class)->findOneBy(array("intervention"=>$job,"technician"=>$user));
         $invite =false;
         $qid=0;
-        if(!is_null($ownQuote))
+
+        if($testQ == false)
         {
-            if($ownQuote->getStatut()==Quote::NEW){
-                $invite =true;
-                $qid = $ownQuote->getId();
+            $ownQuote = $this->em->getRepository(Quote::class)->findOneBy(array("intervention"=>$job,"technician"=>$user));
+
+
+            if(!is_null($ownQuote))
+            {
+                if($ownQuote->getStatut()==Quote::NEW){
+                    $invite =true;
+                    $qid = $ownQuote->getId();
+                }
             }
         }
+
 
 
 
@@ -1041,23 +1070,45 @@ class InterventionService
             if($job->getIsActive()==false) return ["message"=>"job_not_found","code"=>404,"statut"=>true,"data"=>[]];
             else
             {
+
                 if($job->getIsMain()==true)
                 {
-                    if($job->getClient()->getId()!=$user->getId())
+
+                    if(in_array($user->getRole()->getCode(),["ROLE_OPERATOR","ROLE_ADMIN"]))
                     {
-                        return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
+
+                    }
+                    else
+                    {
+                        if($job->getClient()->getId()!=$user->getId())
+                        {
+                            return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
+                        }
                     }
 
                 }
                 else
                 {
-                    if($job->getOperator()->getId()!=$user->getId())
+                    if(!in_array($user->getRole()->getCode(),["ROLE_OPERATOR","ROLE_ADMIN"]))
                     {
                         return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
                     }
+
                 }
 
-                $quotes = $this->em->getRepository(Quote::class)->findByJob($job->getId(),$limit,$offset);
+
+
+
+                if(in_array($job->getStatut(),[Intervention::PAID,Intervention::DONE]))
+                {
+                    $quotes = $this->em->getRepository(Quote::class)->findByJobValidated($job->getId());
+                }
+                else
+                {
+                    $quotes = $this->em->getRepository(Quote::class)->findByJob($job->getId(),$limit,$offset);
+                }
+
+
 
                 return ["message"=>"","code"=>201,"statut"=>false,"data"=>["quotes"=>$quotes,"job"=>$job]];
             }
@@ -1249,6 +1300,430 @@ class InterventionService
         $d=$this->em->getRepository(Domain::class)->findOneBy(array("slug"=>$slug));
 
         return ["message"=>" ","code"=>201,"statut"=>true,"data"=>["jobs"=>$jobs,"domain"=>$d]];
+
+    }
+
+    public function getTechniciansAll(int $limit,int $offset)
+    {
+
+        $jobs = $this->em->getRepository(User::class)->findTechniciansAll( $limit,$offset);
+
+
+        return ["message"=>" ","code"=>201,"statut"=>true,"data"=>["users"=>$jobs]];
+
+    }
+
+    public function getClientJobForInvitation(User $user,int $techId,int $limit,int $offset)
+    {
+        $tech = $this->em->getRepository(User::class)->findOneBy(array("id"=>$techId));
+
+        if(is_null($tech)) return ["message"=>"user_not_found","code"=>404,"statut"=>true,"data"=>["jobs"=>[]]];
+
+        $domains=[];
+
+        if($tech->getRole()->getCode()=="ROLE_MANAGER_COMPANY")
+        {
+            foreach ($tech->getCompany()->getDomains() as $d)
+            {
+                $domains[]=$d->getId();
+            }
+        }
+        elseif($tech->getRole()->getCode()=="ROLE_TECHNICIAN_PERSON")
+        {
+
+            foreach ($tech->getUserDetail()->getDomains() as $d)
+            {
+                $domains[]=$d->getId();
+            }
+        }
+
+        $jobs = $this->em->getRepository(Intervention::class)->clientJobForInvitaion($user->getId(),$techId,$user->getRole()->getCode(),$domains,$limit,$offset);
+
+        return ["message"=>"","code"=>201,"statut"=>false,"data"=>["jobs"=>$jobs]];
+
+
+    }
+
+    public function sendInvitation(User $user,int $jobId,int $techId)
+    {
+        if($user->getRole()->getCode()=="ROLE_CLIENT")
+        {
+            $job = $this->em->getRepository(Intervention::class)->findOneBy(array("id"=>$jobId,"client"=>$user->getId()));
+        }
+        elseif($user->getRole()->getCode()=="ROLE_OPERATOR")
+        {
+            $job = $this->em->getRepository(Intervention::class)->findOneBy(array("id"=>$jobId,"operator"=>$user->getId()));
+
+        }
+        else
+        {
+            return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
+        }
+
+        if(is_null($job)) return ["message"=>"job_not_found","code"=>404,"statut"=>true,"data"=>[]];
+
+        $tech = $this->em->getRepository(User::class)->findOneBy(array("id"=>$techId));
+
+        if(is_null($tech)) return ["message"=>"user_not_found","code"=>404,"statut"=>true,"data"=>[]];
+
+        if($tech->getRole()->getCode()=="ROLE_MANAGER_COMPANY")
+        {
+            if(!$tech->getCompany()->getDomains()->contains($job->getDomain()))
+            {
+                return ["message"=>"user_not_matched","code"=>401,"statut"=>true,"data"=>[]];
+            }
+        }
+        elseif($tech->getRole()->getCode()=="ROLE_TECHNICIAN_PERSON")
+        {
+            if(!$tech->getUserDetail()->getDomains()->contains($job->getDomain()))
+            {
+                return ["message"=>"user_not_matched","code"=>401,"statut"=>true,"data"=>[]];
+            }
+        }
+        else{
+
+            return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
+        }
+
+        $old = $this->em->getRepository(Quote::class)->findOneBy(array("intervention"=>$job,"technician"=>$tech));
+
+        if(!is_null($old)) return ["message"=>"quotation_already_send","code"=>401,"statut"=>true,"data"=>[]];
+
+        $quote = new Quote();
+
+        $quote->setSuggestedDate($job->getStartDate());
+        if(strtolower($job->getLocation()->getCity())==strtolower($job->getLocation()->getCity()))
+        {
+            $quote->setAmount($job->getBudget()+2000);
+        }
+        else
+        {
+            $quote->setAmount($job->getBudget());
+        }
+
+        $quote->setIntervention($job);
+        $quote->setTechnician($tech);
+
+
+
+
+        $notif = new Notification();
+
+        $notif->setUser($user);
+        $notif->setIsActive(false);
+        $notif->setCode(Notification::QUOTATION_INVITATION);
+        $notif->setQuote($quote);
+
+        $statut = new Statut();
+        $statut->setNotification($notif);
+        $statut->setUser($quote->getTechnician());
+        $statut->setStatut(false);
+
+        $this->em->persist($quote);
+        $this->em->persist($statut);
+
+        $this->em->flush();
+
+
+        return ["message"=>"operation_did","code"=>201,"statut"=>false,"data"=>["quote"=>$quote]];
+
+
+
+    }
+
+    public function getQuote(User $user,int $id)
+    {
+        $role = $user->getRole();
+
+        if(!in_array($role->getCode(),["ROLE_CLIENT","ROLE_OPERATOR"]))
+        {
+            return ["message"=>"operation_denied1","code"=>401,"statut"=>true,"data"=>[]];
+        }
+        else
+        {
+            $quote = $this->em->getRepository(Quote::class)->findOneBy(array("id"=>$id));
+
+            if(is_null($quote)) return ["message"=>"quotation_not_found","code"=>401,"statut"=>true,"data"=>[]];
+
+            $int = $quote->getIntervention();
+
+            if($int->getIsMain()==true)
+            {
+                if($user->getId()!= $int->getClient()->getId()) return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
+            }
+            else
+            {
+                if($user->getId()!= $int->getOperator()->getId()) return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
+
+            }
+
+
+            return ["message"=>"cool","code"=>201,"statut"=>false,"data"=>$quote];
+
+        }
+    }
+
+    public function makePayment(User $user,Quote $quote)
+    {
+        $headers = array('Accept' => 'application/json',
+            'Authorization'=>'Bearer sADnotJRf5Fwu1fSKgm8ogZGxjQw',
+            'Content-Type'=>'application/json');
+
+        $quote->setReference($this->container->get("hash_service")->generateUUID("DIGIQ",12));
+
+        $this->em->persist($quote);
+        $this->em->flush();
+
+        $data=[
+            "merchant_key"=>"5d936434",
+            "currency"=> "OUV",
+            "order_id"=> $quote->getReference(),
+          "amount"=> 1000,
+          "return_url"=> "http://37.120.158.247:32788/digitrav/public/"."job/payment/callback/".$quote->getReference()."/".$quote->getIntervention()->getSlug(),
+          "cancel_url"=> "http://37.120.158.247:32788/digitrav/public/"."job/payment/callback/cancel/".$quote->getReference()."/".$quote->getIntervention()->getSlug(),
+          "notif_url"=> "http://37.120.158.247:32788/digitrav/public/"."job/payment/notification",
+          "lang"=> "fr",
+          "reference"=> "DIGITRAV"
+        ];
+
+        $body = Unirest\Request\Body::json($data);
+
+        $response = Unirest\Request::post('https://api.orange.com/orange-money-webpay/dev/v1/webpayment', $headers, $body);
+
+
+        return ["message"=>"","code"=>$response->code,"statut"=>false,"data"=>$response];
+    }
+
+    public function verifyPayment(string $orderId,int $amount,string $payToken)
+    {
+        $headers = array('Accept' => 'application/json',
+            'Authorization'=>'Bearer sADnotJRf5Fwu1fSKgm8ogZGxjQw',
+            'Content-Type'=>'application/json');
+
+        $data=[
+            "order_id"=> $orderId,
+            "amount"=> $amount,
+            "pay_token"=>$payToken
+        ];
+
+        $body = Unirest\Request\Body::json($data);
+
+        $response = Unirest\Request::post('https://api.orange.com/orange-money-webpay/dev/v1/webpayment', $headers, $body);
+
+        return ["message"=>"","code"=>$response->code,"statut"=>false,"data"=>$response];
+
+    }
+
+    public function getNotification(string $status,string $notifToken)
+    {
+        $tab=["SUCCESS"=>"payment_is_done",
+            "INITIATED"=>"transaction_waiting_user",
+            "PENDING"=>"transaction_in_progress",
+            "EXPIRED"=>"transaction_expired",
+            "FAILED"=>"payment_has_failed"
+        ];
+
+        if(!array_key_exists($status,$tab)) return ["message"=>"BAD_RESPONSE","code"=>401,"statut"=>true,"data"=>[]];
+
+
+        if($status =="SUCCESS")
+        {
+            $payment = $this->em->getRepository(Payment::class)->findOneBy(array("notifToken"=>$notifToken));
+
+            if(!is_null($payment))
+            {
+                $quote = $this->em->getRepository(Quote::class)->findOneBy(array("reference"=>$payment->getReference()));
+
+                if(!is_null($quote))
+                {
+                    $quote->setStatut(Quote::PAID);
+
+                    $payment->setStatut(true);
+
+                    $this->em->persist($payment);
+
+
+
+
+                    $int = $quote->getIntervention();
+
+                    $int->setStatut(Intervention::PAID);
+
+
+                    $bill = new Bill();
+                    $bill->setPayment($payment);
+                    $bill->setReference($this->container->get("hash_service")->generateUUID("DIGIB",12));
+                    $bill->setReason(Bill::PAID);
+                    $bill->setAmount($payment->getAmount());
+
+                    $quote->setBill($bill);
+
+
+                    $this->em->persist($int);
+
+                    $quotes = $int->getQuotes();
+
+                    foreach ($quotes as $elt)
+                    {
+                        if($elt->getId()!= $quote->getId())
+                        {
+                            $elt->setStatut(Quote::REFUSED);
+                            $this->em->persist($elt);
+                        }
+
+                    }
+
+                    $notif = new Notification();
+
+                    $notif->setIsActive(true);
+                    $notif->setQuote($quote);
+                    $notif->setUser($payment->getClient());
+                    $notif->setCode(Notification::QUOTATION_ACCEPTED);
+
+                    $sta = new Statut();
+                    $sta->setUser($quote->getTechnician());
+                    $sta->setNotification($notif);
+
+
+                    $this->em->persist($quote);
+                    $this->em->persist($sta);
+                    $this->em->flush();
+
+                    return ["message"=>"","code"=>201,"statut"=>false,"data"=>[]];
+
+                }
+                else{
+                    return ["message"=>"quotation_not_found","code"=>401,"statut"=>true,"data"=>[]];
+                }
+
+            }
+            else
+            {
+                return ["message"=>"transaction_not_found","code"=>401,"statut"=>true,"data"=>[]];
+            }
+        }
+
+
+        return ["message"=>$tab[$status],"code"=>401,"statut"=>true,"data"=>[]];
+
+
+    }
+
+    public function getQuoteAfterPayment(User $user, string $ref)
+    {
+        $q=$this->em->getRepository(Quote::class)->findOneBy(array("reference"=>$ref));
+
+        if(!is_null($q))
+        {
+            $p = $this->em->getRepository(Payment::class)->findOneBy(array("reference",$q->getReference()));
+
+            if(is_null($p)) return ["message"=>"transaction_not_found","code"=>404,"statut"=>true,"data"=>[]];
+
+            if($p->getClient()->getId() != $user->getId()) return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
+
+
+            if($p->getStatut()==false)
+            {
+                $headers = array('Accept' => 'application/json',
+                    'Authorization'=>'Bearer sADnotJRf5Fwu1fSKgm8ogZGxjQw',
+                    'Content-Type'=>'application/json');
+
+                $data=[
+                    "order_id"=> $q->getReference(),
+                    "amount"=> (int)$q->getAmount(),
+                    "pay_token"=>$p->getPayToken()
+                ];
+
+                $body = Unirest\Request\Body::json($data);
+
+                $response = Unirest\Request::post('https://api.orange.com/orange-money-webpay/dev/v1/transactionstatus', $headers, $body);
+
+
+                if($response->body->status == "SUCCESS")
+                {
+                        $q->setStatut(Quote::PAID);
+
+                        $p->setStatut(true);
+                        $this->em->persist($p);
+
+
+                        $int = $q->getIntervention();
+
+                        $int->setStatut(Intervention::PAID);
+
+                        $this->em->persist($int);
+
+
+                        $bill = new Bill();
+                        $bill->setPayment($p);
+                        $bill->setReference($this->container->get("hash_service")->generateUUID("DIGIB",12));
+                        $bill->setReason(Bill::PAID);
+                        $bill->setAmount($p->getAmount());
+
+                        $q->setBill($bill);
+
+
+
+                        $quotes = $int->getQuotes();
+
+                        foreach ($quotes as $elt)
+                        {
+                            if($elt->getId()!= $q->getId())
+                            {
+                                $elt->setStatut(Quote::REFUSED);
+                                $this->em->persist($elt);
+                            }
+
+                        }
+
+                        $notif = new Notification();
+
+                        $notif->setIsActive(true);
+                        $notif->setQuote($q);
+                        $notif->setUser($p->getClient());
+                        $notif->setCode(Notification::QUOTATION_ACCEPTED);
+
+                        $sta = new Statut();
+                        $sta->setUser($q->getTechnician());
+                        $sta->setNotification($notif);
+
+
+                        $this->em->persist($q);
+                        $this->em->persist($sta);
+                        $this->em->flush();
+
+                        return ["message"=>"payment_is_done","code"=>201,"statut"=>false,"data"=>[]];
+
+                }
+                else
+                {
+                    $tab=["SUCCESS"=>"payment_is_done",
+                        "INITIATED"=>"transaction_waiting_user",
+                        "PENDING"=>"transaction_in_progress",
+                        "EXPIRED"=>"transaction_expired",
+                        "FAILED"=>"payment_has_failed"
+                    ];
+
+                    if(!array_key_exists($response->body->status,$tab)) return ["message"=>"BAD_RESPONSE","code"=>401,"statut"=>true,"data"=>[]];
+
+
+                    return ["message"=>$tab[$response->body->status],"code"=>$response->code,"statut"=>false,"data"=>$response];
+                }
+
+
+
+
+            }
+            else
+            {
+                return ["message"=>"payment_is_done","code"=>201,"statut"=>false,"data"=>$q];
+            }
+
+
+
+        }
+
+        return ["message"=>"quotation_not_found","code"=>401,"statut"=>true,"data"=>[]];
 
     }
 

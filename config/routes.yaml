@@ -375,3 +375,39 @@ web_more_domain_technicians:
   path: /job/domain/technicians/more/{slug}
   controller: App\Controller\WebController::findMoreDomainTechnicians
   methods: [GET]
+
+web_more_technicians:
+  path: /job/technicians/more
+  controller: App\Controller\WebController::findMoreTechnicians
+  methods: [GET]
+
+web_client_job_for_invitation:
+  path: /job/invitations/{techId}
+  controller: App\Controller\WebController::getClientRecentJobForInvitation
+  methods: [GET]
+
+web_send_job_for_invitation:
+  path: /job/send/invitations
+  controller: App\Controller\WebController::sendInvitationToTechnician
+  methods: [POST]
+
+web_initiate_payment:
+  path: /job/initiate/payment
+  controller: App\Controller\WebController::initiatePayment
+  methods: [POST]
+
+web_payment_notification:
+  path: /job/payment/notification
+  controller: App\Controller\WebController::getPaymentNotification
+  methods: [POST]
+
+web_payment_callback:
+  path: /job/payment/callback/{ref}/{slug}
+  controller: App\Controller\WebController::getPaymentCallback
+  methods: [GET]
+
+web_payment_callback_cancel:
+  path: /job/payment/callback/cancel/{ref}/{slug}
+  controller: App\Controller\WebController::getPaymentCallbackCancel
+  methods: [GET]
+

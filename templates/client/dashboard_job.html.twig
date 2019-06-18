@@ -61,7 +61,7 @@
                             </thead>
                             <tbody>
                             {% for job in jobs %}
-                                <tr {% if job.statut==0 %} class="success" {% endif %}>
+                                <tr  class=" {% if job.statut==0 %}success {% endif %} {% if job.isMain ==false %}  {% if job.operator.id == app.user.id %} btn-info {% endif %}{% endif %}" >
                                     <td >
                                         <a href="{{ path('web_show_job',{slug:job.slug}) }}">
                                             <i style="color: #1572e8" class="fa fa-eye"></i>

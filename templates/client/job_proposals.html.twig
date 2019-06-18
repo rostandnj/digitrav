@@ -134,8 +134,23 @@
                                                                    </button>
 
                                                                     {% endif %}
-                                                                    <button class="btn btn-success"> <span class="list-apply-button ripple-effect">{{ 'valid'|trans }}</span></button>
-                                                                </div>
+
+                                                                    {% if job.isMain ==1 %}
+
+                                                                        {% if job.client.id == app.user.id %}
+                                                                            <button data-type="{% if q.type ==false %}0{% else %}1{% endif %}" data-amount="{{ q.amount }}" data-id="{{ q.id }}" data-toggle="modal" data-target="#pay-job" class="btn btn-success"> <span class="list-apply-button ripple-effect">{{ 'valid'|trans }}</span></button>
+
+                                                                        {% endif %}
+
+                                                                    {% else %}
+                                                                        {% if job.operator.id == app.user.id %}
+                                                                            <button data-type="{% if q.type ==false %}0{% else %}1{% endif %}" data-amount="{{ q.amount }}" data-id="{{ q.id }}" data-toggle="modal" data-target="#pay-job" class="btn btn-success"> <span class="list-apply-button ripple-effect">{{ 'valid'|trans }}</span></button>
+
+                                                                        {% endif %}
+
+                                                                    {% endif %}
+
+                                                                        </div>
                                                             </li>
 
 
@@ -163,6 +178,7 @@
             </div>
         </section>
 
+        {% include 'client/modal_payement.html.twig' %}
 
 
 
@@ -182,6 +198,27 @@
 {% block js %}
 
     <script>
+
+        var show =false;
+
+        {% if job.isMain ==1 %}
+
+        {% if job.client.id == app.user.id %}
+
+       show =true;
+
+        {% endif %}
+
+        {% else %}
+
+        {% if job.operator.id == app.user.id %}
+
+        show =true;
+
+        {% endif %}
+
+        {% endif %}
+
         $('.popover-dismiss').popover({
             trigger: 'focus'
         });
@@ -255,7 +292,7 @@
                             '                    <li><i class="icon-material-outline-access-time"></i> ';
 
                         let part34='</li>\n' +
-                            '                </ul></div></div><button class="btn btn-success"> <span class="list-apply-button ripple-effect">';
+                            '                </ul></div></div>';
 
 
                         resultat.quotes.forEach(function (el) {
@@ -269,7 +306,7 @@
 
                             let ur= url.replace('/axx',"/"+el.technician.profile_name);
                             let u = ur.replace('/ayy',"/"+el.technician.uid);
-                            let end='</span></button></div></li>';
+                            let end='</div></li>';
 
 
                             if(el.technician.role.code === "ROLE_TECHNICIAN_PERSON")
@@ -343,10 +380,14 @@
                                     "                                                                   </button>";
                             }
 
+                            let btn ='<button data-toggle="modal" data-target="#pay-job" class="btn btn-success" '+'data-id="'+el.id+'"'+ ' data-amount="'+el.amount+'" '+'data-type="'+el.type+'" '+ '>'+ '<span class="list-apply-button ripple-effect">'+ "{{ 'valid'|trans }}"+"</span></button>";
+
+                            if(show ==false) btn="";
+
                             html =html + part1+img+part2+"<a  style=\"color: grey!important;\" href='"+u+"'>"+ name
                                 +"</a><br/><small>"+note+part31+location+part32+type+
                                     "<li><i class=\"icon-material-outline-alarm-add\"></i>"+el.suggested_date+"</li>"+part33+
-                                el.date+part34+"{{ 'valid'|trans }}"+end;
+                                el.date+part34+btn+ end;
 
 
 
@@ -381,7 +422,55 @@
 
 
 
-        })
+        });
+
+        $('#pay-job').on('show.bs.modal', function (event) {
+            $("#main-loader").show();
+
+            $("#main-invit").hide();
+            $("#send-modal").hide();
+            $("#job").html("");
+            $('#main-message').html('');
+
+            var button = $(event.relatedTarget); // Button that triggered the modal
+
+            let quoteId = button.data('id');
+            let quoteAmount = button.data("amount");
+            let type = button.data("type");
+
+            if(type =="0")
+            {
+                $("#job-msg").html("{{ 'valid_quotation'|trans }}");
+            }
+            else
+            {
+                $("#job-msg").html("{{ 'valid_devis'|trans }}");
+            }
+
+
+
+            $("#total-amount").html(quoteAmount);
+
+            $("#quoteid").attr("value",quoteId);
+
+            var modal = $(this);
+
+
+
+
+            // modal.find('#id').text(recipient);
+
+
+
+
+
+
+
+
+
+
+
+        });
     </script>
 
 {% endblock %}

@@ -43,7 +43,7 @@ class Quote
 
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Bill")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Bill",cascade={"persist","remove"})
      */
     private $bill;
 
@@ -76,6 +76,11 @@ class Quote
      * @ORM\OneToMany(targetEntity="App\Entity\ToolQuote", mappedBy="quote", orphanRemoval=true)
      */
     private $toolQuotes;
+
+    /**
+     * @ORM\Column(type="string", length=30, nullable=true)
+     */
+    private $reference;
 
     const NEW =0;
     const ACCEPTED =1;
@@ -170,6 +175,8 @@ class Quote
         return $this;
     }
 
+
+
     public function toArray()
     {
         $tab =["id"=>$this->id,
@@ -180,7 +187,8 @@ class Quote
             "is_active"=>$this->isActive,
             "statut"=>$this->statut,
             "technician"=>$this->getTechnician()->toArray(),
-            "suggested_date"=>$this->getSuggestedDate()
+            "suggested_date"=>$this->getSuggestedDate(),
+            "type"=>(int)$this->type
 
         ];
 
@@ -274,6 +282,18 @@ class Quote
                 $toolQuote->setQuote(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(?string $reference): self
+    {
+        $this->reference = $reference;
 
         return $this;
     }
