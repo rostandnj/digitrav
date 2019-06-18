@@ -36,7 +36,7 @@ class QuoteRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findByJobValidated($id)
+    public function findByJobValidated($id,$limit,$offset)
     {
         return $this->createQueryBuilder('q')
             ->leftJoin('q.intervention','int')
@@ -45,6 +45,8 @@ class QuoteRepository extends ServiceEntityRepository
             ->setParameter('id', $id)
             ->setParameter('tab', [Quote::DONE,Quote::PAID])
             ->orderBy("q.date","DESC")
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
             ->getQuery()
             ->getResult()
             ;

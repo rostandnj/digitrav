@@ -36,6 +36,56 @@
 
                                         {% endif %}
 
+                                        {% if show_detail == true or app.user.role.code in ["ROLE_OPERATOR","ROLE_ADMIN"] %}
+
+                                            {% if job.isMain==false %}
+
+                                                <div class="widget mt-5">
+
+                                                    <div class="mb-4">
+                                                        <h5>
+                                                            <strong>{{ 'phone'|trans }}</strong> : {{ job.clientPhone }}
+                                                        </h5>
+
+                                                    </div>
+                                                    {% if job.clientEmail is not null %}
+                                                    <div class="mb-4">
+                                                        <h5>
+                                                            <strong>{{ 'email'|trans }}</strong> : {{ job.clientEmail }}
+                                                        </h5>
+
+                                                    </div>
+
+                                                    {% endif %}
+
+                                                </div>
+                                            {% else %}
+
+                                                <div class="widget mt-5">
+
+                                                    <div class="mb-4">
+                                                        <h5>
+                                                            <strong>{{ 'phone'|trans }}</strong> : {{ job.client.phone }}
+                                                        </h5>
+
+                                                    </div>
+
+                                                    <div class="mb-4">
+                                                        <h5>
+                                                            <strong>{{ 'email'|trans }}</strong> : {{ job.client.email }}
+                                                        </h5>
+
+                                                    </div>
+
+
+
+                                                </div>
+                                            {% endif %}
+
+
+
+                                        {% endif %}
+
 
                                     </div>
                                     <div class="mb-4">
@@ -88,7 +138,7 @@
 
 
                                                 {% else %}
-                                                    {% if job.hasApplied ==false %}
+                                                    {% if job.hasApplied ==false and job.statut==0 %}
 
                                                         <li class="mb-2">
 

@@ -130,7 +130,7 @@ class Payment
         return $this;
     }
 
-    public function getClient(): ?User
+    public function getClient(): ?string
     {
         return $this->client;
     }

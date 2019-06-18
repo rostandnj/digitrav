@@ -137,13 +137,13 @@
 
                                                                     {% if job.isMain ==1 %}
 
-                                                                        {% if job.client.id == app.user.id %}
+                                                                        {% if job.client.id == app.user.id and q.statut not in [3,4,2] %}
                                                                             <button data-type="{% if q.type ==false %}0{% else %}1{% endif %}" data-amount="{{ q.amount }}" data-id="{{ q.id }}" data-toggle="modal" data-target="#pay-job" class="btn btn-success"> <span class="list-apply-button ripple-effect">{{ 'valid'|trans }}</span></button>
 
                                                                         {% endif %}
 
                                                                     {% else %}
-                                                                        {% if job.operator.id == app.user.id %}
+                                                                        {% if job.operator.id == app.user.id and q.statut not in [3,4,2] %}
                                                                             <button data-type="{% if q.type ==false %}0{% else %}1{% endif %}" data-amount="{{ q.amount }}" data-id="{{ q.id }}" data-toggle="modal" data-target="#pay-job" class="btn btn-success"> <span class="list-apply-button ripple-effect">{{ 'valid'|trans }}</span></button>
 
                                                                         {% endif %}
@@ -203,7 +203,7 @@
 
         {% if job.isMain ==1 %}
 
-        {% if job.client.id == app.user.id %}
+        {% if job.client.id == app.user.id and job.statut not in [2,4] %}
 
        show =true;
 
@@ -211,7 +211,7 @@
 
         {% else %}
 
-        {% if job.operator.id == app.user.id %}
+        {% if job.operator.id == app.user.id and job.statut not in [2,4] %}
 
         show =true;
 

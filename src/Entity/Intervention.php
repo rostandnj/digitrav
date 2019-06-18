@@ -139,6 +139,16 @@ class Intervention
      */
     private $hasEdit;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $clientPhone;
+
+    /**
+     * @ORM\Column(type="string", length=100, nullable=true)
+     */
+    private $clientEmail;
+
     const NEW=0;
     const ACCEPTED=1;
     const PAID=2;
@@ -483,7 +493,9 @@ class Intervention
             "can_save"=>$this->canSave,
             "can_delete"=>$this->canDelete,
             "can_alert"=>$this->canAlert,
-            "budget"=>$this->budget
+            "budget"=>$this->budget,
+            "client_email"=>$this->clientEmail,
+            "client_phone"=>$this->clientPhone,
         ];
 
         if($this->isMain ==true)
@@ -582,6 +594,30 @@ class Intervention
     public function setHasEdit(bool $hasEdit): self
     {
         $this->hasEdit = $hasEdit;
+
+        return $this;
+    }
+
+    public function getClientPhone(): ?string
+    {
+        return $this->clientPhone;
+    }
+
+    public function setClientPhone(?string $clientPhone): self
+    {
+        $this->clientPhone = $clientPhone;
+
+        return $this;
+    }
+
+    public function getClientEmail(): ?string
+    {
+        return $this->clientEmail;
+    }
+
+    public function setClientEmail(?string $clientEmail): self
+    {
+        $this->clientEmail = $clientEmail;
 
         return $this;
     }

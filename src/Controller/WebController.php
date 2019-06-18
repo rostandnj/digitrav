@@ -1411,7 +1411,12 @@ class WebController extends AbstractController implements LogginInterfaceControl
 
 
 
-                if($cu->getRole()->getCode()=="ROLE_OPERATOR") $data["client_name"]=trim($request->request->get("client"));
+                if($cu->getRole()->getCode()=="ROLE_OPERATOR"){
+
+                    $data["client_name"]=trim($request->request->get("client"));
+                    $data["client_email"]=trim($request->request->get("client_email"));
+                    $data["client_phone"]=trim($request->request->get("client_phone"));
+                }
                 $data["files"]=[];
 
 
@@ -1715,7 +1720,7 @@ class WebController extends AbstractController implements LogginInterfaceControl
             //$domains = $this->mycontainer->get('domain_manager')->showList(20,0);
 
             return $this->render("client/show_job.html.twig",["job"=>$data["data"]["job"],"quotes"=>$data["data"]["quotes"],"files"=>$data["data"]["files"],
-                "nb_job"=>$data["data"]["nb_job"],"spent"=>$data["data"]["spent"],"invite"=>$data["data"]["invite"],"qid"=>$data["data"]["qid"]]);
+                "nb_job"=>$data["data"]["nb_job"],"spent"=>$data["data"]["spent"],"invite"=>$data["data"]["invite"],"qid"=>$data["data"]["qid"],"show_detail"=>$data["data"]["show_detail"]]);
         }
     }
 

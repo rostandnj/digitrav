@@ -17,7 +17,6 @@ use App\Entity\Quote;
 use App\Entity\SaveJob;
 use App\Entity\Statut;
 use App\Entity\SubCategory;
-use Couchbase\PhraseSearchQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Unirest;
@@ -74,7 +73,12 @@ class InterventionService
 
         if(!in_array($role,["ROLE_CLIENT","ROLE_OPERATOR"])) return ["message"=>" operation denied","code"=>401,"statut"=>false,"data"=>""];
 
-        if($role =="ROLE_OPERATOR") $required[]="client_name";
+        if($role =="ROLE_OPERATOR")
+        {
+            $required[]="client_name";
+            $required[]="client_email";
+            $required[]="client_phone";
+        }
 
         foreach ($required as $el)
         {
@@ -88,6 +92,22 @@ class InterventionService
                if(strlen($data["client_name"])<3) return ["message"=>" client name too short","code"=>401,"statut"=>false,"data"=>""];
            }
        }
+
+        if(array_key_exists("client_phone",$data))
+        {
+            if(!is_null($data["client_phone"]))
+            {
+                if(strlen($data["client_phone"])!=9) return ["message"=>"invalid_phone","statut"=>false,"code"=>401,"data"=>""];
+            }
+        }
+        if(array_key_exists("client_email",$data))
+        {
+            /*if($data["client_email"]!="")
+            {
+                if(!filter_var($data["client_email"], FILTER_VALIDATE_EMAIL)) return ["message"=>"invalid_email","statut"=>false,"code"=>401,"data"=>""];
+            }*/
+        }
+
 
         if(strlen($data["description"])<20) return ["message"=>"description field is too short ","code"=>401,"statut"=>false,"data"=>""];
         if(strlen($data["title"])<0) return ["message"=>"title field is too short ","code"=>401,"statut"=>false,"data"=>""];
@@ -140,6 +160,8 @@ class InterventionService
         {
             $intervention->setIsMain(false);
             $intervention->setClientName($data["client_name"]);
+            $intervention->setClientEmail($data["client_email"]);
+            $intervention->setClientPhone($data["client_phone"]);
             $intervention->setOperator($user);
         }
 
@@ -452,38 +474,48 @@ class InterventionService
             if(in_array($job->getStatut(),[Intervention::PAID,Intervention::DONE]))
             {
                 $testQ=true;
-                $quotes= $this->em->getRepository(Quote::class)->findByJobValidated($job->getId());
+                $quotes= $this->em->getRepository(Quote::class)->findByJobValidated($job->getId(),1,0);
             }
             else
             {
-                $testQ=false;
                 $quotes= $this->em->getRepository(Quote::class)->findByJob($job->getId(),$limit,$offset);
             }
 
 
         }
 
+
         $invite =false;
         $qid=0;
 
-        if($testQ == false)
+        $showDetails=false;
+
+
+        $ownQuote = $this->em->getRepository(Quote::class)->findOneBy(array("intervention"=>$job,"technician"=>$user));
+
+
+        if(!is_null($ownQuote))
         {
-            $ownQuote = $this->em->getRepository(Quote::class)->findOneBy(array("intervention"=>$job,"technician"=>$user));
-
-
-            if(!is_null($ownQuote))
+            $showDetails =true;
+            if(!in_array($job->getStatut(),[Intervention::PAID,Intervention::DONE]))
             {
                 if($ownQuote->getStatut()==Quote::NEW){
                     $invite =true;
                     $qid = $ownQuote->getId();
                 }
             }
+            else{
+                $showDetails =true;
+            }
+
         }
 
 
 
 
-        return ["message"=>" ","code"=>201,"statut"=>true,"data"=>["job"=>$job,"quotes"=>$quotes,"files"=>$files,"nb_job"=>$nbJob,"spent"=>$spent,"invite"=>$invite,"qid"=>$qid]];
+
+
+        return ["message"=>" ","code"=>201,"statut"=>true,"data"=>["job"=>$job,"quotes"=>$quotes,"files"=>$files,"nb_job"=>$nbJob,"spent"=>$spent,"invite"=>$invite,"qid"=>$qid,"show_detail"=>$showDetails]];
 
 
     }
@@ -1101,7 +1133,7 @@ class InterventionService
 
                 if(in_array($job->getStatut(),[Intervention::PAID,Intervention::DONE]))
                 {
-                    $quotes = $this->em->getRepository(Quote::class)->findByJobValidated($job->getId());
+                    $quotes = $this->em->getRepository(Quote::class)->findByJobValidated($job->getId(),$limit,$offset);
                 }
                 else
                 {
@@ -1479,9 +1511,9 @@ class InterventionService
             "currency"=> "OUV",
             "order_id"=> $quote->getReference(),
           "amount"=> 1000,
-          "return_url"=> $this->container->get("router")->generate("web_payment_callback",["ref"=>$quote->getReference(),"slug"=>$quote->getIntervention()->getSlug()]),
-          "cancel_url"=> $this->container->get("router")->generate("web_payment_callback_cancel",["ref"=>$quote->getReference(),"slug"=>$quote->getIntervention()->getSlug()]),
-          "notif_url"=> $this->container->get("router")->generate("web_payment_notification"),
+          "return_url"=> "http://69.55.55.225".$this->container->get("router")->generate("web_payment_callback",["ref"=>$quote->getReference(),"slug"=>$quote->getIntervention()->getSlug()]),
+          "cancel_url"=> "http://69.55.55.225".$this->container->get("router")->generate("web_payment_callback_cancel",["ref"=>$quote->getReference(),"slug"=>$quote->getIntervention()->getSlug()]),
+          "notif_url"=> "http://69.55.55.225".$this->container->get("router")->generate("web_payment_notification"),
           "lang"=> "fr",
           "reference"=> "DIGITRAV"
         ];
@@ -1489,6 +1521,38 @@ class InterventionService
         $body = Unirest\Request\Body::json($data);
 
         $response = Unirest\Request::post('https://api.orange.com/orange-money-webpay/dev/v1/webpayment', $headers, $body);
+
+        if($response->code==201)
+        {
+            $p = new Payment();
+            $p->setReference($quote->getReference());
+            $p->setAmount(1000);
+            $p->setType(Payment::ORANGE_MONEY);
+
+            $int = $quote->getIntervention();
+            if($int->getIsMain()==true)
+            {
+                $p->setClient($int->getClient()->getSurname()." ".$int->getClient()->getName());
+
+            }
+            else
+            {
+                $p->setClient($int->getClientName());
+
+            }
+
+            $p->setReceiver("DIGITRAV");
+
+            $p->setPayToken($response->body->pay_token);
+            $p->setPayUrl($response->body->payment_url);
+            $p->setNotifToken($response->body->notif_token);
+
+
+            $this->em->persist($p);
+
+            $this->em->flush();
+
+        }
 
 
         return ["message"=>"","code"=>$response->code,"statut"=>false,"data"=>$response];
@@ -1615,11 +1679,11 @@ class InterventionService
 
         if(!is_null($q))
         {
-            $p = $this->em->getRepository(Payment::class)->findOneBy(array("reference",$q->getReference()));
+            $p = $this->em->getRepository(Payment::class)->findOneBy(array("reference"=>$q->getReference()));
 
             if(is_null($p)) return ["message"=>"transaction_not_found","code"=>404,"statut"=>true,"data"=>[]];
 
-            if($p->getClient()->getId() != $user->getId()) return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
+          //  if($p->getClient()->getId() != $user->getId()) return ["message"=>"operation_denied","code"=>401,"statut"=>true,"data"=>[]];
 
 
             if($p->getStatut()==false)
@@ -1680,7 +1744,21 @@ class InterventionService
 
                         $notif->setIsActive(true);
                         $notif->setQuote($q);
-                        $notif->setUser($p->getClient());
+
+                        $int = $q->getIntervention();
+
+                    if($int->getIsMain()==true)
+                    {
+                        $notif->setUser($int->getClient());
+
+                    }
+                    else
+                    {
+                        $notif->setUser($int->getOperator());
+
+                    }
+
+
                         $notif->setCode(Notification::QUOTATION_ACCEPTED);
 
                         $sta = new Statut();
