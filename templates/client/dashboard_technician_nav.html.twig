@@ -26,7 +26,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item {% if menu =="domain" %}active{% endif %}">
+                <li style="display: none;" class="nav-item {% if menu =="domain" %}active{% endif %}">
                     <a href="#">
                         <i class="fas fa-building"></i>
                         <p>{{ 'transactions'|trans }}</p>
@@ -35,7 +35,7 @@
                 </li>
 
                 <li class="nav-item {% if menu =="notification" %}active{% endif %}">
-                    <a href="#">
+                    <a href="{{ path('web_notifications') }}">
                         <i class="fas flaticon-alarm"></i>
                         <p>{{ 'notifications'|trans }}</p>
 

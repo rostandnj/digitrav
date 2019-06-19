@@ -21,7 +21,7 @@
                         <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
 
                             <div class="">
-                                <h2 class="text-white pb-2 fw-bold">{{ 'jobs'|trans }} </h2>
+                                <h2 class="text-white pb-2 fw-bold">{{ 'notifications'|trans }} </h2>
 
                             </div>
                             <div class="row ml-md-auto py-2 py-md-0 short-nav">
@@ -37,57 +37,14 @@
 
 
                         </div>
-                        {% if app.user.role.code in ["ROLE_OPERATOR","ROLE_CLIENT"] %}
-                            <a href="{{ path('web_dashboard_create_job') }}" class="btn btn-secondary btn-round">{{ 'post_a_job'|trans }}</a>
-                        {% endif %}
+
 
 
                     </div>
                 </div>
                 <div class="dash page-inner mt--5">
 
-                    <div class="row container-fluid mb-5 mt-5">
-                        <table id="job-datatables" class="display table table-responsive table-striped table-hover" >
-                            <thead>
-                            <tr>
-                                <th><span class="flaticon-settings"></span></th>
 
-                                <th>{{ 'title'|trans }}</th>
-                                <th>Code</th>
-                                <th>{{ 'domain'|trans }}</th>
-                                <th>{{ 'category'|trans }}</th>
-                                <th>{{ 'status'|trans }}</th>
-                                <th>{{ 'date'|trans }}</th>
-
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for job in jobs %}
-                                <tr  class=" {% if job.statut==0 %}success {% endif %} {% if job.isMain ==false %}  {% if job.operator.id == app.user.id %} btn-info {% endif %}{% endif %}" >
-                                    <td >
-                                        <a href="{{ path('web_show_job',{slug:job.slug}) }}">
-                                            <i style="color: #1572e8" class="fa fa-eye"></i>
-                                        </a>
-                                    </td>
-                                    <td> {{ job.title}}</td>
-                                    <td> {{ job.reference|upper}}</td>
-                                    <td> {{ job.domain.name}}</td>
-                                    <td> {{ job.category.name}}</td>
-                                    <td>
-                                        {% if job.statut==0 %} {{ 'statut_in_progress'|trans }} {% endif %}
-                                        {% if job.statut==2 %} {{ 'transaction_paid'|trans }} {% endif %}
-                                        {% if job.statut==4 %} {{ 'transaction_done'|trans }} {% endif %}
-
-                                    </td>
-                                    <td> {{job.date | date('y/m/d')}}</td>
-
-                                </tr>
-
-
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
 
                 </div>
                 {% include 'client/base/dashboard_footer.html.twig' %}

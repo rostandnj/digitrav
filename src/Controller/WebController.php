@@ -1720,7 +1720,7 @@ class WebController extends AbstractController implements LogginInterfaceControl
             //$domains = $this->mycontainer->get('domain_manager')->showList(20,0);
 
             return $this->render("client/show_job.html.twig",["job"=>$data["data"]["job"],"quotes"=>$data["data"]["quotes"],"files"=>$data["data"]["files"],
-                "nb_job"=>$data["data"]["nb_job"],"spent"=>$data["data"]["spent"],"invite"=>$data["data"]["invite"],"qid"=>$data["data"]["qid"],"show_detail"=>$data["data"]["show_detail"]]);
+                "nb_job"=>$data["data"]["nb_job"],"spent"=>$data["data"]["spent"],"invite"=>$data["data"]["invite"],"qid"=>$data["data"]["qid"],"show_detail"=>$data["data"]["show_detail"],"note"=>$data["data"]["note"]]);
         }
     }
 
@@ -2713,7 +2713,7 @@ class WebController extends AbstractController implements LogginInterfaceControl
 
         if($cu==null) return $this->redirectToRoute("web_login");
 
-        $limit =1;
+        $limit =4;
 
         $offset =0;
 
@@ -2745,13 +2745,13 @@ class WebController extends AbstractController implements LogginInterfaceControl
         {
             $limit = intval($request->query->get('limit'));
         }
-        else $limit =1;
+        else $limit =4;
 
         if(!empty($request->query->get('offset')))
         {
             $offset = intval($request->query->get('offset'));
         }
-        else $offset =1;
+        else $offset =4;
 
 
 
@@ -3167,6 +3167,48 @@ class WebController extends AbstractController implements LogginInterfaceControl
         $this->addFlash('notice',$this->mycontainer->get('translator')->trans($res["message"]));
 
         return $this->redirectToRoute("web_show_job",["slug"=>$slug]);
+
+    }
+
+    public function transactions(Request $request)
+    {
+        $cu = $this->getUser();
+        if($cu==null) return $this->redirectToRoute("web_login");
+
+        $u = $cu;
+
+
+        $limit =20;
+
+        $offset =0;
+
+        if(!empty($request->query->get('p')))
+        {
+            $page = intval($request->query->get('p'));
+
+            $offset = $limit*($page-1);
+        }
+        else
+        {
+            $page=1;
+        }
+
+
+        $res = $this->mycontainer->get("intervention_manager")->getMyTransaction($u,$limit,$offset);
+        $res2 = $this->mycontainer->get("intervention_manager")->countAllTransaction($u->getId());
+
+        $totalPage=1;
+
+        if($res2 > 0)
+        {
+            $totalPage = ceil($res2/$limit);
+        }
+
+
+
+
+        return $this->render("client/dashboard_transactions.html.twig",["transactions"=>[],"page"=>$page,"total_page"=>$totalPage, "menu"=>"transaction"]);
+
 
     }
 

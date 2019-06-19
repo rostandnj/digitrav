@@ -60,37 +60,39 @@
                     <a href="{{ path('web_dashboard_job') }}" class="nav-link ">{% trans %} my_jobs {% endtrans %}</a>
                 </li>
 
-                <li id="list-notif-btn" class="nav-item ">
 
-                    <a href="#"  data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" class="nav-link">
-                        <i class="icon-feather-bell"></i>
-
-                       {% if app.session.get("notif") >0 %}
-                        <span class="badge badge-danger">{{ app.session.get("notif") }}</span>
-
-                        {% endif %}
-
-
-                    </a>
-
-                     <ul  class="dropdown-menu  notify-drop">
-
-                        <!-- notify content -->
-                        <div id="list-notif" class="drop-content">
-                            <img id="notif-img" width="250" height="200" src="{{ asset('assets/images/loader.gif') }}">
-
-                        </div>
-                        <div id="list-notif-more" style="display: none" class="notify-drop-footer text-center">
-                            <a href="{{ path('web_notifications') }}"><i class="fa fa-eye"></i> {{ 'load_more'|trans }}</a>
-                        </div>
-                    </ul>
-                </li>
 
                 {% if app.user.role.code =="ROLE_CLIENT"  %}
                     <li class="nav-item badge badge-info {% if app.request.pathInfo == "/create/job" %} active {% endif %}">
                         <a style="color: white" href="{{ path('web_dashboard_create_job') }}" class="nav-link ">{{ 'post_a_job'|trans }}</a>
                     </li>
                 {% endif %}
+
+                    <li id="list-notif-btn" class="nav-item ">
+
+                        <a href="#"  data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" class="nav-link">
+                            <i class="icon-feather-bell"></i>
+
+                            {% if app.session.get("notif") >0 %}
+                                <span class="badge badge-danger">{{ app.session.get("notif") }}</span>
+
+                            {% endif %}
+
+
+                        </a>
+
+                        <ul  class="dropdown-menu  notify-drop">
+
+                            <!-- notify content -->
+                            <div id="list-notif" class="drop-content">
+                                <img id="notif-img" width="250" height="200" src="{{ asset('assets/images/loader.gif') }}">
+
+                            </div>
+                            <div id="list-notif-more" style="display: none" class="notify-drop-footer text-center">
+                                <a href="{{ path('web_notifications') }}"><i class="fa fa-eye"></i> {{ 'load_more'|trans }}</a>
+                            </div>
+                        </ul>
+                    </li>
 
 
                 {% endif %}
@@ -136,8 +138,7 @@
                             <li>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ path('web_profile',{'name':app.user.profileName, 'id':app.user.uid}) }}">{% trans %}profile{% endtrans %}</a>
-                                <a class="dropdown-item" href="#">My Balance</a>
-                                <a class="dropdown-item" href="#">Inbox</a>
+                                
                                 <div class="dropdown-divider"></div>
 
                                 <a class="dropdown-item" href="{{ path('web_logout') }}">{% trans %}logout{% endtrans %}</a>

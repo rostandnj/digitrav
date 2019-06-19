@@ -229,7 +229,7 @@
         var nbItem="{{ quotes|length }}";
         var totalItem=parseInt(nbItem);
 
-        if(nbItem>=1) $("#load-more").show();
+        if(nbItem>=4) $("#load-more").show();
 
         let link1 ="{{ url('web_job_show_proposals_more',{slug:job.slug}) }}";
         //let link = link1.replace('/axx',"/"+el.technician.uid);
@@ -256,7 +256,7 @@
                     if(resultat.quotes.length>0)
                     {
                         totalItem+=resultat.quotes.length;
-                        if(resultat.quotes.length<1)$("#load-more").hide();
+                        if(resultat.quotes.length<4)$("#load-more").hide();
                         else $("#load-more").attr("disabled",false);
 
                         let html="";

@@ -7,7 +7,7 @@
 
     {% endblock %}
 </head>
-<body  class="">
+<body id="body"  class="">
 
 
 
@@ -142,16 +142,18 @@
         $(".dash").attr("style","min-height:"+($(document).height())+"px");
 
 
-        $("#counterm").attr("style","height:"+($(document).height()+30)+"px");
+
+
+        $("#counterm").attr("style","height:"+($("#counterm").height()+30)+"px");
 
         var baseWidth=$(document).width();
         var baseHeight=$(document).height();
-        var baseBodyHeight=$("body").height();
+        var baseBodyHeight=$("#body").height();
 
 
         window.onresize = function(event) {
            let currentWidth=$(document).width();
-           let currentHeight=$("body").height();
+           let currentHeight=$("#body").height();
 
 
 
@@ -159,7 +161,7 @@
            {
                if(currentWidth<=baseWidth)
                {
-                   // $(".dash").attr("style","min-height:"+($(document).height())+"px");
+                   //$(".dash").attr("style","min-height:"+($(document).height())+"px");
                    $("#counterm").attr("style","height:"+($(document).height()-100)+"px");
                }
                else
@@ -173,7 +175,7 @@
         };
 
     window.addEventListener("orientationchange", function() {
-        $("#counterm").attr("style","height:"+($(document).height()-150)+"px");
+        $("#counterm").attr("style","height:"+($("#counterm").height()-150)+"px");
     });
 </script>
 

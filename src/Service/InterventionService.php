@@ -450,10 +450,19 @@ class InterventionService
                     {
                         $nbJob++;
 
-                        if($j->getStatut()==Intervention::PAID)
+                        if($j->getStatut()==Intervention::DONE)
                         {
-                            $spent+=(int)$j->getBudget();
+                            $q1 = $this->em->getRepository(Quote::class)->findOneBy(array("intervention"=>$j,"statut"=>Quote::DONE));
+
+                            if(!is_null($q1))
+                            {
+                                $bill = $q1->getBill();
+                                $spent+=(int)$bill->getAmount();
+
+                            }
+
                         }
+
                     }
                 }
 
@@ -484,6 +493,13 @@ class InterventionService
 
         }
 
+        $note=null;
+
+        if($job->getStatut()==Intervention::DONE)
+        {
+            $note = $this->em->getRepository(Note::class)->findOneBy(array("intervention"=>$job));
+        }
+
 
         $invite =false;
         $qid=0;
@@ -512,10 +528,7 @@ class InterventionService
 
 
 
-
-
-
-        return ["message"=>" ","code"=>201,"statut"=>true,"data"=>["job"=>$job,"quotes"=>$quotes,"files"=>$files,"nb_job"=>$nbJob,"spent"=>$spent,"invite"=>$invite,"qid"=>$qid,"show_detail"=>$showDetails]];
+        return ["message"=>" ","code"=>201,"statut"=>true,"data"=>["job"=>$job,"quotes"=>$quotes,"files"=>$files,"nb_job"=>$nbJob,"spent"=>$spent,"invite"=>$invite,"qid"=>$qid,"show_detail"=>$showDetails,"note"=>$note]];
 
 
     }
